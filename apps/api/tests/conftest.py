@@ -12,11 +12,29 @@ from testcontainers.postgres import PostgresContainer
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
-# Phase 2: foundation tables only. Extend as later migrations land.
 _ALL_TABLES = (
-    "audit_log",
     "users",
+    "audit_log",
     "tenants",
+    "source_systems",
+    "column_mappings",
+    "import_batches",
+    "raw_files",
+    "raw_records",
+    "staging_records",
+    "entity_identity_map",
+    "merge_review_items",
+    "data_conflicts",
+    "departments",
+    "programmes",
+    "courses",
+    "faculty",
+    "students",
+    "enrollment",
+    "attendance",
+    "internal_marks",
+    "fees",
+    "semester_results",
 )
 
 

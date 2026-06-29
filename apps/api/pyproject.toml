@@ -1,7 +1,7 @@
 [project]
 name = "forevue-api"
 version = "0.1.0"
-description = "Forevue — backend API (Phase 2: foundation — auth, RLS, audit)"
+description = "Forevue — backend API (Phase 3: ingestion, canonical data, entity resolution)"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi==0.115.6",
@@ -13,6 +13,10 @@ dependencies = [
     "pydantic-settings==2.6.1",
     "pyjwt==2.10.1",
     "argon2-cffi==23.1.0",
+    "pandas==2.2.3",
+    "openpyxl==3.1.5",
+    "rapidfuzz==3.10.1",
+    "python-multipart==0.0.20",
 ]
 
 [project.optional-dependencies]
