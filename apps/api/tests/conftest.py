@@ -12,6 +12,20 @@ from testcontainers.postgres import PostgresContainer
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
+# Placeholders so test modules can import app.* at collection time (before
+# migrated_db starts the container). migrated_db overwrites DATABASE_URL with
+# the real testcontainer URL; JWT_SECRET_KEY stays "test-secret".
+os.environ.setdefault(
+    "DATABASE_URL",
+    "postgresql+psycopg://app_user:placeholder@localhost:5432/placeholder",
+)
+os.environ.setdefault(
+    "MIGRATIONS_DATABASE_URL",
+    "postgresql+psycopg://test:test@localhost:5432/placeholder",
+)
+os.environ.setdefault("JWT_SECRET_KEY", "test-secret")
+os.environ.setdefault("APP_DB_PASSWORD", "test-app-user-password")
+
 _ALL_TABLES = (
     "users",
     "audit_log",
@@ -35,6 +49,13 @@ _ALL_TABLES = (
     "internal_marks",
     "fees",
     "semester_results",
+    "risk_configs",
+    "risk_assessments",
+    "risk_findings",
+    "interventions",
+    "intervention_outcomes",
+    "risk_alerts",
+    "faculty_scopes",
 )
 
 

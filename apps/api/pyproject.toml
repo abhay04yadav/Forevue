@@ -1,7 +1,7 @@
 [project]
 name = "forevue-api"
 version = "0.1.0"
-description = "Forevue — backend API (Phase 3: ingestion, canonical data, entity resolution)"
+description = "Forevue — backend API (Phase 4: Student Success Engine — risk, interventions, alerts)"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi==0.115.6",
