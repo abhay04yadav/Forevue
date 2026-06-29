@@ -132,6 +132,4 @@ not preferences.
 
 Proprietary — © Forevue Technologies. All rights reserved. Internal repository;
 not for public distribution.
-=======
-# Forevue
 
