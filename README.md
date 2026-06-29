@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div align="center">
 
 # Forevue
@@ -132,3 +133,7 @@ not preferences.
 
 Proprietary — © Forevue Technologies. All rights reserved. Internal repository;
 not for public distribution.
+=======
+# Forevue
+Forevue
+>>>>>>> 483829eaa22b9a6010e9e0b9dcc4f9f0e7578c85
