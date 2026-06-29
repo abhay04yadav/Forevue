@@ -1,16 +1,20 @@
 # Forevue API (`apps/api`)
 
-**Status:** Skeleton — no application code yet.
+**Status:** Phase 2 — foundation (auth, RLS, audit).
 
-The FastAPI **modular monolith** (Bible `AD-2.1`). Internal layering:
+The FastAPI **modular monolith** (Bible `AD-2.1`). Current surface:
 
-```
-app/api/routes  →  app/services  →  app/repositories  →  app/models
-```
+| Area | Status |
+|---|---|
+| `app/core/` | config, db, security, RLS, audit, logging, exceptions |
+| `app/models/` | tenants, users, audit_log |
+| `app/repositories/` | tenant + user (defense-in-depth) |
+| `app/services/auth_service.py` | register, login, refresh |
+| `app/api/routes/` | `/health`, `/auth/*` |
+| `migrations/` | Phase 0 foundation (RLS bootstrap) |
 
-Bounded contexts under `app/services/`: ingestion, risk, ai (future).
+**Release gate:** `pytest` — RLS isolation + coverage tests must pass.
 
-Migrations live in `migrations/` (Alembic; every tenant table ships RLS).
+Run locally: see [`docs/engineering/DEVELOPMENT_SETUP.md`](../../docs/engineering/DEVELOPMENT_SETUP.md).
 
-Application code will be migrated module-by-module per
-`docs/engineering/MIGRATION_PLAN.md` — not copied from the legacy prototype.
+Further modules (ingestion, risk, AI) land per [`MIGRATION_PLAN.md`](../../docs/engineering/MIGRATION_PLAN.md).
