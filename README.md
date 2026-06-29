@@ -10,8 +10,8 @@
 
 ---
 
-> **Repository status: Phase 5 — Frontend** (`apps/web`, `packages/design-system`, `packages/api-client`).
-> Backend Phases 2–4 are complete in `apps/api`. The legacy prototype
+> **Repository status: Phase 6 — Hardening** (token revocation, `request_id`, user/scope APIs, rate limits).
+> Backend Phases 2–5 and frontend `apps/web` are in place. Legacy prototype
 > (`AI-ERP-Copilot`) is **reference only** — see
 > [`docs/engineering/MIGRATION_PLAN.md`](docs/engineering/MIGRATION_PLAN.md).
 

@@ -59,6 +59,18 @@ _ALL_TABLES = (
 )
 
 
+@pytest.fixture(autouse=True)
+def _reset_ephemeral_stores():
+    from app.core.kv import reset_kv_store_for_tests
+    from app.core.refresh_tokens import reset_refresh_token_store
+
+    reset_kv_store_for_tests()
+    reset_refresh_token_store()
+    yield
+    reset_kv_store_for_tests()
+    reset_refresh_token_store()
+
+
 @pytest.fixture(scope="session")
 def postgres_container():
     with PostgresContainer("postgres:16") as pg:

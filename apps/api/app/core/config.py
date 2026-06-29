@@ -30,5 +30,15 @@ class Settings(BaseSettings):
     here -- auth is Bearer-token-in-header, not cookies, so credentialed CORS
     isn't needed."""
 
+    redis_url: str | None = None
+    """Redis for refresh-token denylist and auth rate limits (Ch6 DATA-6.1).
+    When unset, an in-process store is used (dev/tests only)."""
+
+    redis_fail_closed: bool = True
+    """When Redis is configured, auth flows fail closed if Redis is unreachable."""
+
+    auth_rate_limit_per_minute: int = 30
+    """Per-identifier cap on /auth/* requests (Ch7 §10). Set 0 to disable."""
+
 
 settings = Settings()

@@ -1,7 +1,7 @@
 [project]
 name = "forevue-api"
 version = "0.1.0"
-description = "Forevue — backend API (Phase 4: Student Success Engine — risk, interventions, alerts)"
+description = "Forevue — backend API (Phase 6: hardening — token revocation, users, rate limits)"
 requires-python = ">=3.12"
 dependencies = [
     "fastapi==0.115.6",
@@ -17,6 +17,7 @@ dependencies = [
     "openpyxl==3.1.5",
     "rapidfuzz==3.10.1",
     "python-multipart==0.0.20",
+    "redis==5.2.1",
 ]
 
 [project.optional-dependencies]

@@ -1,8 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-import { login as apiLogin } from "../api/auth";
+import { login as apiLogin, logout as apiLogout } from "../api/auth";
 import { setOnAuthExpired } from "../api/client";
-import { clearTokens, decodeAccessToken, getAccessToken, setTokens } from "./tokenStorage";
+import { clearTokens, decodeAccessToken, getAccessToken, getRefreshToken, setTokens } from "./tokenStorage";
 
 interface AuthUser {
   userId: string;
@@ -31,8 +31,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
   const logout = useCallback(() => {
-    clearTokens();
-    setUser(null);
+    const refreshToken = getAccessToken() ? getRefreshToken() : null;
+    void (async () => {
+      if (refreshToken) {
+        try {
+          await apiLogout();
+        } catch {
+          // Best-effort server revocation; local session is always cleared.
+        }
+      }
+      clearTokens();
+      setUser(null);
+    })();
   }, []);
 
   useEffect(() => {

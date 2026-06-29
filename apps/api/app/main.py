@@ -1,26 +1,29 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import auth, health, imports, mappings, risk, sources, students
+from app.api.routes import auth, health, imports, mappings, risk, sources, students, users
 from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
+from app.core.middleware import RequestIdMiddleware
 
 configure_logging(settings.log_level)
 
 app = FastAPI(title="Forevue API", version="0.1.0")
 register_exception_handlers(app)
 
+app.add_middleware(RequestIdMiddleware)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[origin.strip() for origin in settings.frontend_origins.split(",") if origin.strip()],
     allow_credentials=False,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
 )
 
 app.include_router(health.router)
 app.include_router(auth.router)
+app.include_router(users.router)
 app.include_router(sources.router)
 app.include_router(mappings.router)
 app.include_router(imports.router)

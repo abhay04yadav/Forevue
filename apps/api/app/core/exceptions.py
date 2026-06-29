@@ -32,8 +32,20 @@ class ConflictException(AppException):
     detail = "Conflicting state."
 
 
+class RateLimitException(AppException):
+    status_code = status.HTTP_429_TOO_MANY_REQUESTS
+    detail = "Too many requests."
+
+    def __init__(self, detail: str | None = None, *, retry_after_seconds: int = 60):
+        self.retry_after_seconds = retry_after_seconds
+        super().__init__(detail)
+
+
 async def app_exception_handler(request: Request, exc: AppException) -> JSONResponse:
-    return JSONResponse(status_code=exc.status_code, content={"error": exc.detail})
+    headers: dict[str, str] = {}
+    if isinstance(exc, RateLimitException):
+        headers["Retry-After"] = str(exc.retry_after_seconds)
+    return JSONResponse(status_code=exc.status_code, content={"error": exc.detail}, headers=headers)
 
 
 def register_exception_handlers(app: FastAPI) -> None:
