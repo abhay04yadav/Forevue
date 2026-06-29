@@ -1,0 +1,169 @@
+# ==============================================================================
+# Forevue — root .gitignore
+# Covers: Python · Node/React/Next/Vite · Docker · IDE · OS · logs · caches ·
+#         build artifacts · coverage · environment files · secrets · temp files
+# Per-app ignores may add to (never relax) this baseline.
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Secrets & environment  (NEVER commit real values — see .env.example)
+# ------------------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.env
+*.pem
+*.key
+*.crt
+*.p12
+secrets/
+*.secrets.json
+credentials.json
+service-account*.json
+
+# ------------------------------------------------------------------------------
+# Python  (apps/api and any Python tooling)
+# ------------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+wheels/
+*.egg-info/
+*.egg
+.installed.cfg
+MANIFEST
+
+# Python tooling caches
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.tox/
+.nox/
+.hypothesis/
+
+# Python coverage
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+nosetests.xml
+*.cover
+
+# ------------------------------------------------------------------------------
+# Node / JavaScript / TypeScript  (apps/web, packages/*)
+# ------------------------------------------------------------------------------
+node_modules/
+.pnp
+.pnp.js
+.pnpm-store/
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# Build output
+dist/
+dist-ssr/
+build/
+out/
+.output/
+*.tsbuildinfo
+
+# Next.js
+.next/
+next-env.d.ts
+
+# Vite
+.vite/
+vite.config.*.timestamp-*
+
+# JS test / coverage
+coverage/
+.nyc_output/
+playwright-report/
+playwright/.cache/
+test-results/
+
+# Package manager logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.npm/
+
+# Generated API client artifacts (regenerated from OpenAPI — not source of truth)
+# Keep the generator config; ignore generated output if emitted outside packages/.
+*.gen.ts.bak
+
+# ------------------------------------------------------------------------------
+# Docker  (local volumes / overrides — infra/ tracked files are explicit)
+# ------------------------------------------------------------------------------
+docker-compose.override.yml
+.docker/
+*.local.yml
+
+# ------------------------------------------------------------------------------
+# IDE / editors
+# ------------------------------------------------------------------------------
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+.idea/
+*.iml
+*.swp
+*.swo
+*~
+.history/
+*.code-workspace
+
+# ------------------------------------------------------------------------------
+# Operating system
+# ------------------------------------------------------------------------------
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ------------------------------------------------------------------------------
+# Logs & temporary files
+# ------------------------------------------------------------------------------
+logs/
+*.log
+tmp/
+temp/
+*.tmp
+*.bak
+*.orig
+.cache/
+
+# ------------------------------------------------------------------------------
+# Misc
+# ------------------------------------------------------------------------------
+*.pid
+*.seed
+*.pid.lock
+.turbo/

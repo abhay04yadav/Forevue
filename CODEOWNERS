@@ -1,0 +1,58 @@
+# ==============================================================================
+# Forevue — CODEOWNERS
+#
+# Defines required reviewers per area. GitHub requests review from the matching
+# owner(s) automatically and (with branch protection) blocks merge until a
+# CODEOWNER approves. Last matching pattern wins, so order matters.
+#
+# ACTION REQUIRED (repo admin): replace the placeholder @forevue/* teams with
+# real GitHub teams or usernames, and enable "Require review from Code Owners"
+# in the branch protection rules for `main`. Until those teams exist, GitHub
+# will skip owners it cannot resolve.
+# ==============================================================================
+
+# ---- Default owner for everything not matched more specifically -------------
+*                                   @forevue/maintainers
+
+# ---- Repository foundation & governance -------------------------------------
+/.github/                           @forevue/platform @forevue/maintainers
+/CODEOWNERS                         @forevue/maintainers
+/.gitignore                         @forevue/platform
+/.env.example                       @forevue/platform @forevue/security
+/README.md                          @forevue/maintainers
+/CONTRIBUTING.md                    @forevue/maintainers
+/SECURITY.md                        @forevue/security
+
+# ---- Documentation ----------------------------------------------------------
+# The Architecture Bible and RSDDs are FROZEN — changes require Architecture
+# Review Board sign-off in addition to CODEOWNER review.
+/docs/                              @forevue/architecture
+/docs/architecture-bible/           @forevue/architecture @forevue/arb
+/docs/rsdd/                         @forevue/architecture @forevue/arb
+/docs/engineering/                  @forevue/architecture @forevue/platform
+
+# ---- Design system & brand (frozen) -----------------------------------------
+/design/                            @forevue/design
+
+# ---- Applications -----------------------------------------------------------
+/apps/api/                          @forevue/backend
+/apps/web/                          @forevue/frontend
+
+# Security-sensitive backend areas require an additional security review.
+/apps/api/app/core/                 @forevue/backend @forevue/security
+/apps/api/migrations/               @forevue/backend @forevue/data
+
+# ---- Shared packages --------------------------------------------------------
+/packages/                          @forevue/platform
+/packages/api-client/               @forevue/backend @forevue/frontend
+/packages/design-system/            @forevue/design @forevue/frontend
+
+# ---- Reserved future services (AD-2.1 extraction seam) ----------------------
+/services/                          @forevue/platform @forevue/architecture
+
+# ---- Infrastructure ---------------------------------------------------------
+/infra/                             @forevue/platform @forevue/security
+
+# ---- Scripts & cross-cutting tests ------------------------------------------
+/scripts/                           @forevue/platform
+/tests/                             @forevue/backend @forevue/frontend
