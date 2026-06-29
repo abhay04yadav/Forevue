@@ -1,7 +1,8 @@
 # `@forevue/design-system`
 
-**Status:** Skeleton — no React package yet.
+React components and tokens implementing the **frozen** design source in `design/design-system/`.
 
-Implemented React components built **from** the frozen design source in
-`design/design-system/` (tokens, component specs, guidelines). The source
-artifacts are reference truth; this package is the runtime implementation.
+- `RiskMarker` — colour + shape + label tier primitive
+- `styles.css` — imports frozen CSS token files
+
+Reference artifacts live under `design/design-system/`; this package is the runtime implementation consumed by `apps/web`.

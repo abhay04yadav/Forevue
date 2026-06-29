@@ -1,10 +1,16 @@
 # Forevue Web (`apps/web`)
 
-**Status:** Skeleton — no application code yet.
+**Status:** Phase 5 — App Shell, role dashboards, frozen Design System.
 
-The React + TypeScript + Vite **experience plane** (`TDR-13`). One API-first
-client of `apps/api`, built on the frozen Design System
-(`design/design-system/`, `packages/design-system/`).
+React + Vite experience plane. API types come from `@forevue/api-client` (generated from OpenAPI).
 
-Role dashboards and workspaces implement the RSDDs (`docs/rsdd/`) and Final
-Designs (`design/final-designs/`). The legacy prototype UI is **not** migrated.
+```bash
+# from repo root
+pnpm install
+pnpm --filter @forevue/api-client generate
+pnpm --filter web dev
+```
+
+**Release gate:** `tsc --noEmit` + Playwright (`pnpm --filter web test:e2e`).
+
+Set `VITE_API_BASE_URL=http://localhost:8000` in `.env.local`.

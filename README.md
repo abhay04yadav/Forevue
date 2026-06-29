@@ -10,11 +10,9 @@
 
 ---
 
-> **Repository status: Phase 0 — Foundation.**
-> This repository is the **new production repository** for Forevue. It currently
-> contains the engineering foundation only (governance docs, conventions, and
-> repository configuration). No application code has been migrated yet. The
-> previous prototype (`AI-ERP-Copilot`) is **legacy reference only** — see
+> **Repository status: Phase 5 — Frontend** (`apps/web`, `packages/design-system`, `packages/api-client`).
+> Backend Phases 2–4 are complete in `apps/api`. The legacy prototype
+> (`AI-ERP-Copilot`) is **reference only** — see
 > [`docs/engineering/MIGRATION_PLAN.md`](docs/engineering/MIGRATION_PLAN.md).
 
 ## What Forevue is
