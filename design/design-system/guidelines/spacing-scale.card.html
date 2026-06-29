@@ -1,0 +1,30 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Spacing scale" subtitle="4px base · --space-1 … --space-24" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 20px; font-family: var(--font-sans); background: #fff; }
+  .row { display: flex; align-items: flex-end; gap: 14px; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .bar { background: var(--color-teal-300); border-radius: 3px; width: 100%; }
+  .item > .bar { width: 22px; }
+  .tk { font-size: 11px; color: var(--text-muted); font-variant-numeric: tabular-nums; }
+  .nm { font-size: 11px; font-weight: 600; color: var(--text-strong); }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="item"><span class="bar" style="height:4px"></span><span class="nm">1</span><span class="tk">4</span></div>
+  <div class="item"><span class="bar" style="height:8px"></span><span class="nm">2</span><span class="tk">8</span></div>
+  <div class="item"><span class="bar" style="height:12px"></span><span class="nm">3</span><span class="tk">12</span></div>
+  <div class="item"><span class="bar" style="height:16px"></span><span class="nm">4</span><span class="tk">16</span></div>
+  <div class="item"><span class="bar" style="height:24px"></span><span class="nm">6</span><span class="tk">24</span></div>
+  <div class="item"><span class="bar" style="height:32px"></span><span class="nm">8</span><span class="tk">32</span></div>
+  <div class="item"><span class="bar" style="height:48px"></span><span class="nm">12</span><span class="tk">48</span></div>
+  <div class="item"><span class="bar" style="height:64px"></span><span class="nm">16</span><span class="tk">64</span></div>
+  <div class="item"><span class="bar" style="height:80px"></span><span class="nm">20</span><span class="tk">80</span></div>
+</div>
+</body>
+</html>

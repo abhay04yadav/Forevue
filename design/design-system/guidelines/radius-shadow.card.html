@@ -1,0 +1,37 @@
+<!-- @dsCard group="Spacing" viewport="700x150" name="Radius & shadow" subtitle="Generous radius · subtle cool shadows" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 20px; font-family: var(--font-sans); background: var(--surface-page); display: flex; gap: 28px; align-items: center; }
+  .group { display: flex; gap: 12px; align-items: flex-end; }
+  .swatch { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+  .box { width: 54px; height: 54px; background: #fff; border: 1px solid var(--border-subtle); }
+  .tk { font-size: 10.5px; color: var(--text-muted); }
+  .nm { font-size: 11px; font-weight: 600; color: var(--text-strong); }
+  .lab { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+  .col { display: flex; flex-direction: column; }
+</style>
+</head>
+<body>
+<div class="col">
+  <span class="lab">Radius</span>
+  <div class="group">
+    <div class="swatch"><div class="box" style="border-radius:var(--radius-sm)"></div><span class="nm">sm</span><span class="tk">8</span></div>
+    <div class="swatch"><div class="box" style="border-radius:var(--radius-md)"></div><span class="nm">md</span><span class="tk">10</span></div>
+    <div class="swatch"><div class="box" style="border-radius:var(--radius-lg)"></div><span class="nm">lg</span><span class="tk">14</span></div>
+    <div class="swatch"><div class="box" style="border-radius:var(--radius-xl)"></div><span class="nm">xl</span><span class="tk">18</span></div>
+  </div>
+</div>
+<div class="col">
+  <span class="lab">Shadow</span>
+  <div class="group">
+    <div class="swatch"><div class="box" style="border:none;box-shadow:var(--shadow-sm);border-radius:var(--radius-md)"></div><span class="nm">sm</span></div>
+    <div class="swatch"><div class="box" style="border:none;box-shadow:var(--shadow-md);border-radius:var(--radius-md)"></div><span class="nm">md</span></div>
+    <div class="swatch"><div class="box" style="border:none;box-shadow:var(--shadow-lg);border-radius:var(--radius-md)"></div><span class="nm">lg</span></div>
+  </div>
+</div>
+</body>
+</html>

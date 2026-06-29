@@ -1,0 +1,57 @@
+<!-- @dsCard group="Components" viewport="700x250" name="Risk · evidence · consent" subtitle="Governance primitives — colour+shape+label, provenance, DPDP" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>
+  body { margin: 0; padding: 22px; background: var(--surface-page); font-family: var(--font-sans); }
+  .stack { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .stack + .lab { margin-top: 18px; }
+  .lab { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 9px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { RiskMarker, EvidenceCite, ConsentTag, DataStat } = window.ForevueDesignSystem_24f415;
+  function Demo() {
+    return (
+      <div>
+        <div className="lab">Risk — colour + shape + label (never colour alone)</div>
+        <div className="stack">
+          <RiskMarker tier="high" />
+          <RiskMarker tier="watch" />
+          <RiskMarker tier="low" />
+          <RiskMarker tier="high" variant="glyph" />
+          <RiskMarker tier="watch" variant="glyph" />
+          <RiskMarker tier="low" variant="glyph" />
+        </div>
+        <div className="lab">Consent (DPDP)</div>
+        <div className="stack">
+          <ConsentTag state="required" />
+          <ConsentTag state="granted" />
+        </div>
+        <div className="lab">Evidence — grounded or abstain</div>
+        <div className="stack">
+          <EvidenceCite
+            sources={[{ label: "Attendance register", meta: "wk 6–9" }, { label: "Internal marks", meta: "CSE-3" }, "Fee status"]}
+            onOpen={() => {}}
+          />
+        </div>
+        <div className="lab">Data figures (tabular)</div>
+        <div className="stack" style={{ gap: 40 }}>
+          <DataStat label="Students watched" value="1,240" />
+          <DataStat label="Below attendance line" value="6" delta="2" deltaDir="down" sub="this week" />
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+</script>
+</body>
+</html>

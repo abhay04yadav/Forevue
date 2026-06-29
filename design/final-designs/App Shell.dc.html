@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/styles.css">
+<script src="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; border: 3px solid transparent; background-clip: padding-box; }
+  @keyframes fvFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fvRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fvSlideR { from { transform: translateX(14px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fvPulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="height:100vh;width:100%;background:var(--surface-page);font-family:var(--font-sans);color:var(--text-body);overflow:hidden;position:relative;">
+
+<!-- ============================ AUTHENTICATED SHELL ============================ -->
+<sc-if value="{{ authed }}" hint-placeholder-val="{{ false }}">
+<div style="display:flex;height:100%;width:100%;">
+
+  <!-- ----- SIDEBAR (desktop / tablet) ----- -->
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+  <aside style="{{ sidebarStyle }}">
+    <div style="display:flex;align-items:center;gap:9px;padding:4px 8px 6px;height:34px;">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="" style="width:26px;height:26px;flex:none;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="" style="width:26px;height:26px;flex:none;" /></sc-if>
+      <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="font-size:18px;font-weight:700;color:var(--text-strong);letter-spacing:-0.01em;">Forevue</span></sc-if>
+    </div>
+
+    <!-- AI workspace entry — the single teal primary affordance -->
+    <button onClick="{{ openAI }}" title="AI workspace" style="display:flex;align-items:center;gap:10px;width:100%;margin-top:14px;padding:10px 11px;border:1px solid var(--color-teal);border-radius:var(--radius-md);background:var(--action-primary);color:var(--action-primary-text);font-family:var(--font-sans);font-size:14px;font-weight:600;cursor:pointer;justify-content:{{ railJustify }};transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--action-primary-hover);">
+      <dc-import name="Icon" n="sparkles" size="17" hint-size="17px,17px"></dc-import>
+      <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;text-align:left;">AI workspace</span></sc-if>
+    </button>
+
+    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+      <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);padding:18px 11px 8px;">Workspace</div>
+    </sc-if>
+    <sc-if value="{{ isCollapsed }}" hint-placeholder-val="{{ false }}"><div style="height:14px;"></div></sc-if>
+
+    <nav style="display:flex;flex-direction:column;gap:2px;">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4">
+        <sc-if value="{{ item.active }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:var(--color-teal-50);color:var(--color-deep-teal);font-family:var(--font-sans);font-size:14px;font-weight:600;cursor:pointer;text-align:left;justify-content:{{ railJustify }};">
+            <dc-import name="Icon" n="{{ item.icon }}" size="17" hint-size="17px,17px"></dc-import>
+            <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">{{ item.label }}</span></sc-if>
+            <sc-if value="{{ item.showCount }}" hint-placeholder-val="{{ false }}"><span style="font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;color:var(--color-deep-teal);background:var(--surface-card);border-radius:999px;padding:1px 8px;">{{ item.countLabel }}</span></sc-if>
+          </button>
+        </sc-if>
+        <sc-if value="{{ item.inactive }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);font-family:var(--font-sans);font-size:14px;font-weight:500;cursor:pointer;text-align:left;justify-content:{{ railJustify }};transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+            <dc-import name="Icon" n="{{ item.icon }}" size="17" hint-size="17px,17px"></dc-import>
+            <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">{{ item.label }}</span></sc-if>
+            <sc-if value="{{ item.showCount }}" hint-placeholder-val="{{ false }}"><span style="font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;color:var(--color-neutral-500);background:var(--color-neutral-100);border-radius:999px;padding:1px 8px;">{{ item.countLabel }}</span></sc-if>
+          </button>
+        </sc-if>
+      </sc-for>
+    </nav>
+
+    <!-- Sidebar footer: help, settings, profile -->
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:2px;">
+      <button onClick="{{ openHelp }}" title="Help center" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);font-family:var(--font-sans);font-size:14px;font-weight:500;cursor:pointer;text-align:left;justify-content:{{ railJustify }};transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+        <dc-import name="Icon" n="help" size="17" hint-size="17px,17px"></dc-import>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">Help</span></sc-if>
+      </button>
+      <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openSettings }}" title="Settings" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:var(--color-teal-50);color:var(--color-deep-teal);font-family:var(--font-sans);font-size:14px;font-weight:600;cursor:pointer;text-align:left;justify-content:{{ railJustify }};">
+          <dc-import name="Icon" n="settings" size="17" hint-size="17px,17px"></dc-import>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">Settings</span></sc-if>
+        </button>
+      </sc-if>
+      <sc-if value="{{ notSettings }}" hint-placeholder-val="{{ true }}">
+        <button onClick="{{ openSettings }}" title="Settings" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);font-family:var(--font-sans);font-size:14px;font-weight:500;cursor:pointer;text-align:left;justify-content:{{ railJustify }};transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+          <dc-import name="Icon" n="settings" size="17" hint-size="17px,17px"></dc-import>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">Settings</span></sc-if>
+        </button>
+      </sc-if>
+
+      <button onClick="{{ toggleProfile }}" title="{{ user.name }}" style="display:flex;align-items:center;gap:9px;width:100%;margin-top:8px;padding:10px 8px 4px;border:none;border-top:1px solid var(--border-subtle);background:transparent;cursor:pointer;text-align:left;justify-content:{{ railJustify }};">
+        <span style="width:30px;height:30px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;">{{ user.initials }}</span>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+          <span style="min-width:0;flex:1;">
+            <span style="display:block;font-size:13px;font-weight:600;color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.name }}</span>
+            <span style="display:block;font-size:11.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.title }}</span>
+          </span>
+        </sc-if>
+      </button>
+    </div>
+
+    <!-- collapse toggle (wide only) -->
+    <sc-if value="{{ canCollapse }}" hint-placeholder-val="{{ false }}">
+      <button onClick="{{ toggleCollapse }}" title="Collapse sidebar" style="position:absolute;top:18px;right:-12px;width:24px;height:24px;border-radius:50%;border:1px solid var(--border-subtle);background:var(--surface-card);color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-xs);z-index:5;">
+        <dc-import name="Icon" n="panelLeft" size="13" hint-size="13px,13px"></dc-import>
+      </button>
+    </sc-if>
+  </aside>
+  </sc-if>
+
+  <!-- ----- MAIN COLUMN ----- -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--surface-page);">
+
+    <!-- TOP BAR -->
+    <header style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border-subtle);background:var(--surface-card);flex:none;">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openDrawer }}" aria-label="Open menu" style="width:38px;height:38px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;">
+          <dc-import name="Icon" n="menu" size="19" hint-size="19px,19px"></dc-import>
+        </button>
+      </sc-if>
+
+      <!-- Global command / search trigger -->
+      <button onClick="{{ openPalette }}" style="display:flex;align-items:center;gap:10px;flex:1;max-width:520px;height:38px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);color:var(--text-muted);cursor:text;font-family:var(--font-sans);font-size:14px;transition:border-color var(--duration-fast) var(--ease-standard);" style-hover="border-color:var(--border-strong);">
+        <dc-import name="Icon" n="search" size="16" hint-size="16px,16px"></dc-import>
+        <span style="flex:1;text-align:left;">Search or run a command</span>
+        <span style="display:flex;align-items:center;gap:3px;font-size:11px;font-weight:600;color:var(--color-neutral-500);background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:6px;padding:2px 6px;">{{ cmdKey }}K</span>
+      </button>
+
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px;">
+        <button onClick="{{ toggleTheme }}" aria-label="Toggle theme" style="width:38px;height:38px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+          <dc-import name="Icon" n="{{ themeIcon }}" size="18" hint-size="18px,18px"></dc-import>
+        </button>
+        <button onClick="{{ openHelp }}" aria-label="Help" style="width:38px;height:38px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+          <dc-import name="Icon" n="help" size="18" hint-size="18px,18px"></dc-import>
+        </button>
+        <button onClick="{{ toggleNotifs }}" aria-label="Notifications" style="position:relative;width:38px;height:38px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+          <dc-import name="Icon" n="bell" size="18" hint-size="18px,18px"></dc-import>
+          <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}"><span style="position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--color-amber);border:1.5px solid var(--surface-card);"></span></sc-if>
+        </button>
+        <button onClick="{{ toggleProfile }}" aria-label="Profile" style="width:34px;height:34px;margin-left:4px;border:none;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;flex:none;">{{ user.initials }}</button>
+      </div>
+    </header>
+
+    <!-- SCROLL REGION -->
+    <div style="flex:1;overflow-y:auto;">
+      <div style="max-width:{{ contentMax }};margin:0 auto;padding:20px 24px 48px;">
+
+        <!-- Breadcrumbs -->
+        <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);margin-bottom:10px;">
+          <button onClick="{{ goHome }}" style="border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:13px;cursor:pointer;padding:0;" style-hover="color:var(--text-link);">Home</button>
+          <span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="chevronRight" size="14" hint-size="14px,14px"></dc-import></span>
+          <span style="color:var(--text-body);font-weight:500;">{{ pageTitle }}</span>
+        </div>
+
+        <!-- Page header -->
+        <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:22px;">
+          <div style="min-width:0;flex:1;">
+            <h1 style="margin:0;font-size:24px;font-weight:700;color:var(--text-strong);letter-spacing:-0.015em;">{{ pageTitle }}</h1>
+            <p style="margin:5px 0 0;font-size:14px;line-height:1.5;color:var(--text-muted);max-width:60ch;">{{ pageSubtitle }}</p>
+          </div>
+          <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="md" hint-size="96px,40px">Filters</x-import>
+              <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="md" hint-size="92px,40px">Share</x-import>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- ===== APP content slot (role-agnostic placeholder) ===== -->
+        <sc-if value="{{ isApp }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:56px 28px;background:var(--surface-card);border:1px dashed var(--border-default);border-radius:var(--radius-lg);">
+            <div style="width:132px;height:74px;">{{ resolveMark }}</div>
+            <div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Workspace shell</div>
+              <div style="font-size:18px;font-weight:600;color:var(--text-strong);">{{ pageTitle }} content renders here</div>
+              <p style="margin:8px auto 0;font-size:14px;line-height:1.55;color:var(--text-muted);max-width:52ch;">This is the role-agnostic shell every role inherits. Role-specific views load into this region — the chrome, navigation and AI workspace stay consistent across the product.</p>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;">
+            <div style="height:120px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);"></div>
+            <div style="height:120px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);"></div>
+            <div style="height:120px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);"></div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ===== SETTINGS ===== -->
+        <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+        <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
+          <div style="padding:6px 18px 0;border-bottom:1px solid var(--border-subtle);">
+            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Tabs" items="{{ settingsTabs }}" value="{{ settingsTab }}" onChange="{{ onSettingsTab }}" hint-size="100%,44px"></x-import>
+          </div>
+          <div style="padding:24px;max-width:640px;">
+
+            <sc-if value="{{ tabProfile }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;flex-direction:column;gap:18px;">
+                <div style="display:flex;align-items:center;gap:14px;">
+                  <span style="width:52px;height:52px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;flex:none;">{{ user.initials }}</span>
+                  <div>
+                    <div style="font-size:16px;font-weight:600;color:var(--text-strong);">{{ user.name }}</div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+                      <x-import component-from-global-scope="ForevueDesignSystem_24f415.Badge" tone="teal" hint-size="80px,22px">{{ user.roleLabel }}</x-import>
+                      <span style="font-size:13px;color:var(--text-muted);">{{ user.title }}</span>
+                    </div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Full name" value="{{ user.name }}" hint-size="100%,66px"></x-import>
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Work email" value="{{ user.email }}" hint-size="100%,66px"></x-import>
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Title" value="{{ user.title }}" hint-size="100%,66px"></x-import>
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Role" value="{{ user.roleLabel }}" disabled="{{ true }}" hint="Set by your workspace admin." hint-size="100%,66px"></x-import>
+                </div>
+                <div style="display:flex;gap:10px;padding-top:4px;">
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="md" hint-size="130px,40px">Save changes</x-import>
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="md" hint-size="80px,40px">Cancel</x-import>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabNotifications }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:22px;">
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--text-strong);margin-bottom:4px;">Channels</div>
+                  <p style="margin:0 0 12px;font-size:13px;color:var(--text-muted);">Where Forevue reaches you. It surfaces — it never acts on its own.</p>
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="In-app notifications" defaultChecked="{{ true }}" hint-size="220px,24px"></x-import>
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Email" defaultChecked="{{ true }}" hint-size="220px,24px"></x-import>
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Weekly digest" hint-size="220px,24px"></x-import>
+                  </div>
+                </div>
+                <div style="border-top:1px solid var(--border-subtle);padding-top:18px;">
+                  <div style="font-size:14px;font-weight:600;color:var(--text-strong);margin-bottom:12px;">What to notify me about</div>
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Alerts — a threshold is crossed" defaultChecked="{{ true }}" hint-size="280px,24px"></x-import>
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Approvals waiting for me" defaultChecked="{{ true }}" hint-size="280px,24px"></x-import>
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="AI recommendations" defaultChecked="{{ true }}" hint-size="280px,24px"></x-import>
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Tasks assigned to me" defaultChecked="{{ true }}" hint-size="280px,24px"></x-import>
+                  </div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabAppearance }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:22px;">
+                <div>
+                  <div style="font-size:14px;font-weight:600;color:var(--text-strong);margin-bottom:10px;">Theme</div>
+                  <div style="display:inline-flex;padding:3px;background:var(--surface-page);border:1px solid var(--border-subtle);border-radius:var(--radius-md);gap:3px;">
+                    <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}">
+                      <button onClick="{{ setLight }}" style="display:flex;align-items:center;gap:7px;padding:7px 14px;border:none;border-radius:7px;background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-xs);"><dc-import name="Icon" n="sun" size="15" hint-size="15px,15px"></dc-import>Light</button>
+                      <button onClick="{{ setDark }}" style="display:flex;align-items:center;gap:7px;padding:7px 14px;border:none;border-radius:7px;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:13px;font-weight:500;cursor:pointer;"><dc-import name="Icon" n="moon" size="15" hint-size="15px,15px"></dc-import>Dark</button>
+                    </sc-if>
+                    <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ setLight }}" style="display:flex;align-items:center;gap:7px;padding:7px 14px;border:none;border-radius:7px;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:13px;font-weight:500;cursor:pointer;"><dc-import name="Icon" n="sun" size="15" hint-size="15px,15px"></dc-import>Light</button>
+                      <button onClick="{{ setDark }}" style="display:flex;align-items:center;gap:7px;padding:7px 14px;border:none;border-radius:7px;background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-xs);"><dc-import name="Icon" n="moon" size="15" hint-size="15px,15px"></dc-import>Dark</button>
+                    </sc-if>
+                  </div>
+                </div>
+                <div style="border-top:1px solid var(--border-subtle);padding-top:18px;display:flex;flex-direction:column;gap:14px;">
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Compact density" hint-size="200px,24px"></x-import>
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Reduce motion" hint-size="200px,24px"></x-import>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabSecurity }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:20px;">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+                  <div><div style="font-size:14px;font-weight:600;color:var(--text-strong);">Password</div><div style="font-size:13px;color:var(--text-muted);margin-top:2px;">Last changed 3 months ago.</div></div>
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="sm" hint-size="150px,32px">Change password</x-import>
+                </div>
+                <div style="border-top:1px solid var(--border-subtle);padding-top:18px;">
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Two-factor authentication" defaultChecked="{{ true }}" hint-size="260px,24px"></x-import>
+                </div>
+                <div style="border-top:1px solid var(--border-subtle);padding-top:18px;">
+                  <div style="font-size:14px;font-weight:600;color:var(--text-strong);margin-bottom:12px;">Active sessions</div>
+                  <div style="display:flex;flex-direction:column;gap:10px;">
+                    <div style="display:flex;align-items:center;gap:11px;font-size:13px;"><span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="eye" size="16" hint-size="16px,16px"></dc-import></span><span style="flex:1;color:var(--text-body);">This device · Chrome on macOS</span><span style="color:var(--color-risk-low);font-weight:600;">Active now</span></div>
+                    <div style="display:flex;align-items:center;gap:11px;font-size:13px;"><span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="eye" size="16" hint-size="16px,16px"></dc-import></span><span style="flex:1;color:var(--text-body);">iPad · Safari</span><span style="color:var(--text-muted);">2 days ago</span></div>
+                  </div>
+                  <div style="margin-top:16px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="danger" size="sm" hint-size="220px,32px">Sign out of all other sessions</x-import></div>
+                </div>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ tabAccess }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:16px;">
+                <x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="info" title="You can manage roles" hint-size="100%,64px">This section is visible because your role includes administration. Roles control which navigation and areas each person inherits in the shell.</x-import>
+                <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--border-subtle);border-radius:var(--radius-md);overflow:hidden;">
+                  <sc-for list="{{ accessRoles }}" as="r" hint-placeholder-count="4">
+                    <div style="display:flex;align-items:center;gap:12px;padding:13px 16px;border-bottom:1px solid var(--border-subtle);">
+                      <span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="users" size="17" hint-size="17px,17px"></dc-import></span>
+                      <div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:600;color:var(--text-strong);">{{ r.name }}</div><div style="font-size:12.5px;color:var(--text-muted);">{{ r.scope }}</div></div>
+                      <span style="font-variant-numeric:tabular-nums;font-size:13px;color:var(--text-muted);">{{ r.count }}</span>
+                      <button style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;">Manage</button>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </main>
+</div>
+</sc-if>
+
+<!-- ============================ MOBILE DRAWER ============================ -->
+<sc-if value="{{ showMobileDrawer }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.45);z-index:40;animation:fvFade var(--duration-normal) var(--ease-standard);"></div>
+  <aside style="position:fixed;top:0;left:0;bottom:0;width:264px;background:var(--surface-card);border-right:1px solid var(--border-subtle);z-index:41;display:flex;flex-direction:column;padding:16px 12px;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 6px 10px;">
+      <div style="display:flex;align-items:center;gap:9px;"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="" style="width:24px;height:24px;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="" style="width:24px;height:24px;" /></sc-if><span style="font-size:17px;font-weight:700;color:var(--text-strong);">Forevue</span></div>
+      <button onClick="{{ closeAll }}" aria-label="Close" style="width:32px;height:32px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="18" hint-size="18px,18px"></dc-import></button>
+    </div>
+    <button onClick="{{ openAI }}" style="display:flex;align-items:center;gap:10px;width:100%;margin:6px 0 10px;padding:10px 11px;border:1px solid var(--color-teal);border-radius:var(--radius-md);background:var(--action-primary);color:#fff;font-family:var(--font-sans);font-size:14px;font-weight:600;cursor:pointer;"><dc-import name="Icon" n="sparkles" size="17" hint-size="17px,17px"></dc-import><span>AI workspace</span></button>
+    <nav style="display:flex;flex-direction:column;gap:2px;">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4">
+        <button onClick="{{ item.onClick }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:11px;border:none;border-radius:var(--radius-md);background:{{ item.mobileBg }};color:{{ item.mobileColor }};font-family:var(--font-sans);font-size:14px;font-weight:{{ item.mobileWeight }};cursor:pointer;text-align:left;">
+          <dc-import name="Icon" n="{{ item.icon }}" size="18" hint-size="18px,18px"></dc-import><span style="flex:1;">{{ item.label }}</span>
+          <sc-if value="{{ item.showCount }}" hint-placeholder-val="{{ false }}"><span style="font-variant-numeric:tabular-nums;font-size:12px;font-weight:600;color:var(--color-neutral-500);">{{ item.countLabel }}</span></sc-if>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--border-subtle);padding-top:8px;">
+      <button onClick="{{ openHelp }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:11px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);font-family:var(--font-sans);font-size:14px;cursor:pointer;text-align:left;"><dc-import name="Icon" n="help" size="18" hint-size="18px,18px"></dc-import>Help</button>
+      <button onClick="{{ openSettings }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:11px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);font-family:var(--font-sans);font-size:14px;cursor:pointer;text-align:left;"><dc-import name="Icon" n="settings" size="18" hint-size="18px,18px"></dc-import>Settings</button>
+    </div>
+  </aside>
+</sc-if>
+
+<!-- ============================ COMMAND PALETTE ============================ -->
+<sc-if value="{{ isPalette }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.40);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding-top:11vh;animation:fvFade var(--duration-fast) var(--ease-standard);">
+    <div onClick="{{ stop }}" style="width:min(620px,94vw);background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden;animation:fvRise var(--duration-normal) var(--ease-standard);">
+      <div style="display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1px solid var(--border-subtle);">
+        <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="search" size="18" hint-size="18px,18px"></dc-import></span>
+        <input ref="{{ paletteRef }}" value="{{ paletteQuery }}" onInput="{{ onPaletteInput }}" onKeyDown="{{ onPaletteKey }}" placeholder="Search pages, people, records, or run an AI action" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:15.5px;color:var(--text-strong);" />
+        <span style="font-size:11px;font-weight:600;color:var(--color-neutral-500);border:1px solid var(--border-subtle);border-radius:6px;padding:2px 6px;">esc</span>
+      </div>
+      <div style="max-height:46vh;overflow-y:auto;padding:8px;">
+        <sc-for list="{{ paletteGroups }}" as="g" hint-placeholder-count="3">
+          <div style="padding:8px 10px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">{{ g.label }}</div>
+          <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+            <button onClick="{{ it.onSelect }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:10px;border:none;border-radius:var(--radius-md);background:transparent;cursor:pointer;text-align:left;transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+              <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ it.icon }}" size="16" hint-size="16px,16px"></dc-import></span>
+              <span style="flex:1;min-width:0;"><span style="display:block;font-size:14px;font-weight:500;color:var(--text-strong);">{{ it.title }}</span><span style="display:block;font-size:12px;color:var(--text-muted);">{{ it.meta }}</span></span>
+              <span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="chevronRight" size="15" hint-size="15px,15px"></dc-import></span>
+            </button>
+          </sc-for>
+        </sc-for>
+        <sc-if value="{{ paletteEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:34px 16px;text-align:center;color:var(--text-muted);font-size:14px;">No matches for &ldquo;{{ paletteQuery }}&rdquo;</div>
+        </sc-if>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px;padding:10px 18px;border-top:1px solid var(--border-subtle);background:var(--surface-page);font-size:12px;color:var(--text-muted);">
+        <span style="white-space:nowrap;">&uarr;&darr; navigate</span><span style="white-space:nowrap;">&crarr; open</span><span style="margin-left:auto;white-space:nowrap;">Forevue surfaces — you decide</span>
+      </div>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============================ NOTIFICATION CENTER ============================ -->
+<sc-if value="{{ isNotif }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.35);z-index:50;animation:fvFade var(--duration-fast) var(--ease-standard);"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(400px,100vw);background:var(--surface-card);border-left:1px solid var(--border-subtle);box-shadow:var(--shadow-lg);z-index:51;display:flex;flex-direction:column;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+    <div style="display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border-subtle);">
+      <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--text-strong);flex:1;">Notifications</h2>
+      <button onClick="{{ markAllRead }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;">Mark all read</button>
+      <button onClick="{{ closeAll }}" aria-label="Close" style="width:30px;height:30px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="17" hint-size="17px,17px"></dc-import></button>
+    </div>
+    <div style="display:flex;gap:4px;padding:10px 14px;border-bottom:1px solid var(--border-subtle);overflow-x:auto;">
+      <sc-for list="{{ notifFilters }}" as="f" hint-placeholder-count="5">
+        <button onClick="{{ f.onClick }}" style="white-space:nowrap;padding:5px 12px;border:1px solid {{ f.border }};border-radius:999px;background:{{ f.bg }};color:{{ f.color }};font-family:var(--font-sans);font-size:13px;font-weight:{{ f.weight }};cursor:pointer;">{{ f.label }}</button>
+      </sc-for>
+    </div>
+    <div style="flex:1;overflow-y:auto;">
+      <sc-for list="{{ notifList }}" as="n" hint-placeholder-count="5">
+        <div style="display:flex;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border-subtle);background:{{ n.rowBg }};">
+          <span style="display:inline-flex;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;flex:none;background:{{ n.iconBg }};color:{{ n.iconColor }};"><dc-import name="Icon" n="{{ n.icon }}" size="17" hint-size="17px,17px"></dc-import></span>
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:13.5px;font-weight:600;color:var(--text-strong);flex:1;">{{ n.title }}</span><span style="font-size:11.5px;color:var(--text-muted);flex:none;">{{ n.time }}</span></div>
+            <p style="margin:3px 0 0;font-size:13px;line-height:1.45;color:var(--text-body);">{{ n.body }}</p>
+            <sc-if value="{{ n.hasAction }}" hint-placeholder-val="{{ false }}"><div style="margin-top:9px;"><button onClick="{{ n.onAction }}" style="border:1px solid var(--border-default);background:var(--surface-card);color:var(--color-deep-teal);font-family:var(--font-sans);font-size:12.5px;font-weight:600;padding:5px 12px;border-radius:8px;cursor:pointer;">{{ n.actionLabel }}</button></div></sc-if>
+          </div>
+          <sc-if value="{{ n.unread }}" hint-placeholder-val="{{ false }}"><span style="width:8px;height:8px;border-radius:50%;background:var(--color-amber);flex:none;margin-top:6px;"></span></sc-if>
+        </div>
+      </sc-for>
+      <sc-if value="{{ notifEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:48px 24px;text-align:center;color:var(--text-muted);"><span style="color:var(--color-neutral-400);"><dc-import name="Icon" n="checkCircle" size="28" hint-size="28px,28px"></dc-import></span><div style="font-size:14px;">You are all caught up.</div></div>
+      </sc-if>
+    </div>
+    <div style="padding:12px 18px;border-top:1px solid var(--border-subtle);"><button onClick="{{ openNotifSettings }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;padding:0;">Notification settings</button></div>
+  </aside>
+</sc-if>
+
+<!-- ============================ AI WORKSPACE ============================ -->
+<sc-if value="{{ isAI }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.35);z-index:50;animation:fvFade var(--duration-fast) var(--ease-standard);"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--surface-card);border-left:1px solid var(--border-subtle);box-shadow:var(--shadow-lg);z-index:51;display:flex;flex-direction:column;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+    <div style="display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--border-subtle);">
+      <span style="display:inline-flex;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="sparkles" size="18" hint-size="18px,18px"></dc-import></span>
+      <div style="flex:1;min-width:0;"><h2 style="margin:0;font-size:16px;font-weight:700;color:var(--text-strong);">AI workspace</h2><div style="font-size:12px;color:var(--text-muted);">Ask in plain English — it surfaces, you decide</div></div>
+      <button onClick="{{ closeAll }}" aria-label="Close" style="width:30px;height:30px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="17" hint-size="17px,17px"></dc-import></button>
+    </div>
+    <div ref="{{ chatRef }}" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;">
+      <sc-for list="{{ chat }}" as="m" hint-placeholder-count="2">
+        <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}">
+          <div style="align-self:flex-end;max-width:84%;background:var(--color-teal-600);color:#fff;padding:10px 14px;border-radius:14px 14px 4px 14px;font-size:14px;line-height:1.5;">{{ m.text }}</div>
+        </sc-if>
+        <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ true }}">
+          <div style="align-self:flex-start;max-width:90%;">
+            <div style="background:var(--surface-page);border:1px solid var(--border-subtle);padding:12px 14px;border-radius:14px 14px 14px 4px;font-size:14px;line-height:1.55;color:var(--text-body);">{{ m.text }}</div>
+            <sc-if value="{{ m.hasSources }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"><span style="font-size:11.5px;color:var(--text-muted);align-self:center;">Based on</span><sc-for list="{{ m.sources }}" as="s" hint-placeholder-count="2"><span style="font-size:11.5px;font-weight:500;color:var(--color-deep-teal);background:var(--color-teal-50);border:1px solid var(--color-teal-100);border-radius:6px;padding:2px 8px;">{{ s }}</span></sc-for></div></sc-if>
+          </div>
+        </sc-if>
+      </sc-for>
+      <sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:6px;">
+          <div style="font-size:12px;font-weight:600;color:var(--text-muted);">Try asking</div>
+          <sc-for list="{{ suggestions }}" as="sg" hint-placeholder-count="3">
+            <button onClick="{{ sg.onClick }}" style="text-align:left;border:1px solid var(--border-subtle);background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;padding:10px 12px;border-radius:10px;cursor:pointer;transition:border-color var(--duration-fast) var(--ease-standard);" style-hover="border-color:var(--color-teal-300);">{{ sg.text }}</button>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+    <div style="padding:0 14px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="draft" title="Advisory — nothing is sent automatically" hint-size="100%,60px">It surfaces what it finds with the evidence behind it. Nothing is shared or written back to the systems you run until you approve it.</x-import></div>
+    <div style="display:flex;align-items:flex-end;gap:8px;padding:12px 14px 16px;border-top:1px solid var(--border-subtle);margin-top:12px;">
+      <input ref="{{ chatInputRef }}" value="{{ chatInput }}" onInput="{{ onChatInput }}" onKeyDown="{{ onChatKey }}" placeholder="Ask Forevue…" style="flex:1;height:42px;padding:0 14px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;" />
+      <button onClick="{{ sendChat }}" aria-label="Send" style="width:42px;height:42px;border:none;border-radius:var(--radius-md);background:var(--action-primary);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="send" size="18" hint-size="18px,18px"></dc-import></button>
+    </div>
+  </aside>
+</sc-if>
+
+<!-- ============================ PROFILE MENU ============================ -->
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeAll }}" style="position:fixed;inset:0;z-index:55;background:transparent;"></div>
+  <div style="position:fixed;top:62px;right:18px;width:264px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);z-index:56;overflow:hidden;animation:fvRise var(--duration-fast) var(--ease-standard);">
+    <div style="display:flex;align-items:center;gap:11px;padding:15px 16px;border-bottom:1px solid var(--border-subtle);">
+      <span style="width:40px;height:40px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;flex:none;">{{ user.initials }}</span>
+      <div style="min-width:0;"><div style="font-size:14px;font-weight:600;color:var(--text-strong);">{{ user.name }}</div><div style="font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.email }}</div></div>
+    </div>
+    <div style="padding:6px;">
+      <button onClick="{{ goProfileSettings }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:none;border-radius:8px;background:transparent;color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="user" size="16" hint-size="16px,16px"></dc-import>Account &amp; profile</button>
+      <button onClick="{{ toggleTheme }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:none;border-radius:8px;background:transparent;color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="{{ themeIcon }}" size="16" hint-size="16px,16px"></dc-import><span style="flex:1;">{{ themeMenuLabel }}</span></button>
+      <button onClick="{{ openHelp }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:none;border-radius:8px;background:transparent;color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="help" size="16" hint-size="16px,16px"></dc-import>Help &amp; support</button>
+    </div>
+    <div style="padding:6px;border-top:1px solid var(--border-subtle);">
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:6px 10px 4px;">Switch role (demo)</div>
+      <sc-for list="{{ roleChoices }}" as="rc" hint-placeholder-count="3">
+        <button onClick="{{ rc.onClick }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:8px 10px;border:none;border-radius:8px;background:{{ rc.bg }};color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;cursor:pointer;text-align:left;">
+          <span style="flex:1;">{{ rc.label }}</span>
+          <sc-if value="{{ rc.current }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="check" size="15" hint-size="15px,15px"></dc-import></span></sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <div style="padding:6px;border-top:1px solid var(--border-subtle);">
+      <button onClick="{{ expireSession }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:none;border-radius:8px;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:13px;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="clock" size="16" hint-size="16px,16px"></dc-import>Simulate session expiry</button>
+      <button onClick="{{ signOut }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 10px;border:none;border-radius:8px;background:transparent;color:var(--color-risk-high);font-family:var(--font-sans);font-size:13.5px;font-weight:500;cursor:pointer;text-align:left;" style-hover="background:var(--color-risk-high-bg);"><dc-import name="Icon" n="logout" size="16" hint-size="16px,16px"></dc-import>Sign out</button>
+    </div>
+  </div>
+</sc-if>
+
+<!-- ============================ HELP CENTER ============================ -->
+<sc-if value="{{ isHelp }}" hint-placeholder-val="{{ false }}">
+  <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.35);z-index:50;animation:fvFade var(--duration-fast) var(--ease-standard);"></div>
+  <aside style="position:fixed;top:0;right:0;bottom:0;width:min(380px,100vw);background:var(--surface-card);border-left:1px solid var(--border-subtle);box-shadow:var(--shadow-lg);z-index:51;display:flex;flex-direction:column;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+    <div style="display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--border-subtle);">
+      <h2 style="margin:0;font-size:16px;font-weight:700;color:var(--text-strong);flex:1;">Help center</h2>
+      <button onClick="{{ closeAll }}" aria-label="Close" style="width:30px;height:30px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="17" hint-size="17px,17px"></dc-import></button>
+    </div>
+    <div style="padding:16px 18px;border-bottom:1px solid var(--border-subtle);">
+      <div style="display:flex;align-items:center;gap:9px;height:40px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);">
+        <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="search" size="16" hint-size="16px,16px"></dc-import></span>
+        <input value="{{ helpQuery }}" onInput="{{ onHelpInput }}" placeholder="Search help articles" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:14px;color:var(--text-strong);" />
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:8px;">
+      <sc-for list="{{ helpList }}" as="a" hint-placeholder-count="5">
+        <button style="display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:none;border-radius:var(--radius-md);background:transparent;cursor:pointer;text-align:left;transition:background var(--duration-fast) var(--ease-standard);" style-hover="background:var(--color-neutral-100);">
+          <span style="display:inline-flex;color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ a.icon }}" size="18" hint-size="18px,18px"></dc-import></span>
+          <span style="flex:1;min-width:0;"><span style="display:block;font-size:14px;font-weight:500;color:var(--text-strong);">{{ a.title }}</span><span style="display:block;font-size:12.5px;color:var(--text-muted);">{{ a.meta }}</span></span>
+          <span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="chevronRight" size="15" hint-size="15px,15px"></dc-import></span>
+        </button>
+      </sc-for>
+      <sc-if value="{{ helpEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:34px 16px;text-align:center;color:var(--text-muted);font-size:14px;">No articles match your search.</div></sc-if>
+    </div>
+    <div style="padding:14px 18px;border-top:1px solid var(--border-subtle);"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="md" fullWidth="{{ true }}" hint-size="100%,40px">Contact support</x-import></div>
+  </aside>
+</sc-if>
+
+<!-- ============================ AUTH / SYSTEM STATES ============================ -->
+<sc-if value="{{ notAuthed }}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100%;padding:32px 20px;gap:18px;">
+  <div style="width:min(420px,100%);">
+
+    <!-- LOGIN -->
+    <sc-if value="{{ vLogin }}" hint-placeholder-val="{{ true }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:32px;">
+        <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-lockup-on-light.svg" alt="Forevue" style="height:30px;margin-bottom:24px;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-lockup-on-dark.svg" alt="Forevue" style="height:30px;margin-bottom:24px;" /></sc-if>
+        <h1 style="margin:0;font-size:22px;font-weight:700;color:var(--text-strong);letter-spacing:-0.01em;">Sign in</h1>
+        <p style="margin:6px 0 22px;font-size:14px;color:var(--text-muted);">Welcome back. Sign in to your workspace.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Work email" type="email" value="{{ loginEmail }}" onChange="{{ onLoginEmail }}" hint-size="100%,66px"></x-import>
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Password" type="password" value="{{ loginPw }}" onChange="{{ onLoginPw }}" placeholder="Enter your password" error="{{ loginError }}" hint-size="100%,66px"></x-import>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Switch" label="Keep me signed in" hint-size="160px,24px"></x-import>
+            <button onClick="{{ goForgot }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;">Forgot password?</button>
+          </div>
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="lg" fullWidth="{{ true }}" onClick="{{ signIn }}" hint-size="100%,48px">Sign in</x-import>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;margin-top:22px;padding-top:18px;border-top:1px solid var(--border-subtle);font-size:12px;color:var(--text-muted);">
+          <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="lock" size="14" hint-size="14px,14px"></dc-import></span>
+          Protected workspace · Forevue surfaces, you decide
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- FORGOT PASSWORD -->
+    <sc-if value="{{ vForgot }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:32px;">
+        <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-lockup-on-light.svg" alt="Forevue" style="height:28px;margin-bottom:22px;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-lockup-on-dark.svg" alt="Forevue" style="height:28px;margin-bottom:22px;" /></sc-if>
+        <sc-if value="{{ forgotNotSent }}" hint-placeholder-val="{{ true }}">
+          <h1 style="margin:0;font-size:21px;font-weight:700;color:var(--text-strong);">Reset your password</h1>
+          <p style="margin:6px 0 22px;font-size:14px;line-height:1.5;color:var(--text-muted);">Enter your work email and we will send a link to set a new password.</p>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Work email" type="email" value="{{ forgotEmail }}" onChange="{{ onForgotEmail }}" placeholder="you@college.edu" hint-size="100%,66px"></x-import>
+            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="lg" fullWidth="{{ true }}" onClick="{{ sendReset }}" hint-size="100%,48px">Send reset link</x-import>
+          </div>
+        </sc-if>
+        <sc-if value="{{ forgotSent }}" hint-placeholder-val="{{ false }}">
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="info" title="Check your email" hint-size="100%,72px">If an account exists for {{ forgotEmail }}, a reset link is on its way. The link expires in 30 minutes.</x-import>
+          <div style="margin-top:16px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="md" fullWidth="{{ true }}" onClick="{{ goReset }}" hint-size="100%,40px">I have the link — continue</x-import></div>
+        </sc-if>
+        <button onClick="{{ goLogin }}" style="margin-top:18px;border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;padding:0;">&larr; Back to sign in</button>
+      </div>
+    </sc-if>
+
+    <!-- RESET PASSWORD -->
+    <sc-if value="{{ vReset }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:32px;">
+        <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-lockup-on-light.svg" alt="Forevue" style="height:28px;margin-bottom:22px;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-lockup-on-dark.svg" alt="Forevue" style="height:28px;margin-bottom:22px;" /></sc-if>
+        <h1 style="margin:0;font-size:21px;font-weight:700;color:var(--text-strong);">Set a new password</h1>
+        <p style="margin:6px 0 20px;font-size:14px;color:var(--text-muted);">Choose a strong password you have not used before.</p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="New password" type="password" value="{{ resetPw }}" onChange="{{ onResetPw }}" hint-size="100%,66px"></x-import>
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Input" label="Confirm new password" type="password" value="{{ resetPw2 }}" onChange="{{ onResetPw2 }}" error="{{ resetError }}" hint-size="100%,66px"></x-import>
+          <div style="display:flex;flex-direction:column;gap:6px;font-size:12.5px;color:var(--text-muted);">
+            <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-flex;color:var(--color-risk-low);"><dc-import name="Icon" n="check" size="14" hint-size="14px,14px"></dc-import></span>At least 12 characters</div>
+            <div style="display:flex;align-items:center;gap:7px;"><span style="display:inline-flex;color:var(--color-risk-low);"><dc-import name="Icon" n="check" size="14" hint-size="14px,14px"></dc-import></span>A mix of letters, numbers and symbols</div>
+          </div>
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="lg" fullWidth="{{ true }}" onClick="{{ updatePassword }}" hint-size="100%,48px">Update password</x-import>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- UNAUTHORIZED -->
+    <sc-if value="{{ vUnauth }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:36px 32px;text-align:center;">
+        <span style="display:inline-flex;width:56px;height:56px;border-radius:50%;align-items:center;justify-content:center;background:var(--color-risk-high-bg);color:var(--color-risk-high);margin-bottom:18px;"><dc-import name="Icon" n="shield" size="26" hint-size="26px,26px"></dc-import></span>
+        <h1 style="margin:0;font-size:21px;font-weight:700;color:var(--text-strong);">You do not have access to this</h1>
+        <p style="margin:8px auto 22px;font-size:14px;line-height:1.55;color:var(--text-muted);max-width:34ch;">Your role does not include this area. If you think this is a mistake, ask your workspace admin to update your access.</p>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="md" onClick="{{ backToApp }}" hint-size="130px,40px">Back to home</x-import>
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="md" onClick="{{ goLogin }}" hint-size="140px,40px">Switch account</x-import>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- SESSION EXPIRED -->
+    <sc-if value="{{ vSession }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:36px 32px;text-align:center;">
+        <span style="display:inline-flex;width:56px;height:56px;border-radius:50%;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);margin-bottom:18px;"><dc-import name="Icon" n="clock" size="26" hint-size="26px,26px"></dc-import></span>
+        <h1 style="margin:0;font-size:21px;font-weight:700;color:var(--text-strong);">Your session has expired</h1>
+        <p style="margin:8px auto 22px;font-size:14px;line-height:1.55;color:var(--text-muted);max-width:36ch;">For security, you were signed out after a period of inactivity. Sign in again to pick up where you left off — nothing was lost.</p>
+        <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="md" onClick="{{ goLogin }}" hint-size="150px,40px">Sign in again</x-import>
+      </div>
+    </sc-if>
+
+    <!-- MAINTENANCE -->
+    <sc-if value="{{ vMaint }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-xl);box-shadow:var(--shadow-md);padding:36px 32px;text-align:center;">
+        <span style="display:inline-flex;width:56px;height:56px;border-radius:50%;align-items:center;justify-content:center;background:var(--color-amber-50);color:var(--color-amber-700);margin-bottom:18px;"><dc-import name="Icon" n="wrench" size="25" hint-size="25px,25px"></dc-import></span>
+        <h1 style="margin:0;font-size:21px;font-weight:700;color:var(--text-strong);">Scheduled maintenance</h1>
+        <p style="margin:8px auto 18px;font-size:14px;line-height:1.55;color:var(--text-muted);max-width:38ch;">Forevue is being improved and will be back shortly. Your data is safe and nothing was lost.</p>
+        <div style="text-align:left;max-width:300px;margin:0 auto;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="info" title="Expected back by 02:30 IST" hint-size="100%,60px">Follow status updates at status.forevue.app.</x-import></div>
+      </div>
+    </sc-if>
+
+    <!-- State previewer -->
+    <div style="margin-top:18px;display:flex;flex-wrap:wrap;align-items:center;gap:6px;justify-content:center;">
+      <span style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);width:100%;text-align:center;margin-bottom:2px;">Preview auth &amp; system states</span>
+      <sc-for list="{{ authChips }}" as="c" hint-placeholder-count="6">
+        <button onClick="{{ c.onClick }}" style="padding:5px 11px;border:1px solid {{ c.border }};border-radius:999px;background:{{ c.bg }};color:{{ c.color }};font-family:var(--font-sans);font-size:12px;font-weight:{{ c.weight }};cursor:pointer;">{{ c.label }}</button>
+      </sc-for>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  state = {
+    authed: false,
+    authView: "login",
+    loginEmail: "r.menon@northfield.edu",
+    loginPw: "",
+    loginError: "",
+    forgotEmail: "",
+    forgotSent: false,
+    resetPw: "",
+    resetPw2: "",
+    resetError: "",
+    role: "dean",
+    theme: "light",
+    activeNav: "home",
+    view: "app",
+    settingsTab: "profile",
+    overlay: null,
+    paletteQuery: "",
+    helpQuery: "",
+    notifFilter: "all",
+    notifs: [
+      { id: "n1", type: "approval", title: "Approval requested", body: "A fee-concession note for CSE-3 is waiting for your sign-off.", time: "4m", unread: true },
+      { id: "n2", type: "ai", title: "Forevue surfaced a pattern", body: "Attendance in three sections dipped after the mid-sem break. Open it to see the evidence.", time: "1h", unread: true },
+      { id: "n3", type: "alert", title: "Threshold crossed", body: "Two records moved below the attendance line this week.", time: "3h", unread: true },
+      { id: "n4", type: "task", title: "Task due today", body: "Review the draft mentor note before it is shared.", time: "5h", unread: false },
+      { id: "n5", type: "approval", title: "Access request", body: "A. Sharma asked for access to the Reports area.", time: "1d", unread: false },
+      { id: "n6", type: "ai", title: "Recommendation ready", body: "A grounded summary of this weeks flags is ready for your review.", time: "2d", unread: false }
+    ],
+    chat: [],
+    chatInput: "",
+    sidebarCollapsed: false,
+    mobileDrawer: false,
+    layout: "wide"
+  };
+
+  rootRef = React.createRef();
+  paletteRef = React.createRef();
+  chatRef = React.createRef();
+  chatInputRef = React.createRef();
+
+  roles = {
+    dean: { name: "R. Menon", title: "Dean, Academics", roleLabel: "Dean", email: "r.menon@northfield.edu", initials: "RM", admin: true,
+      nav: [
+        { id: "home", label: "Home", icon: "home", desc: "Your overview across the workspace." },
+        { id: "insights", label: "Insights", icon: "sparkles", desc: "What Forevue is surfacing, with the evidence behind it." },
+        { id: "approvals", label: "Approvals", icon: "clipboard", count: 3, desc: "Items waiting for your sign-off." },
+        { id: "reports", label: "Reports", icon: "fileText", desc: "Saved and scheduled reports." },
+        { id: "people", label: "People", icon: "users", desc: "Staff and roles in your workspace." }
+      ] },
+    faculty: { name: "A. Sharma", title: "Faculty, CSE", roleLabel: "Faculty", email: "a.sharma@northfield.edu", initials: "AS", admin: false,
+      nav: [
+        { id: "home", label: "Home", icon: "home", desc: "Your overview across the workspace." },
+        { id: "classes", label: "My classes", icon: "bookOpen", desc: "The sections you teach." },
+        { id: "insights", label: "Insights", icon: "sparkles", desc: "What Forevue is surfacing, with the evidence behind it." },
+        { id: "tasks", label: "Tasks", icon: "tasks", count: 5, desc: "Your open tasks." }
+      ] },
+    registrar: { name: "K. Iyer", title: "Registrar", roleLabel: "Registrar", email: "k.iyer@northfield.edu", initials: "KI", admin: true,
+      nav: [
+        { id: "home", label: "Home", icon: "home", desc: "Your overview across the workspace." },
+        { id: "records", label: "Records", icon: "folder", desc: "Student and institutional records." },
+        { id: "approvals", label: "Approvals", icon: "clipboard", count: 2, desc: "Items waiting for your sign-off." },
+        { id: "reports", label: "Reports", icon: "fileText", desc: "Saved and scheduled reports." }
+      ] }
+  };
+
+  darkVars = {
+    "--surface-page": "#082E33", "--surface-card": "#0C434A", "--surface-sunken": "#0A3A40",
+    "--border-subtle": "#16555E", "--border-default": "#1E6670", "--border-strong": "#2A7882",
+    "--text-strong": "#ECF5F4", "--text-body": "#C2D6D6", "--text-muted": "#8AAEAF", "--color-ink": "#ECF5F4",
+    "--color-neutral-50": "#0E4A52", "--color-neutral-100": "#11525B", "--color-neutral-200": "#16555E",
+    "--color-neutral-300": "#1E6670", "--color-neutral-400": "#5E8A8E", "--color-neutral-500": "#8AAEAF", "--color-neutral-700": "#C2D6D6",
+    "--color-teal-50": "#0E5760", "--color-teal-100": "#16626B", "--color-deep-teal": "#86CFD4", "--text-link": "#86CFD4", "--focus-ring": "#2E96A0",
+    "--shadow-xs": "0 1px 2px rgba(0,0,0,.35)", "--shadow-sm": "0 1px 3px rgba(0,0,0,.4)", "--shadow-md": "0 6px 16px rgba(0,0,0,.45)", "--shadow-lg": "0 16px 40px rgba(0,0,0,.55)"
+  };
+
+  componentDidMount() {
+    this._onResize = () => {
+      const w = (this.rootRef.current && this.rootRef.current.clientWidth) || window.innerWidth;
+      const layout = w >= 1040 ? "wide" : w >= 720 ? "tablet" : "mobile";
+      if (layout !== this.state.layout) this.setState({ layout });
+    };
+    this._onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) {
+        e.preventDefault();
+        if (this.state.authed) this.setState({ overlay: this.state.overlay === "palette" ? null : "palette", paletteQuery: "" }, () => this.focusPalette());
+      } else if (e.key === "Escape") {
+        this.setState({ overlay: null, mobileDrawer: false });
+      }
+    };
+    window.addEventListener("resize", this._onResize);
+    window.addEventListener("keydown", this._onKey);
+    this._onResize();
+    this.applyTheme();
+  }
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._onResize);
+    window.removeEventListener("keydown", this._onKey);
+  }
+  componentDidUpdate() { this.applyTheme(); }
+
+  applyTheme() {
+    const el = this.rootRef.current;
+    if (!el) return;
+    if (this.state.theme === "dark") {
+      for (const k in this.darkVars) el.style.setProperty(k, this.darkVars[k]);
+    } else {
+      for (const k in this.darkVars) el.style.removeProperty(k);
+    }
+  }
+  focusPalette() { setTimeout(() => { if (this.paletteRef.current) this.paletteRef.current.focus(); }, 30); }
+
+  set = (p) => this.setState(p);
+  closeAll = () => this.setState({ overlay: null, mobileDrawer: false });
+  stop = (e) => e.stopPropagation();
+
+  renderVals() {
+    const S = this.state;
+    const user = this.roles[S.role];
+    const layout = S.layout;
+    const isMobile = layout === "mobile";
+    const isCollapsed = layout === "tablet" || (layout === "wide" && S.sidebarCollapsed);
+    const showLabels = !isCollapsed;
+    const isApp = S.view === "app";
+    const isSettings = S.view === "settings";
+
+    // nav
+    const nav = user.nav.map((it) => {
+      const active = isApp && S.activeNav === it.id;
+      return {
+        ...it,
+        active, inactive: !active,
+        showCount: it.count != null,
+        countLabel: it.count != null ? String(it.count) : "",
+        mobileBg: active ? "var(--color-teal-50)" : "transparent",
+        mobileColor: active ? "var(--color-deep-teal)" : "var(--color-neutral-700)",
+        mobileWeight: active ? 600 : 500,
+        onClick: () => this.setState({ view: "app", activeNav: it.id, mobileDrawer: false, overlay: null })
+      };
+    });
+
+    const activeItem = user.nav.find((n) => n.id === S.activeNav) || user.nav[0];
+    const pageTitle = isSettings ? "Settings" : activeItem.label;
+    const pageSubtitle = isSettings ? "Manage your profile, notifications, appearance and security." : activeItem.desc;
+
+    // command palette
+    const q = S.paletteQuery.trim().toLowerCase();
+    const match = (s) => !q || s.toLowerCase().includes(q);
+    const pageItems = user.nav.filter((n) => match(n.label)).map((n) => ({
+      icon: n.icon, title: n.label, meta: "Page", onSelect: () => this.setState({ view: "app", activeNav: n.id, overlay: null })
+    }));
+    const peopleRaw = [
+      { title: "A. Sharma", meta: "Faculty · CSE" },
+      { title: "K. Iyer", meta: "Registrar" },
+      { title: "R. Menon", meta: "Dean, Academics" }
+    ];
+    const peopleItems = peopleRaw.filter((p) => match(p.title) || match(p.meta)).map((p) => ({ icon: "user", title: p.title, meta: p.meta, onSelect: this.closeAll }));
+    const recordsRaw = [
+      { title: "CSE-3 attendance register", meta: "Record · wk 6–9" },
+      { title: "Semester 4 internal marks", meta: "Record" },
+      { title: "Mentor note #1182", meta: "Record · draft" }
+    ];
+    const recordItems = recordsRaw.filter((r) => match(r.title) || match(r.meta)).map((r) => ({ icon: "fileText", title: r.title, meta: r.meta, onSelect: this.closeAll }));
+    const aiRaw = [
+      "Which sections are slipping this week, and why?",
+      "Summarize attendance trends for CSE-3",
+      "Draft a note to a mentor",
+      "Explain what a risk tier is based on"
+    ];
+    const aiItems = aiRaw.filter((a) => match(a)).map((a) => ({ icon: "sparkles", title: a, meta: "AI action", onSelect: () => this.seedAI(a) }));
+    const groupsAll = [
+      { label: "Pages", items: pageItems },
+      { label: "People", items: peopleItems },
+      { label: "Records", items: recordItems },
+      { label: "AI actions", items: aiItems }
+    ];
+    const paletteGroups = groupsAll.filter((g) => g.items.length > 0);
+    const paletteFlat = paletteGroups.reduce((a, g) => a.concat(g.items), []);
+    const paletteEmpty = paletteFlat.length === 0;
+
+    // notifications
+    const unreadCount = S.notifs.filter((n) => n.unread).length;
+    const filters = [
+      { id: "all", label: "All" }, { id: "alert", label: "Alerts" }, { id: "approval", label: "Approvals" },
+      { id: "ai", label: "AI" }, { id: "task", label: "Tasks" }
+    ];
+    const notifFilters = filters.map((f) => {
+      const on = S.notifFilter === f.id;
+      return { ...f, onClick: () => this.setState({ notifFilter: f.id }),
+        bg: on ? "var(--color-teal-50)" : "transparent", color: on ? "var(--color-deep-teal)" : "var(--text-muted)",
+        border: on ? "var(--color-teal-100)" : "var(--border-subtle)", weight: on ? 600 : 500 };
+    });
+    const typeMeta = {
+      alert: { icon: "alert", iconBg: "var(--color-risk-watch-bg)", iconColor: "var(--color-risk-watch)" },
+      approval: { icon: "clipboard", iconBg: "var(--color-teal-50)", iconColor: "var(--color-deep-teal)" },
+      ai: { icon: "sparkles", iconBg: "var(--color-teal-50)", iconColor: "var(--color-deep-teal)" },
+      task: { icon: "tasks", iconBg: "var(--color-neutral-100)", iconColor: "var(--color-neutral-700)" }
+    };
+    const notifList = S.notifs.filter((n) => S.notifFilter === "all" || n.type === S.notifFilter).map((n) => {
+      const tm = typeMeta[n.type];
+      const hasAction = n.type === "approval" || n.type === "ai";
+      return { ...n, icon: tm.icon, iconBg: tm.iconBg, iconColor: tm.iconColor,
+        rowBg: n.unread ? "var(--color-teal-50)" : "transparent",
+        hasAction, actionLabel: n.type === "approval" ? "Review" : "View",
+        onAction: n.type === "ai" ? () => this.seedAI("Show me the pattern from this recommendation") : this.closeAll };
+    });
+    const notifEmpty = notifList.length === 0;
+
+    // chat
+    const chat = S.chat.map((m) => ({ ...m, isUser: m.role === "user", isBot: m.role === "assistant", hasSources: !!(m.sources && m.sources.length) }));
+    const chatEmpty = S.chat.length === 0;
+    const suggestions = aiRaw.slice(0, 3).map((t) => ({ text: t, onClick: () => this.send(t) }));
+
+    // role choices
+    const roleChoices = Object.keys(this.roles).map((rid) => ({
+      label: this.roles[rid].roleLabel + " — " + this.roles[rid].name, current: S.role === rid,
+      bg: S.role === rid ? "var(--color-neutral-100)" : "transparent",
+      onClick: () => this.setState({ role: rid, activeNav: "home", view: "app", overlay: null })
+    }));
+
+    // settings
+    const settingsTabs = [
+      { id: "profile", label: "Profile" }, { id: "notifications", label: "Notifications" },
+      { id: "appearance", label: "Appearance" }, { id: "security", label: "Security" }
+    ];
+    if (user.admin) settingsTabs.push({ id: "access", label: "Access & roles" });
+    const accessRoles = [
+      { name: "Dean", scope: "Full workspace · administration", count: 2 },
+      { name: "Registrar", scope: "Records, approvals, reports", count: 3 },
+      { name: "Faculty", scope: "Classes, insights, tasks", count: 48 },
+      { name: "Staff", scope: "Limited, read-only", count: 16 }
+    ];
+
+    // help
+    const hq = S.helpQuery.trim().toLowerCase();
+    const helpAll = [
+      { icon: "sparkles", title: "Getting started with Forevue", meta: "Basics · 5 min" },
+      { icon: "command", title: "Keyboard shortcuts", meta: "Command palette, navigation" },
+      { icon: "fileText", title: "How grounding and evidence work", meta: "Why every answer shows its sources" },
+      { icon: "lock", title: "Privacy and consent for minors", meta: "Consent-gated data" },
+      { icon: "help", title: "Contacting support", meta: "Get help from a person" }
+    ];
+    const helpList = helpAll.filter((a) => !hq || a.title.toLowerCase().includes(hq) || a.meta.toLowerCase().includes(hq));
+
+    // auth chips
+    const authStates = [
+      { id: "login", label: "Sign in" }, { id: "forgot", label: "Forgot" }, { id: "reset", label: "Reset" },
+      { id: "unauthorized", label: "Unauthorized" }, { id: "session-expired", label: "Session expired" }, { id: "maintenance", label: "Maintenance" }
+    ];
+    const authChips = authStates.map((a) => {
+      const on = S.authView === a.id;
+      return { label: a.label, onClick: () => this.setState({ authView: a.id, forgotSent: false, loginError: "", resetError: "" }),
+        bg: on ? "var(--color-teal-600)" : "var(--surface-card)", color: on ? "#fff" : "var(--text-muted)",
+        border: on ? "var(--color-teal-600)" : "var(--border-default)", weight: on ? 600 : 500 };
+    });
+
+    const sidebarStyle = "width:" + (isCollapsed ? "72px" : "248px") + ";flex:none;background:var(--surface-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;padding:16px 12px;position:relative;transition:width var(--duration-normal) var(--ease-standard);";
+
+    return {
+      rootRef: this.rootRef, paletteRef: this.paletteRef, chatRef: this.chatRef, chatInputRef: this.chatInputRef,
+      authed: S.authed, notAuthed: !S.authed,
+      user, nav, isMobile, isCollapsed, showLabels,
+      showSidebar: !isMobile, showMobileDrawer: S.mobileDrawer && isMobile,
+      canCollapse: layout === "wide", railJustify: isCollapsed ? "center" : "flex-start",
+      sidebarStyle, contentMax: isSettings ? "880px" : "1120px",
+      isApp, isSettings, notSettings: !isSettings,
+      pageTitle, pageSubtitle,
+      cmdKey: (navigator.platform && /Mac/.test(navigator.platform)) ? "\u2318" : "Ctrl ",
+      logoIcon: S.theme === "dark" ? "assets/forevue-icon-on-dark.svg" : "assets/forevue-icon-on-light.svg",
+      logoLockup: S.theme === "dark" ? "assets/forevue-lockup-on-dark.svg" : "assets/forevue-lockup-on-light.svg",
+      themeIcon: S.theme === "dark" ? "sun" : "moon",
+      themeMenuLabel: S.theme === "dark" ? "Switch to light" : "Switch to dark",
+      isLight: S.theme === "light", isDark: S.theme === "dark",
+      hasUnread: unreadCount > 0,
+      // overlays
+      isPalette: S.overlay === "palette", isNotif: S.overlay === "notifications",
+      isProfile: S.overlay === "profile", isHelp: S.overlay === "help", isAI: S.overlay === "ai",
+      paletteQuery: S.paletteQuery, paletteGroups, paletteEmpty,
+      notifFilters, notifList, notifEmpty,
+      chat, chatEmpty, suggestions, chatInput: S.chatInput,
+      roleChoices,
+      settingsTabs, settingsTab: S.settingsTab, accessRoles,
+      tabProfile: S.settingsTab === "profile", tabNotifications: S.settingsTab === "notifications",
+      tabAppearance: S.settingsTab === "appearance", tabSecurity: S.settingsTab === "security", tabAccess: S.settingsTab === "access",
+      helpQuery: S.helpQuery, helpList, helpEmpty: helpList.length === 0,
+      // auth
+      authChips,
+      vLogin: S.authView === "login", vForgot: S.authView === "forgot", vReset: S.authView === "reset",
+      vUnauth: S.authView === "unauthorized", vSession: S.authView === "session-expired", vMaint: S.authView === "maintenance",
+      loginEmail: S.loginEmail, loginPw: S.loginPw, loginError: S.loginError,
+      forgotEmail: S.forgotEmail, forgotSent: S.forgotSent, forgotNotSent: !S.forgotSent,
+      resetPw: S.resetPw, resetPw2: S.resetPw2, resetError: S.resetError,
+      resolveMark: this.resolveMark(),
+      // handlers
+      openAI: () => this.setState({ overlay: "ai", mobileDrawer: false }),
+      openHelp: () => this.setState({ overlay: "help", mobileDrawer: false }),
+      openSettings: () => this.setState({ view: "settings", overlay: null, mobileDrawer: false }),
+      goHome: () => this.setState({ view: "app", activeNav: "home", overlay: null }),
+      openPalette: () => this.setState({ overlay: "palette", paletteQuery: "" }, () => this.focusPalette()),
+      openDrawer: () => this.setState({ mobileDrawer: true }),
+      toggleNotifs: () => this.setState({ overlay: S.overlay === "notifications" ? null : "notifications" }),
+      toggleProfile: () => this.setState({ overlay: S.overlay === "profile" ? null : "profile" }),
+      toggleTheme: this.toggleTheme, setLight: () => this.setState({ theme: "light" }), setDark: () => this.setState({ theme: "dark" }),
+      toggleCollapse: () => this.setState({ sidebarCollapsed: !S.sidebarCollapsed }),
+      closeAll: this.closeAll, stop: this.stop,
+      onPaletteInput: (e) => this.setState({ paletteQuery: e.target.value }),
+      onPaletteKey: (e) => { if (e.key === "Enter" && paletteFlat[0]) paletteFlat[0].onSelect(); },
+      onHelpInput: (e) => this.setState({ helpQuery: e.target.value }),
+      markAllRead: () => this.setState({ notifs: S.notifs.map((n) => ({ ...n, unread: false })) }),
+      openNotifSettings: () => this.setState({ view: "settings", settingsTab: "notifications", overlay: null }),
+      onChatInput: (e) => this.setState({ chatInput: e.target.value }),
+      onChatKey: (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); this.sendChat(); } },
+      sendChat: this.sendChat,
+      goProfileSettings: () => this.setState({ view: "settings", settingsTab: "profile", overlay: null }),
+      onSettingsTab: (id) => this.setState({ settingsTab: id }),
+      expireSession: () => this.setState({ authed: false, authView: "session-expired", overlay: null }),
+      signOut: () => this.setState({ authed: false, authView: "login", overlay: null }),
+      // auth handlers
+      onLoginEmail: (e) => this.setState({ loginEmail: e.target.value }),
+      onLoginPw: (e) => this.setState({ loginPw: e.target.value, loginError: "" }),
+      signIn: () => { if (!S.loginPw) { this.setState({ loginError: "Enter your password to continue." }); } else { this.setState({ authed: true, view: "app", activeNav: "home", overlay: null }); } },
+      goForgot: () => this.setState({ authView: "forgot", forgotSent: false }),
+      goLogin: () => this.setState({ authView: "login", loginError: "" }),
+      goReset: () => this.setState({ authView: "reset" }),
+      onForgotEmail: (e) => this.setState({ forgotEmail: e.target.value }),
+      sendReset: () => this.setState({ forgotSent: true }),
+      onResetPw: (e) => this.setState({ resetPw: e.target.value, resetError: "" }),
+      onResetPw2: (e) => this.setState({ resetPw2: e.target.value, resetError: "" }),
+      updatePassword: () => { if (S.resetPw && S.resetPw === S.resetPw2) { this.setState({ authView: "login", resetPw: "", resetPw2: "" }); } else { this.setState({ resetError: "Passwords do not match." }); } },
+      backToApp: () => this.setState({ authed: true, view: "app", activeNav: "home" }),
+      expireDemo: () => {}
+    };
+  }
+
+  toggleTheme = () => this.setState((s) => ({ theme: s.theme === "dark" ? "light" : "dark" }));
+
+  seedAI(text) { this.setState({ overlay: "ai", chatInput: text, mobileDrawer: false }, () => { if (this.chatInputRef.current) this.chatInputRef.current.focus(); }); }
+
+  send = (text) => {
+    const t = (text || "").trim();
+    if (!t) return;
+    const reply = {
+      role: "assistant", kind: "grounded",
+      text: "Here is what I found, based on the records you already keep. Two records in CSE-3 are below the attendance line this week. This is advisory — nothing is sent or written back until you approve it.",
+      sources: ["Attendance register", "Internal marks", "Fee status"]
+    };
+    this.setState((s) => ({ chat: s.chat.concat([{ role: "user", text: t }, reply]), chatInput: "" }), () => {
+      if (this.chatRef.current) this.chatRef.current.scrollTop = this.chatRef.current.scrollHeight;
+    });
+  };
+  sendChat = () => this.send(this.state.chatInput);
+
+  resolveMark() {
+    const pts = [[10, 18], [16, 46], [22, 30], [30, 58], [34, 14], [44, 40], [52, 24], [58, 52]];
+    const focal = [118, 37];
+    const lines = pts.map((p, i) => React.createElement("line", { key: "l" + i, x1: p[0], y1: p[1], x2: focal[0], y2: focal[1], stroke: "var(--color-teal-300)", strokeWidth: 1, opacity: 0.35 }));
+    const dots = pts.map((p, i) => React.createElement("circle", { key: "d" + i, cx: p[0], cy: p[1], r: 2.4, fill: "var(--color-teal-500)", opacity: 0.55 }));
+    const glow = React.createElement("circle", { key: "g", cx: focal[0], cy: focal[1], r: 9, fill: "var(--color-amber)", opacity: 0.18 });
+    const focalDot = React.createElement("circle", { key: "f", cx: focal[0], cy: focal[1], r: 5, fill: "var(--color-amber)" });
+    return React.createElement("svg", { viewBox: "0 0 132 74", width: "100%", height: "100%", style: { display: "block" } }, [...lines, ...dots, glow, focalDot]);
+  }
+}
+</script>
+</body>
+</html>

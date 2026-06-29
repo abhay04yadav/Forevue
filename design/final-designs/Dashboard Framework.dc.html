@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/styles.css">
+<script src="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; border: 3px solid transparent; background-clip: padding-box; }
+  @keyframes fvFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fvRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fvSlideR { from { transform: translateX(14px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="height:100vh;width:100%;background:var(--surface-page);font-family:var(--font-sans);color:var(--text-body);overflow:hidden;position:relative;display:flex;">
+
+  <!-- ===== SIDEBAR ===== -->
+  <sc-if value="{{ showSidebar }}" hint-placeholder-val="{{ true }}">
+  <aside aria-label="Primary navigation" style="{{ sidebarStyle }}">
+    <div style="display:flex;align-items:center;gap:9px;padding:4px 8px 6px;height:34px;">
+      <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="" style="width:26px;height:26px;flex:none;" /></sc-if>
+      <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="" style="width:26px;height:26px;flex:none;" /></sc-if>
+      <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="font-size:18px;font-weight:700;color:var(--text-strong);letter-spacing:-0.01em;">Forevue</span></sc-if>
+    </div>
+    <button onClick="{{ openAI }}" title="AI workspace" style="display:flex;align-items:center;gap:10px;width:100%;margin-top:14px;padding:10px 11px;border:1px solid var(--color-teal);border-radius:var(--radius-md);background:var(--action-primary);color:#fff;font-family:var(--font-sans);font-size:14px;font-weight:600;cursor:pointer;justify-content:{{ railJustify }};" style-hover="background:var(--action-primary-hover);">
+      <dc-import name="Icon" n="sparkles" size="17" hint-size="17px,17px"></dc-import>
+      <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;text-align:left;">AI workspace</span></sc-if>
+    </button>
+    <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);padding:18px 11px 8px;">Workspace</div></sc-if>
+    <sc-if value="{{ isCollapsed }}" hint-placeholder-val="{{ false }}"><div style="height:14px;"></div></sc-if>
+    <nav style="display:flex;flex-direction:column;gap:2px;">
+      <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4">
+        <button onClick="{{ item.onClick }}" title="{{ item.label }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:{{ item.bg }};color:{{ item.color }};font-family:var(--font-sans);font-size:14px;font-weight:{{ item.weight }};cursor:pointer;text-align:left;justify-content:{{ railJustify }};" style-hover="background:var(--color-neutral-100);">
+          <dc-import name="Icon" n="{{ item.icon }}" size="17" hint-size="17px,17px"></dc-import>
+          <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">{{ item.label }}</span></sc-if>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="margin-top:auto;display:flex;flex-direction:column;gap:2px;">
+      <button onClick="{{ openHelp }}" title="Help" style="display:flex;align-items:center;gap:10px;width:100%;padding:9px 11px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);font-family:var(--font-sans);font-size:14px;font-weight:500;cursor:pointer;text-align:left;justify-content:{{ railJustify }};" style-hover="background:var(--color-neutral-100);">
+        <dc-import name="Icon" n="help" size="17" hint-size="17px,17px"></dc-import>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}"><span style="flex:1;">Help</span></sc-if>
+      </button>
+      <div style="display:flex;align-items:center;gap:9px;padding:10px 8px 4px;border-top:1px solid var(--border-subtle);margin-top:8px;justify-content:{{ railJustify }};">
+        <span style="width:30px;height:30px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex:none;">{{ user.initials }}</span>
+        <sc-if value="{{ showLabels }}" hint-placeholder-val="{{ true }}">
+          <span style="min-width:0;flex:1;"><span style="display:block;font-size:13px;font-weight:600;color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.name }}</span><span style="display:block;font-size:11.5px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ user.role }}</span></span>
+        </sc-if>
+      </div>
+    </div>
+  </aside>
+  </sc-if>
+
+  <!-- ===== MAIN ===== -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;">
+
+    <!-- TOP BAR -->
+    <header style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid var(--border-subtle);background:var(--surface-card);flex:none;">
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+        <button onClick="{{ openDrawer }}" aria-label="Open menu" style="width:38px;height:38px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="menu" size="19" hint-size="19px,19px"></dc-import></button>
+      </sc-if>
+      <button onClick="{{ openSearch }}" style="display:flex;align-items:center;gap:10px;flex:1;max-width:460px;height:38px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);color:var(--text-muted);cursor:text;font-family:var(--font-sans);font-size:14px;" style-hover="border-color:var(--border-strong);">
+        <dc-import name="Icon" n="search" size="16" hint-size="16px,16px"></dc-import>
+        <span style="flex:1;text-align:left;">Quick search</span>
+        <span style="font-size:11px;font-weight:600;color:var(--color-neutral-500);background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:6px;padding:2px 6px;">{{ cmdKey }}K</span>
+      </button>
+      <!-- Role switcher: same framework, every role -->
+      <label style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--text-muted);white-space:nowrap;">
+        <sc-if value="{{ wideEnough }}" hint-placeholder-val="{{ true }}"><span>Viewing as</span></sc-if>
+        <select value="{{ roleKey }}" onChange="{{ onRole }}" style="height:36px;padding:0 30px 0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%235E7175%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22m6 9 6 6 6-6%22/></svg>');background-repeat:no-repeat;background-position:right 9px center;">
+          <sc-for list="{{ roleOptions }}" as="r" hint-placeholder-count="6"><option value="{{ r.key }}">{{ r.role }}</option></sc-for>
+        </select>
+      </label>
+      <button onClick="{{ toggleTheme }}" aria-label="Toggle theme" style="width:38px;height:38px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="{{ themeIcon }}" size="18" hint-size="18px,18px"></dc-import></button>
+      <button onClick="{{ toggleNotif }}" aria-label="Notifications" style="position:relative;width:38px;height:38px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="bell" size="18" hint-size="18px,18px"></dc-import><span style="position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--color-amber);border:1.5px solid var(--surface-card);"></span></button>
+      <button aria-label="Profile" style="width:34px;height:34px;border:none;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;cursor:pointer;flex:none;">{{ user.initials }}</button>
+    </header>
+
+    <!-- SCROLL -->
+    <div style="flex:1;overflow-y:auto;">
+      <div style="max-width:1180px;margin:0 auto;padding:20px 24px 32px;">
+
+        <!-- Breadcrumbs -->
+        <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-muted);margin-bottom:10px;">
+          <span style="color:var(--text-muted);">Home</span>
+          <span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="chevronRight" size="14" hint-size="14px,14px"></dc-import></span>
+          <span style="color:var(--text-body);font-weight:500;">Dashboard</span>
+        </nav>
+
+        <!-- Title + Page actions -->
+        <div style="display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px;">
+          <div style="min-width:0;flex:1;">
+            <h1 style="margin:0;font-size:25px;font-weight:700;color:var(--text-strong);letter-spacing:-0.015em;">Dashboard</h1>
+            <p style="margin:5px 0 0;font-size:14px;color:var(--text-muted);">A reusable overview every role inherits.</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <sc-if value="{{ editMode }}" hint-placeholder-val="{{ false }}"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="md" onClick="{{ toggleEdit }}" hint-size="110px,40px">Done</x-import></sc-if>
+            <sc-if value="{{ notEdit }}" hint-placeholder-val="{{ true }}"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="md" onClick="{{ toggleEdit }}" hint-size="118px,40px">Customize</x-import></sc-if>
+            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="md" hint-size="100px,40px">Export</x-import>
+            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="md" onClick="{{ addWidget }}" hint-size="132px,40px">Add widget</x-import>
+          </div>
+        </div>
+
+        <!-- Welcome area -->
+        <div style="display:flex;align-items:center;gap:16px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:20px 22px;margin-bottom:18px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-size:20px;font-weight:700;color:var(--text-strong);letter-spacing:-0.01em;">{{ greeting }}, {{ user.name }}</div>
+            <p style="margin:5px 0 0;font-size:14px;line-height:1.5;color:var(--text-muted);">{{ user.context }} {{ todayLine }}</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="text-align:right;"><div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Role</div><div style="font-size:14px;font-weight:600;color:var(--color-deep-teal);">{{ user.role }}</div></div>
+            <div style="width:96px;height:54px;flex:none;">{{ resolveMark }}</div>
+          </div>
+        </div>
+
+        <!-- Dashboard tabs -->
+        <div style="border-bottom:1px solid var(--border-subtle);margin-bottom:16px;">
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Tabs" items="{{ tabs }}" value="{{ tab }}" onChange="{{ onTab }}" hint-size="100%,44px"></x-import>
+        </div>
+
+        <!-- Filter bar -->
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:18px;">
+          <div style="display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);">
+            <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="filter" size="15" hint-size="15px,15px"></dc-import></span>
+            <select value="{{ timeRange }}" onChange="{{ onTimeRange }}" style="border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:13.5px;font-weight:500;color:var(--text-strong);cursor:pointer;">
+              <sc-for list="{{ timeOptions }}" as="t" hint-placeholder-count="4"><option value="{{ t }}">{{ t }}</option></sc-for>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);">
+            <select value="{{ scope }}" onChange="{{ onScope }}" style="border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:13.5px;font-weight:500;color:var(--text-strong);cursor:pointer;">
+              <sc-for list="{{ scopeOptions }}" as="s" hint-placeholder-count="3"><option value="{{ s }}">{{ s }}</option></sc-for>
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;height:38px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);flex:1;min-width:160px;max-width:280px;">
+            <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="search" size="15" hint-size="15px,15px"></dc-import></span>
+            <input value="{{ dashSearch }}" onInput="{{ onDashSearch }}" placeholder="Filter widgets" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:13.5px;color:var(--text-strong);" />
+          </div>
+          <button onClick="{{ resetFilters }}" style="height:38px;padding:0 12px;border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;">Reset</button>
+          <span style="margin-left:auto;font-size:12.5px;color:var(--text-muted);font-variant-numeric:tabular-nums;">{{ showingLabel }}</span>
+        </div>
+
+        <!-- ===== OVERVIEW TAB ===== -->
+        <sc-if value="{{ tabOverview }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:flex-start;">
+
+          <!-- Primary column -->
+          <div style="flex:3;min-width:300px;display:flex;flex-direction:column;gap:18px;">
+
+            <!-- KPI region -->
+            <section aria-label="Key metrics">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;">
+                <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="4">
+                  <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px 18px;">
+                    <x-import component-from-global-scope="ForevueDesignSystem_24f415.DataStat" value="{{ k.value }}" label="{{ k.label }}" sub="{{ k.sub }}" delta="{{ k.delta }}" delta-dir="{{ k.dir }}" hint-size="100%,76px"></x-import>
+                  </div>
+                </sc-for>
+              </div>
+            </section>
+
+            <!-- AI Insight panel -->
+            <section aria-label="AI insight" aria-live="polite" style="background:var(--surface-card);border:1px solid var(--color-amber-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
+              <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border-subtle);">
+                <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-amber-50);color:var(--color-amber-700);flex:none;"><dc-import name="Icon" n="sparkles" size="17" hint-size="17px,17px"></dc-import></span>
+                <div style="flex:1;min-width:0;"><div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-amber-700);">Forevue surfaced</div></div>
+                <button onClick="{{ refreshInsight }}" aria-label="Refresh insight" style="width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="zap" size="16" hint-size="16px,16px"></dc-import></button>
+                <button onClick="{{ dismissInsight }}" aria-label="Dismiss insight" style="width:30px;height:30px;border:none;border-radius:8px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="x" size="16" hint-size="16px,16px"></dc-import></button>
+              </div>
+              <sc-if value="{{ insightVisible }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:16px 18px;">
+                <p style="margin:0 0 12px;font-size:15.5px;line-height:1.55;color:var(--text-strong);">{{ insightText }}</p>
+                <x-import component-from-global-scope="ForevueDesignSystem_24f415.EvidenceCite" sources="{{ insightSources }}" label="Based on" hint-size="100%,30px"></x-import>
+                <div style="display:flex;align-items:center;gap:10px;margin-top:14px;flex-wrap:wrap;">
+                  <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="sm" onClick="{{ openInsightInAI }}" hint-size="180px,32px">Open in AI workspace</x-import>
+                  <span style="font-size:12px;color:var(--text-muted);">Advisory — it surfaces, you decide.</span>
+                </div>
+              </div>
+              </sc-if>
+              <sc-if value="{{ insightDismissed }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:18px;font-size:13.5px;color:var(--text-muted);">Insight dismissed. <button onClick="{{ refreshInsight }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;padding:0;">Show another</button></div>
+              </sc-if>
+            </section>
+
+            <!-- Widget grid -->
+            <section aria-label="Widgets">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                <h2 style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);">Widgets</h2>
+              </div>
+              <sc-if value="{{ hasWidgets }}" hint-placeholder-val="{{ true }}">
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;">
+                <sc-for list="{{ widgets }}" as="w" hint-placeholder-count="6">
+                  <div style="background:var(--surface-card);border:1px {{ w.borderStyle }} {{ w.borderColor }};border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:13px 15px;border-bottom:1px solid var(--border-subtle);">
+                      <span style="font-size:13.5px;font-weight:600;color:var(--text-strong);flex:1;">{{ w.title }}</span>
+                      <sc-if value="{{ w.editing }}" hint-placeholder-val="{{ false }}"><button onClick="{{ w.onRemove }}" aria-label="Remove widget" style="width:26px;height:26px;border:none;border-radius:7px;background:var(--color-risk-high-bg);color:var(--color-risk-high);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="15" hint-size="15px,15px"></dc-import></button></sc-if>
+                      <sc-if value="{{ w.notEditing }}" hint-placeholder-val="{{ true }}"><button aria-label="Widget options" style="width:26px;height:26px;border:none;border-radius:7px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="settings" size="15" hint-size="15px,15px"></dc-import></button></sc-if>
+                    </div>
+                    <div style="padding:16px 15px;flex:1;min-height:128px;display:flex;align-items:flex-end;gap:7px;">
+                      <sc-if value="{{ w.isBars }}" hint-placeholder-val="{{ true }}">
+                        <sc-for list="{{ w.bars }}" as="b" hint-placeholder-count="6"><span style="flex:1;height:{{ b.h }};background:var(--color-teal-100);border-radius:4px 4px 0 0;"></span></sc-for>
+                      </sc-if>
+                      <sc-if value="{{ w.isList }}" hint-placeholder-val="{{ false }}">
+                        <div style="width:100%;display:flex;flex-direction:column;gap:10px;align-self:flex-start;">
+                          <div style="display:flex;align-items:center;gap:10px;"><span style="width:26px;height:26px;border-radius:50%;background:var(--color-neutral-100);flex:none;"></span><span style="flex:1;height:9px;border-radius:5px;background:var(--color-neutral-100);"></span></div>
+                          <div style="display:flex;align-items:center;gap:10px;"><span style="width:26px;height:26px;border-radius:50%;background:var(--color-neutral-100);flex:none;"></span><span style="flex:1;height:9px;border-radius:5px;background:var(--color-neutral-100);"></span></div>
+                          <div style="display:flex;align-items:center;gap:10px;"><span style="width:26px;height:26px;border-radius:50%;background:var(--color-neutral-100);flex:none;"></span><span style="flex:1;height:9px;border-radius:5px;background:var(--color-neutral-100);"></span></div>
+                        </div>
+                      </sc-if>
+                    </div>
+                    <div style="padding:9px 15px;border-top:1px solid var(--border-subtle);font-size:11.5px;color:var(--text-muted);">Placeholder widget</div>
+                  </div>
+                </sc-for>
+              </div>
+              </sc-if>
+              <sc-if value="{{ noWidgets }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:44px;text-align:center;background:var(--surface-card);border:1px dashed var(--border-default);border-radius:var(--radius-lg);">
+                  <span style="color:var(--color-neutral-400);"><dc-import name="Icon" n="plus" size="26" hint-size="26px,26px"></dc-import></span>
+                  <div style="font-size:14px;color:var(--text-muted);">No widgets match. <button onClick="{{ resetFilters }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:14px;font-weight:600;cursor:pointer;padding:0;">Clear filters</button></div>
+                </div>
+              </sc-if>
+            </section>
+          </div>
+
+          <!-- Secondary rail -->
+          <aside aria-label="Dashboard side panel" style="flex:1;min-width:280px;display:flex;flex-direction:column;gap:16px;">
+
+            <!-- AI Quick Actions -->
+            <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px;">
+              <h2 style="margin:0 0 12px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);">AI quick actions</h2>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <sc-for list="{{ quickActions }}" as="qa" hint-placeholder-count="4">
+                  <button onClick="{{ qa.onClick }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:10px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;cursor:pointer;text-align:left;" style-hover="border-color:var(--color-teal-300);">
+                    <span style="display:inline-flex;color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="sparkles" size="15" hint-size="15px,15px"></dc-import></span>
+                    <span style="flex:1;">{{ qa.text }}</span>
+                    <span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="arrowRight" size="14" hint-size="14px,14px"></dc-import></span>
+                  </button>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px;">
+              <h2 style="margin:0 0 12px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);">Recent activity</h2>
+              <div style="display:flex;flex-direction:column;">
+                <sc-for list="{{ activity }}" as="a" hint-placeholder-count="5">
+                  <div style="display:flex;gap:11px;padding:9px 0;">
+                    <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ a.icon }}" size="15" hint-size="15px,15px"></dc-import></span>
+                    <div style="flex:1;min-width:0;"><div style="font-size:13.5px;color:var(--text-body);line-height:1.4;">{{ a.text }}</div><div style="font-size:11.5px;color:var(--text-muted);margin-top:1px;">{{ a.time }}</div></div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+
+            <!-- Notifications panel -->
+            <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:16px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><h2 style="margin:0;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);flex:1;">Notifications</h2><span style="font-size:11px;font-weight:700;color:var(--color-amber-700);background:var(--color-amber-50);border-radius:999px;padding:1px 8px;">{{ notifCount }}</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px;">
+                <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="3">
+                  <div style="display:flex;gap:11px;align-items:flex-start;">
+                    <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:{{ n.iconBg }};color:{{ n.iconColor }};flex:none;"><dc-import name="Icon" n="{{ n.icon }}" size="15" hint-size="15px,15px"></dc-import></span>
+                    <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;color:var(--text-strong);">{{ n.title }}</div><div style="font-size:11.5px;color:var(--text-muted);">{{ n.time }}</div></div>
+                  </div>
+                </sc-for>
+              </div>
+              <button onClick="{{ toggleNotif }}" style="margin-top:12px;width:100%;border:1px solid var(--border-default);background:var(--surface-card);color:var(--color-deep-teal);font-family:var(--font-sans);font-size:13px;font-weight:600;padding:8px;border-radius:var(--radius-md);cursor:pointer;">View all</button>
+            </div>
+          </aside>
+        </div>
+        </sc-if>
+
+        <!-- ===== ACTIVITY TAB ===== -->
+        <sc-if value="{{ tabActivity }}" hint-placeholder-val="{{ false }}">
+          <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:8px 20px;max-width:760px;">
+            <sc-for list="{{ activityLong }}" as="a" hint-placeholder-count="6">
+              <div style="display:flex;gap:13px;padding:14px 0;border-bottom:1px solid var(--border-subtle);">
+                <span style="display:inline-flex;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ a.icon }}" size="16" hint-size="16px,16px"></dc-import></span>
+                <div style="flex:1;min-width:0;"><div style="font-size:14px;color:var(--text-body);">{{ a.text }}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">{{ a.time }}</div></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- ===== REPORTS TAB ===== -->
+        <sc-if value="{{ tabReports }}" hint-placeholder-val="{{ false }}">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px;">
+            <sc-for list="{{ reports }}" as="r" hint-placeholder-count="4">
+              <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:18px;display:flex;flex-direction:column;gap:12px;">
+                <span style="display:inline-flex;width:38px;height:38px;border-radius:10px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);"><dc-import name="Icon" n="fileText" size="19" hint-size="19px,19px"></dc-import></span>
+                <div><div style="font-size:15px;font-weight:600;color:var(--text-strong);">{{ r.title }}</div><div style="font-size:13px;color:var(--text-muted);margin-top:3px;">{{ r.meta }}</div></div>
+                <div style="margin-top:auto;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="sm" hint-size="92px,32px">Open</x-import></div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <!-- Footer -->
+        <footer style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:32px;padding-top:18px;border-top:1px solid var(--border-subtle);font-size:12.5px;color:var(--text-muted);">
+          <span style="display:flex;align-items:center;gap:8px;"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="" style="width:18px;height:18px;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="" style="width:18px;height:18px;" /></sc-if>Forevue · Clarity, early.</span>
+          <span style="color:var(--color-neutral-300);">·</span>
+          <a href="#" style="color:var(--text-muted);text-decoration:none;" style-hover="color:var(--text-link);">Help</a>
+          <a href="#" style="color:var(--text-muted);text-decoration:none;" style-hover="color:var(--text-link);">Privacy</a>
+          <a href="#" style="color:var(--text-muted);text-decoration:none;" style-hover="color:var(--text-link);">Status</a>
+          <span style="margin-left:auto;">It surfaces — you decide.</span>
+        </footer>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== AI DRAWER ===== -->
+  <sc-if value="{{ aiOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.35);z-index:50;animation:fvFade var(--duration-fast) var(--ease-standard);"></div>
+    <aside style="position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);background:var(--surface-card);border-left:1px solid var(--border-subtle);box-shadow:var(--shadow-lg);z-index:51;display:flex;flex-direction:column;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+      <div style="display:flex;align-items:center;gap:11px;padding:16px 18px;border-bottom:1px solid var(--border-subtle);">
+        <span style="display:inline-flex;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="sparkles" size="18" hint-size="18px,18px"></dc-import></span>
+        <div style="flex:1;min-width:0;"><h2 style="margin:0;font-size:16px;font-weight:700;color:var(--text-strong);">AI workspace</h2><div style="font-size:12px;color:var(--text-muted);">Scoped to this dashboard view</div></div>
+        <button onClick="{{ closeAll }}" aria-label="Close" style="width:30px;height:30px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="17" hint-size="17px,17px"></dc-import></button>
+      </div>
+      <div ref="{{ chatRef }}" style="flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:14px;">
+        <sc-for list="{{ chat }}" as="m" hint-placeholder-count="2">
+          <sc-if value="{{ m.isUser }}" hint-placeholder-val="{{ false }}"><div style="align-self:flex-end;max-width:84%;background:var(--color-teal-600);color:#fff;padding:10px 14px;border-radius:14px 14px 4px 14px;font-size:14px;line-height:1.5;">{{ m.text }}</div></sc-if>
+          <sc-if value="{{ m.isBot }}" hint-placeholder-val="{{ true }}">
+            <div style="align-self:flex-start;max-width:90%;">
+              <div style="background:var(--surface-page);border:1px solid var(--border-subtle);padding:12px 14px;border-radius:14px 14px 14px 4px;font-size:14px;line-height:1.55;color:var(--text-body);">{{ m.text }}</div>
+              <sc-if value="{{ m.hasSources }}" hint-placeholder-val="{{ false }}"><div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;"><span style="font-size:11.5px;color:var(--text-muted);align-self:center;">Based on</span><sc-for list="{{ m.sources }}" as="s" hint-placeholder-count="2"><span style="font-size:11.5px;font-weight:500;color:var(--color-deep-teal);background:var(--color-teal-50);border:1px solid var(--color-teal-100);border-radius:6px;padding:2px 8px;">{{ s }}</span></sc-for></div></sc-if>
+            </div>
+          </sc-if>
+        </sc-for>
+        <sc-if value="{{ chatEmpty }}" hint-placeholder-val="{{ true }}">
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="font-size:12px;font-weight:600;color:var(--text-muted);">Try asking</div>
+            <sc-for list="{{ quickActions }}" as="qa" hint-placeholder-count="3"><button onClick="{{ qa.onClick }}" style="text-align:left;border:1px solid var(--border-subtle);background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:13.5px;padding:10px 12px;border-radius:10px;cursor:pointer;" style-hover="border-color:var(--color-teal-300);">{{ qa.text }}</button></sc-for>
+          </div>
+        </sc-if>
+      </div>
+      <div style="padding:0 14px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="draft" title="Advisory — nothing is sent automatically" hint-size="100%,58px">It surfaces what it finds with the evidence behind it. You decide what happens next.</x-import></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:12px 14px 16px;border-top:1px solid var(--border-subtle);margin-top:12px;">
+        <input ref="{{ chatInputRef }}" value="{{ chatInput }}" onInput="{{ onChatInput }}" onKeyDown="{{ onChatKey }}" placeholder="Ask Forevue…" style="flex:1;height:42px;padding:0 14px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);font-family:var(--font-sans);font-size:14px;color:var(--text-strong);outline:none;" />
+        <button onClick="{{ sendChat }}" aria-label="Send" style="width:42px;height:42px;border:none;border-radius:var(--radius-md);background:var(--action-primary);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="send" size="18" hint-size="18px,18px"></dc-import></button>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- ===== QUICK SEARCH ===== -->
+  <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.40);z-index:50;display:flex;align-items:flex-start;justify-content:center;padding-top:11vh;animation:fvFade var(--duration-fast) var(--ease-standard);">
+      <div onClick="{{ stop }}" style="width:min(600px,94vw);background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden;animation:fvRise var(--duration-normal) var(--ease-standard);">
+        <div style="display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1px solid var(--border-subtle);">
+          <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="search" size="18" hint-size="18px,18px"></dc-import></span>
+          <input ref="{{ searchRef }}" value="{{ searchQuery }}" onInput="{{ onSearchInput }}" placeholder="Search dashboards, widgets, and AI actions" style="flex:1;border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:15.5px;color:var(--text-strong);" />
+          <span style="font-size:11px;font-weight:600;color:var(--color-neutral-500);border:1px solid var(--border-subtle);border-radius:6px;padding:2px 6px;">esc</span>
+        </div>
+        <div style="max-height:46vh;overflow-y:auto;padding:8px;">
+          <sc-for list="{{ searchGroups }}" as="g" hint-placeholder-count="2">
+            <div style="padding:8px 10px 4px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">{{ g.label }}</div>
+            <sc-for list="{{ g.items }}" as="it" hint-placeholder-count="2">
+              <button onClick="{{ it.onSelect }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:10px;border:none;border-radius:var(--radius-md);background:transparent;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);">
+                <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ it.icon }}" size="16" hint-size="16px,16px"></dc-import></span>
+                <span style="flex:1;min-width:0;"><span style="display:block;font-size:14px;font-weight:500;color:var(--text-strong);">{{ it.title }}</span><span style="display:block;font-size:12px;color:var(--text-muted);">{{ it.meta }}</span></span>
+              </button>
+            </sc-for>
+          </sc-for>
+          <sc-if value="{{ searchEmpty }}" hint-placeholder-val="{{ false }}"><div style="padding:34px;text-align:center;color:var(--text-muted);font-size:14px;">No matches.</div></sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== NOTIFICATIONS POPOVER ===== -->
+  <sc-if value="{{ notifOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAll }}" style="position:fixed;inset:0;z-index:55;background:transparent;"></div>
+    <div style="position:fixed;top:62px;right:18px;width:340px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);z-index:56;overflow:hidden;animation:fvRise var(--duration-fast) var(--ease-standard);">
+      <div style="display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--border-subtle);"><h2 style="margin:0;font-size:14px;font-weight:700;color:var(--text-strong);flex:1;">Notifications</h2><button onClick="{{ closeAll }}" aria-label="Close" style="width:28px;height:28px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="16" hint-size="16px,16px"></dc-import></button></div>
+      <div style="max-height:60vh;overflow-y:auto;">
+        <sc-for list="{{ notifs }}" as="n" hint-placeholder-count="3">
+          <div style="display:flex;gap:11px;padding:13px 16px;border-bottom:1px solid var(--border-subtle);">
+            <span style="display:inline-flex;width:32px;height:32px;border-radius:8px;align-items:center;justify-content:center;background:{{ n.iconBg }};color:{{ n.iconColor }};flex:none;"><dc-import name="Icon" n="{{ n.icon }}" size="16" hint-size="16px,16px"></dc-import></span>
+            <div style="flex:1;min-width:0;"><div style="font-size:13.5px;font-weight:600;color:var(--text-strong);">{{ n.title }}</div><div style="font-size:12px;color:var(--text-muted);margin-top:2px;">{{ n.body }}</div><div style="font-size:11.5px;color:var(--text-muted);margin-top:3px;">{{ n.time }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== MOBILE DRAWER ===== -->
+  <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeAll }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.45);z-index:40;animation:fvFade var(--duration-normal) var(--ease-standard);"></div>
+    <aside style="position:fixed;top:0;left:0;bottom:0;width:264px;background:var(--surface-card);border-right:1px solid var(--border-subtle);z-index:41;display:flex;flex-direction:column;padding:16px 12px;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:4px 6px 10px;">
+        <div style="display:flex;align-items:center;gap:9px;"><sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="" style="width:24px;height:24px;" /></sc-if><sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="" style="width:24px;height:24px;" /></sc-if><span style="font-size:17px;font-weight:700;color:var(--text-strong);">Forevue</span></div>
+        <button onClick="{{ closeAll }}" aria-label="Close" style="width:32px;height:32px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="18" hint-size="18px,18px"></dc-import></button>
+      </div>
+      <nav style="display:flex;flex-direction:column;gap:2px;">
+        <sc-for list="{{ nav }}" as="item" hint-placeholder-count="4"><button onClick="{{ item.onClick }}" style="display:flex;align-items:center;gap:10px;width:100%;padding:11px;border:none;border-radius:var(--radius-md);background:{{ item.bg }};color:{{ item.color }};font-family:var(--font-sans);font-size:14px;font-weight:{{ item.weight }};cursor:pointer;text-align:left;"><dc-import name="Icon" n="{{ item.icon }}" size="18" hint-size="18px,18px"></dc-import><span style="flex:1;">{{ item.label }}</span></button></sc-for>
+      </nav>
+    </aside>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  state = {
+    roleKey: "student", theme: "light", tab: "overview",
+    timeRange: "Last 7 days", scope: "All", dashSearch: "",
+    insightIndex: 0, insightDismissed: false,
+    editMode: false, removed: [], added: 0,
+    overlay: null, drawerOpen: false,
+    searchQuery: "", chat: [], chatInput: "",
+    layout: "wide"
+  };
+  rootRef = React.createRef();
+  chatRef = React.createRef();
+  chatInputRef = React.createRef();
+  searchRef = React.createRef();
+
+  roles = {
+    student: { name: "Aarav", initials: "AA", role: "Student", context: "Here is your day at a glance.",
+      kpis: [["Total in scope", "12", "items", "2", "up"], ["Active", "5", "this week", "1", "up"], ["Needs attention", "2", "to review", "1", "down"], ["On track", "83%", "completion", "4", "up"]] },
+    faculty: { name: "A. Sharma", initials: "AS", role: "Faculty", context: "A quick read on your sections and tasks.",
+      kpis: [["Total in scope", "96", "students", "6", "up"], ["Active", "41", "this week", "3", "up"], ["Needs attention", "7", "to review", "2", "down"], ["On track", "78%", "completion", "1", "flat"]] },
+    hod: { name: "Dr. Rao", initials: "DR", role: "Head of Department", context: "Where your department stands today.",
+      kpis: [["Total in scope", "412", "students", "18", "up"], ["Active", "210", "this week", "12", "up"], ["Needs attention", "23", "to review", "5", "down"], ["On track", "81%", "completion", "2", "up"]] },
+    academic: { name: "Dr. Menon", initials: "DM", role: "Academic Head", context: "Across programs, at a glance.",
+      kpis: [["Total in scope", "1.6k", "students", "40", "up"], ["Active", "920", "this week", "30", "up"], ["Needs attention", "64", "to review", "9", "down"], ["On track", "84%", "completion", "3", "up"]] },
+    director: { name: "Dr. Iyer", initials: "DI", role: "Director", context: "The institution at a glance.",
+      kpis: [["Total in scope", "4.2k", "students", "60", "up"], ["Active", "2.4k", "this week", "80", "up"], ["Needs attention", "118", "to review", "14", "down"], ["On track", "86%", "completion", "2", "up"]] },
+    placement: { name: "Placement Cell", initials: "PC", role: "Placement Cell", context: "Where things stand this season.",
+      kpis: [["Total in scope", "780", "candidates", "22", "up"], ["Active", "356", "in process", "18", "up"], ["Needs attention", "31", "to review", "4", "down"], ["On track", "72%", "completion", "5", "up"]] }
+  };
+
+  insights = [
+    "Three items moved into needs-attention since last week — worth a quick look.",
+    "Activity in this view is up compared with the previous period.",
+    "Two items are close to a threshold and may need attention soon."
+  ];
+
+  baseWidgets = [
+    { id: "w1", title: "Trend over time", skel: "bars" },
+    { id: "w2", title: "Breakdown", skel: "bars" },
+    { id: "w3", title: "Distribution", skel: "bars" },
+    { id: "w4", title: "Recent items", skel: "list" },
+    { id: "w5", title: "Comparison", skel: "bars" },
+    { id: "w6", title: "Summary", skel: "list" }
+  ];
+
+  darkVars = {
+    "--surface-page": "#082E33", "--surface-card": "#0C434A", "--surface-sunken": "#0A3A40",
+    "--border-subtle": "#16555E", "--border-default": "#1E6670", "--border-strong": "#2A7882",
+    "--text-strong": "#ECF5F4", "--text-body": "#C2D6D6", "--text-muted": "#8AAEAF", "--color-ink": "#ECF5F4",
+    "--color-neutral-50": "#0E4A52", "--color-neutral-100": "#11525B", "--color-neutral-200": "#16555E",
+    "--color-neutral-300": "#1E6670", "--color-neutral-400": "#5E8A8E", "--color-neutral-500": "#8AAEAF", "--color-neutral-700": "#C2D6D6",
+    "--color-teal-50": "#0E5760", "--color-teal-100": "#16626B", "--color-deep-teal": "#86CFD4", "--text-link": "#86CFD4", "--focus-ring": "#2E96A0",
+    "--shadow-xs": "0 1px 2px rgba(0,0,0,.35)", "--shadow-sm": "0 1px 3px rgba(0,0,0,.4)", "--shadow-md": "0 6px 16px rgba(0,0,0,.45)", "--shadow-lg": "0 16px 40px rgba(0,0,0,.55)"
+  };
+
+  componentDidMount() {
+    this._onResize = () => {
+      const w = (this.rootRef.current && this.rootRef.current.clientWidth) || window.innerWidth;
+      const layout = w >= 1040 ? "wide" : w >= 720 ? "tablet" : "mobile";
+      if (layout !== this.state.layout) this.setState({ layout });
+    };
+    this._onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && (e.key === "k" || e.key === "K")) { e.preventDefault(); this.setState({ overlay: "search", searchQuery: "" }, () => setTimeout(() => this.searchRef.current && this.searchRef.current.focus(), 30)); }
+      else if (e.key === "Escape") this.setState({ overlay: null, drawerOpen: false });
+    };
+    window.addEventListener("resize", this._onResize);
+    window.addEventListener("keydown", this._onKey);
+    this._onResize();
+    this.applyTheme();
+  }
+  componentWillUnmount() { window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); }
+  componentDidUpdate() { this.applyTheme(); }
+  applyTheme() {
+    const el = this.rootRef.current; if (!el) return;
+    if (this.state.theme === "dark") { for (const k in this.darkVars) el.style.setProperty(k, this.darkVars[k]); }
+    else { for (const k in this.darkVars) el.style.removeProperty(k); }
+  }
+
+  closeAll = () => this.setState({ overlay: null, drawerOpen: false });
+  stop = (e) => e.stopPropagation();
+  toggleTheme = () => this.setState((s) => ({ theme: s.theme === "dark" ? "light" : "dark" }));
+
+  seedAI(text) { this.setState({ overlay: "ai", chatInput: text, drawerOpen: false }, () => setTimeout(() => this.chatInputRef.current && this.chatInputRef.current.focus(), 30)); }
+  send = (text) => {
+    const t = (text || "").trim(); if (!t) return;
+    const reply = { role: "assistant", kind: "grounded", text: "Here is what I found, scoped to this view and the period you selected. This is advisory — nothing is sent or written back until you approve it.", sources: ["Records in scope", "Selected period"] };
+    this.setState((s) => ({ chat: s.chat.concat([{ role: "user", text: t }, reply]), chatInput: "" }), () => { if (this.chatRef.current) this.chatRef.current.scrollTop = this.chatRef.current.scrollHeight; });
+  };
+  sendChat = () => this.send(this.state.chatInput);
+
+  resolveMark() {
+    const pts = [[8, 14], [13, 38], [18, 24], [25, 48], [29, 11], [37, 33], [44, 20]];
+    const focal = [86, 30];
+    const lines = pts.map((p, i) => React.createElement("line", { key: "l" + i, x1: p[0], y1: p[1], x2: focal[0], y2: focal[1], stroke: "var(--color-teal-300)", strokeWidth: 1, opacity: 0.35 }));
+    const dots = pts.map((p, i) => React.createElement("circle", { key: "d" + i, cx: p[0], cy: p[1], r: 2.1, fill: "var(--color-teal-500)", opacity: 0.55 }));
+    const glow = React.createElement("circle", { key: "g", cx: focal[0], cy: focal[1], r: 8, fill: "var(--color-amber)", opacity: 0.18 });
+    const focalDot = React.createElement("circle", { key: "f", cx: focal[0], cy: focal[1], r: 4.5, fill: "var(--color-amber)" });
+    return React.createElement("svg", { viewBox: "0 0 96 54", width: "100%", height: "100%", style: { display: "block" } }, [...lines, ...dots, glow, focalDot]);
+  }
+
+  renderVals() {
+    const S = this.state;
+    const user = this.roles[S.roleKey];
+    const layout = S.layout;
+    const isMobile = layout === "mobile";
+    const isCollapsed = layout === "tablet";
+    const showLabels = !isCollapsed;
+
+    const navItems = [
+      { id: "dashboard", label: "Dashboard", icon: "home", active: true },
+      { id: "insights", label: "Insights", icon: "sparkles" },
+      { id: "reports", label: "Reports", icon: "fileText" },
+      { id: "activity", label: "Activity", icon: "tasks" }
+    ];
+    const nav = navItems.map((n) => ({ ...n,
+      bg: n.active ? "var(--color-teal-50)" : "transparent",
+      color: n.active ? "var(--color-deep-teal)" : "var(--color-neutral-700)",
+      weight: n.active ? 600 : 500,
+      onClick: this.closeAll }));
+
+    const kpis = user.kpis.map((k) => ({ label: k[0], value: k[1], sub: k[2], delta: k[3], dir: k[4] }));
+
+    // widgets with filter + edit + add
+    const extra = [];
+    for (let i = 0; i < S.added; i++) extra.push({ id: "add" + i, title: "New widget " + (i + 1), skel: "bars" });
+    let allWidgets = this.baseWidgets.concat(extra).filter((w) => !S.removed.includes(w.id));
+    const q = S.dashSearch.trim().toLowerCase();
+    if (q) allWidgets = allWidgets.filter((w) => w.title.toLowerCase().includes(q));
+    const widgets = allWidgets.map((w) => ({
+      ...w,
+      isBars: w.skel === "bars", isList: w.skel === "list",
+      bars: [38, 64, 48, 80, 56, 72].map((h, i) => ({ h: h + "%", key: w.id + i })),
+      editing: S.editMode, notEditing: !S.editMode,
+      borderStyle: S.editMode ? "dashed" : "solid",
+      borderColor: S.editMode ? "var(--color-teal-300)" : "var(--border-subtle)",
+      onRemove: () => this.setState((st) => ({ removed: st.removed.concat([w.id]) }))
+    }));
+
+    const quickActionTexts = ["Summarize this view", "Explain what changed", "Draft an update", "Ask a question"];
+    const quickActions = quickActionTexts.map((t) => ({ text: t, onClick: () => this.seedAI(t) }));
+
+    const activity = [
+      { icon: "fileText", text: "A report was generated", time: "12 min ago" },
+      { icon: "clipboard", text: "An approval was requested", time: "1 hour ago" },
+      { icon: "sparkles", text: "Forevue surfaced a new pattern", time: "2 hours ago" },
+      { icon: "check", text: "A task was marked complete", time: "4 hours ago" },
+      { icon: "user", text: "A member joined the workspace", time: "Yesterday" }
+    ];
+    const activityLong = activity.concat([
+      { icon: "fileText", text: "A scheduled export finished", time: "Yesterday" },
+      { icon: "clipboard", text: "An access request was approved", time: "2 days ago" }
+    ]);
+
+    const notifMeta = {
+      approval: { iconBg: "var(--color-teal-50)", iconColor: "var(--color-deep-teal)" },
+      alert: { iconBg: "var(--color-risk-watch-bg)", iconColor: "var(--color-risk-watch)" },
+      ai: { iconBg: "var(--color-teal-50)", iconColor: "var(--color-deep-teal)" }
+    };
+    const notifsRaw = [
+      { icon: "clipboard", type: "approval", title: "Approval requested", body: "An item is waiting for your sign-off.", time: "4 min ago" },
+      { icon: "alert", type: "alert", title: "Threshold crossed", body: "Two items moved past a line this week.", time: "3 hours ago" },
+      { icon: "sparkles", type: "ai", title: "Recommendation ready", body: "A grounded summary is ready to review.", time: "Yesterday" }
+    ];
+    const notifs = notifsRaw.map((n) => ({ ...n, iconBg: notifMeta[n.type].iconBg, iconColor: notifMeta[n.type].iconColor }));
+
+    const reports = [
+      { title: "Report A", meta: "Placeholder · updated weekly" },
+      { title: "Report B", meta: "Placeholder · on demand" },
+      { title: "Report C", meta: "Placeholder · scheduled" },
+      { title: "Report D", meta: "Placeholder · archived" }
+    ];
+
+    // search palette
+    const sq = S.searchQuery.trim().toLowerCase();
+    const sm = (s) => !sq || s.toLowerCase().includes(sq);
+    const pageHits = [{ t: "Dashboard", m: "Page" }, { t: "Insights", m: "Page" }, { t: "Reports", m: "Page" }].filter((x) => sm(x.t)).map((x) => ({ icon: "home", title: x.t, meta: x.m, onSelect: this.closeAll }));
+    const widgetHits = this.baseWidgets.filter((w) => sm(w.title)).map((w) => ({ icon: "settings", title: w.title, meta: "Widget", onSelect: this.closeAll }));
+    const aiHits = quickActionTexts.filter((a) => sm(a)).map((a) => ({ icon: "sparkles", title: a, meta: "AI action", onSelect: () => this.seedAI(a) }));
+    const searchGroupsAll = [{ label: "Pages", items: pageHits }, { label: "Widgets", items: widgetHits }, { label: "AI actions", items: aiHits }];
+    const searchGroups = searchGroupsAll.filter((g) => g.items.length > 0);
+
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    const dateStr = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+    const roleOptions = Object.keys(this.roles).map((k) => ({ key: k, role: this.roles[k].role }));
+
+    const chat = S.chat.map((m) => ({ ...m, isUser: m.role === "user", isBot: m.role === "assistant", hasSources: !!(m.sources && m.sources.length) }));
+
+    const sidebarStyle = "width:" + (isCollapsed ? "72px" : "248px") + ";flex:none;background:var(--surface-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;padding:16px 12px;transition:width var(--duration-normal) var(--ease-standard);";
+
+    return {
+      rootRef: this.rootRef, chatRef: this.chatRef, chatInputRef: this.chatInputRef, searchRef: this.searchRef,
+      isLight: S.theme === "light", isDark: S.theme === "dark", themeIcon: S.theme === "dark" ? "sun" : "moon",
+      user, nav, kpis, widgets, quickActions, activity, activityLong, notifs, reports,
+      roleKey: S.roleKey, roleOptions,
+      greeting, todayLine: dateStr + ".",
+      resolveMark: this.resolveMark(),
+      showSidebar: !isMobile, isMobile, isCollapsed, showLabels, wideEnough: layout !== "mobile",
+      railJustify: isCollapsed ? "center" : "flex-start", sidebarStyle,
+      cmdKey: (navigator.platform && /Mac/.test(navigator.platform)) ? "\u2318" : "Ctrl ",
+      tab: S.tab, tabOverview: S.tab === "overview", tabActivity: S.tab === "activity", tabReports: S.tab === "reports",
+      tabs: [{ id: "overview", label: "Overview" }, { id: "activity", label: "Activity" }, { id: "reports", label: "Reports" }],
+      timeRange: S.timeRange, scope: S.scope, dashSearch: S.dashSearch,
+      timeOptions: ["Last 7 days", "Last 30 days", "This term", "This year"],
+      scopeOptions: ["All", "My items", "Shared with me"],
+      showingLabel: widgets.length + " widget" + (widgets.length === 1 ? "" : "s"),
+      hasWidgets: widgets.length > 0, noWidgets: widgets.length === 0,
+      editMode: S.editMode, notEdit: !S.editMode,
+      insightVisible: !S.insightDismissed, insightDismissed: S.insightDismissed,
+      insightText: this.insights[S.insightIndex % this.insights.length],
+      insightSources: ["Records in scope", "Previous period"],
+      notifCount: String(notifs.length),
+      // overlays
+      aiOpen: S.overlay === "ai", searchOpen: S.overlay === "search", notifOpen: S.overlay === "notifications", drawerOpen: S.drawerOpen,
+      searchQuery: S.searchQuery, searchGroups, searchEmpty: searchGroups.length === 0,
+      chat, chatEmpty: S.chat.length === 0, chatInput: S.chatInput,
+      // handlers
+      onRole: (e) => this.setState({ roleKey: e.target.value }),
+      onTab: (id) => this.setState({ tab: id }),
+      onTimeRange: (e) => this.setState({ timeRange: e.target.value }),
+      onScope: (e) => this.setState({ scope: e.target.value }),
+      onDashSearch: (e) => this.setState({ dashSearch: e.target.value }),
+      resetFilters: () => this.setState({ timeRange: "Last 7 days", scope: "All", dashSearch: "" }),
+      refreshInsight: () => this.setState((s) => ({ insightIndex: s.insightIndex + 1, insightDismissed: false })),
+      dismissInsight: () => this.setState({ insightDismissed: true }),
+      openInsightInAI: () => this.seedAI("Explain the insight on this dashboard"),
+      toggleEdit: () => this.setState((s) => ({ editMode: !s.editMode })),
+      addWidget: () => this.setState((s) => ({ added: s.added + 1 })),
+      openAI: () => this.setState({ overlay: "ai", drawerOpen: false }),
+      openHelp: () => this.setState({ overlay: "ai", drawerOpen: false }),
+      openSearch: () => this.setState({ overlay: "search", searchQuery: "" }, () => setTimeout(() => this.searchRef.current && this.searchRef.current.focus(), 30)),
+      toggleNotif: () => this.setState((s) => ({ overlay: s.overlay === "notifications" ? null : "notifications" })),
+      openDrawer: () => this.setState({ drawerOpen: true }),
+      toggleTheme: this.toggleTheme, closeAll: this.closeAll, stop: this.stop,
+      onSearchInput: (e) => this.setState({ searchQuery: e.target.value }),
+      onChatInput: (e) => this.setState({ chatInput: e.target.value }),
+      onChatKey: (e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); this.sendChat(); } },
+      sendChat: this.sendChat
+    };
+  }
+}
+</script>
+</body>
+</html>

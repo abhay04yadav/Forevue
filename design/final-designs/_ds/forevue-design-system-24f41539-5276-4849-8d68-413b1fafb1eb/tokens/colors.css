@@ -1,0 +1,92 @@
+/* Forevue — Colour tokens
+   Teal is the spine (shared by brand + product). Amber is the single spark.
+   Risk tiers (red/amber/green) are PRODUCT-ONLY and always pair colour + shape + label. */
+
+:root {
+  /* ---- Brand palette (raw) ---- */
+  --color-midnight-teal: #06363B; /* dark hero canvases, depth (marketing) */
+  --color-teal:          #0E7C86; /* PRIMARY / actions — shared brand+product */
+  --color-deep-teal:     #0A656D; /* links, secondary, focus rings */
+  --color-amber:         #E6A23C; /* the one accent — sparingly, never a background */
+  --color-ink:           #0E1B22; /* text on light */
+  --color-paper:         #F7F5F0; /* warm marketing surface */
+  --color-mist:          #5E7175; /* muted / secondary text */
+
+  /* ---- Teal ramp (derived) ---- */
+  --color-teal-900: #06363B;
+  --color-teal-800: #0A4A52;
+  --color-teal-700: #0A656D;
+  --color-teal-600: #0E7C86;
+  --color-teal-500: #2E96A0;
+  --color-teal-300: #5FAEB3;
+  --color-teal-200: #9FCDD0;
+  --color-teal-100: #DCEBEC;
+  --color-teal-50:  #EAF4F2;
+
+  /* ---- Amber ramp (derived) ---- */
+  --color-amber-700: #B97A1F;
+  --color-amber-600: #E6A23C;
+  --color-amber-200: #F4D9AC;
+  --color-amber-50:  #FCF4E7;
+
+  /* ---- Cool neutrals — IN-APP surfaces stay cooler/neutral white ---- */
+  --color-white:     #FFFFFF;
+  --color-neutral-50:  #F8FAFA;
+  --color-neutral-100: #F1F4F4;
+  --color-neutral-200: #E6EBEB;  /* card borders in product */
+  --color-neutral-300: #D4DCDC;
+  --color-neutral-400: #AAB7B8;
+  --color-neutral-500: #7C8B8C;
+  --color-neutral-600: #5E7175;  /* = Mist */
+  --color-neutral-700: #3A4A4E;
+  --color-neutral-900: #0E1B22;  /* = Ink */
+
+  /* ---- Warm neutrals — MARKETING / paper surfaces ---- */
+  --color-warm-line: #E4E0D6;  /* hairline on paper */
+  --color-warm-bg:   #EAE7DE;  /* page behind paper cards */
+
+  /* ---- Risk tiers (PRODUCT-ONLY · colour-vision-safe · always + shape + label) ---- */
+  --color-risk-high:    #C0492B; /* high  — paired with a SQUARE  */
+  --color-risk-high-bg: #FBEDE9;
+  --color-risk-watch:   #B97A1F; /* watch — paired with a DIAMOND */
+  --color-risk-watch-bg:#FCF4E7;
+  --color-risk-low:     #1E7A52; /* low   — paired with a CIRCLE  */
+  --color-risk-low-bg:  #E8F3EC;
+
+  /* ================= Semantic aliases ================= */
+
+  /* Text */
+  --text-strong:   var(--color-ink);
+  --text-body:     var(--color-neutral-700);
+  --text-muted:    var(--color-mist);
+  --text-on-teal:  #EAF4F2;
+  --text-on-dark:  #EAF3F2;
+  --text-link:     var(--color-deep-teal);
+
+  /* Surfaces */
+  --surface-page:      var(--color-neutral-50);   /* product app canvas (cool) */
+  --surface-card:      var(--color-white);        /* product cards on white */
+  --surface-sunken:    var(--color-neutral-100);
+  --surface-dark:      var(--color-midnight-teal);
+  --surface-paper:     var(--color-paper);        /* marketing only */
+  --surface-paper-page:var(--color-warm-bg);
+
+  /* Borders */
+  --border-subtle:  var(--color-neutral-200);
+  --border-default: var(--color-neutral-300);
+  --border-strong:  var(--color-neutral-400);
+  --border-paper:   var(--color-warm-line);
+
+  /* Interactive (teal primary) */
+  --action-primary:        var(--color-teal);
+  --action-primary-hover:  var(--color-deep-teal);
+  --action-primary-active: var(--color-teal-800);
+  --action-primary-text:   #FFFFFF;
+
+  /* Accent — use ONCE per view, never as a fill behind content */
+  --accent:        var(--color-amber);
+  --accent-strong: var(--color-amber-700);
+
+  /* Focus — Deep Teal ring in product; amber reserved for marketing focus */
+  --focus-ring:    var(--color-deep-teal);
+}

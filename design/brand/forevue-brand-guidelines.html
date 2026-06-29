@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forevue — Brand Guidelines</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Public+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --midnight:#06363B; --teal:#0E7C86; --teal-ink:#0A656D; --ink:#0E1B22;
+    --amber:#E6A23C; --paper:#F7F5F0; --mist:#5E7175; --line:#E4E0D6;
+    --serif:"Spectral",Georgia,serif; --sans:"Public Sans",system-ui,-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:var(--sans);background:#EAE7DE;color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.55}
+  .tnum{font-variant-numeric:tabular-nums}
+  .wrap{max-width:780px;margin:0 auto;padding:0 16px 64px}
+  .sec{margin-top:14px}
+  .card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:26px 22px}
+  .num{font-family:var(--serif);font-size:13px;color:var(--amber);font-weight:600;letter-spacing:.04em}
+  .eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-ink);margin:4px 0 14px}
+  h2.title{font-family:var(--serif);font-weight:600;font-size:clamp(26px,7vw,36px);letter-spacing:-.01em;line-height:1.08;margin:0 0 8px}
+  p.lead{font-size:15.5px;color:#33444A;margin:0 0 14px;max-width:60ch}
+  p.note{font-size:12.5px;color:var(--mist);line-height:1.55;margin:14px 2px 0}
+  b.k{color:var(--ink)}
+
+  /* cover */
+  .cover{background:radial-gradient(120% 130% at 82% 0%,#0A5560 0%,var(--midnight) 62%);color:#EAF3F2;border-radius:0 0 24px 24px;padding:34px 22px 32px;border:1px solid #0A5560;border-top:none;margin:0 -16px 14px}
+  .cover .lk{display:flex;align-items:center;gap:14px;margin-bottom:26px}
+  .cover .wm{font-family:var(--serif);font-weight:600;font-size:34px;color:#fff;line-height:1}
+  .cover .wm .dot{color:var(--amber)}
+  .cover h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,9vw,46px);line-height:1.05;letter-spacing:-.015em;margin:0 0 10px;color:#fff}
+  .cover h1 em{font-style:italic;color:var(--amber)}
+  .cover p{color:#B9D4D5;font-size:14.5px;max-width:44ch;margin:0}
+  .cover .meta{margin-top:22px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#6FA9AD;font-weight:700}
+
+  .tile{border-radius:14px;flex:none;background:linear-gradient(150deg,var(--teal),var(--teal-ink));display:flex;align-items:center;justify-content:center}
+
+  /* idea split */
+  .wewe{display:grid;grid-template-columns:1fr;gap:12px;margin-top:6px}
+  @media(min-width:560px){.wewe{grid-template-columns:1fr 1fr}}
+  .we{border-radius:13px;padding:15px 16px;font-size:13.5px;line-height:1.5}
+  .we.is{background:#EAF4F2;border:1px solid #CDE6E2}
+  .we.is .h{color:var(--teal-ink)}
+  .we.not{background:#fff;border:1px solid var(--line)}
+  .we.not .h{color:#A6694B}
+  .we .h{font-weight:700;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+  .we ul{margin:0;padding-left:16px;color:#3a4a4e}.we li{margin:5px 0}
+
+  /* traits */
+  .traits{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(min-width:560px){.traits{grid-template-columns:repeat(4,1fr)}}
+  .trait{background:#fff;border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  .trait .t{font-family:var(--serif);font-weight:600;font-size:17px;color:var(--ink)}
+  .trait .d{font-size:11.5px;color:var(--mist);margin-top:3px;line-height:1.45}
+
+  /* logo */
+  .logobox{display:flex;flex-wrap:wrap;gap:12px}
+  .lgshow{flex:1;min-width:150px;border-radius:14px;padding:22px;display:flex;align-items:center;justify-content:center;gap:12px}
+  .lgshow.light{background:#fff;border:1px solid var(--line)}
+  .lgshow.dark{background:var(--midnight)}
+  .lgshow .wm{font-family:var(--serif);font-weight:600;font-size:26px;line-height:1}
+  .lgshow.light .wm{color:var(--ink)}.lgshow.dark .wm{color:#fff}
+  .lgshow .dot{color:var(--amber)}
+  .sizes{display:flex;align-items:center;gap:16px;margin-top:12px;flex-wrap:wrap}
+  .donts{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
+  @media(min-width:560px){.donts{grid-template-columns:repeat(4,1fr)}}
+  .dont{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px;font-size:11.5px;color:var(--mist);text-align:center;line-height:1.4}
+  .dont .x{color:#C0492B;font-weight:800;font-size:15px}
+
+  /* swatches */
+  .swatches{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  @media(min-width:560px){.swatches{grid-template-columns:repeat(3,1fr)}}
+  .sw{border-radius:12px;overflow:hidden;border:1px solid var(--line);background:#fff}
+  .sw .chip{height:56px}.sw .meta{padding:9px 11px}
+  .sw .nm{font-size:12.5px;font-weight:700}.sw .hx{font-size:11px;color:var(--mist)}
+  .sw .role{font-size:10.5px;color:var(--mist);margin-top:2px;line-height:1.35}
+
+  /* type */
+  .tscale > div{border-top:1px solid var(--line);padding:13px 0;display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .tscale > div:first-child{border-top:none}
+  .tk{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mist);flex:none}
+  .bignum{font-family:var(--sans);font-weight:800;font-size:44px;letter-spacing:-.02em;color:var(--teal-ink);line-height:1}
+
+  /* voice */
+  .vrules{display:grid;grid-template-columns:1fr;gap:0}
+  .vrules .vr{padding:11px 0;border-top:1px solid var(--line);font-size:14px;color:#33444A}
+  .vrules .vr:first-child{border-top:none}
+  .vrules .vr b{color:var(--ink)}
+  .vx{margin-top:14px;border-radius:13px;overflow:hidden;border:1px solid var(--line)}
+  .vx .yes,.vx .no{padding:13px 15px}
+  .vx .yes{background:#EAF4F2}.vx .no{background:#fff;border-top:1px solid var(--line)}
+  .vx .lab{font-size:10.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+  .vx .yes .lab{color:var(--teal-ink)}.vx .no .lab{color:#A6694B}
+  .vx .yes .t{font-size:14.5px;color:var(--ink);font-weight:500}.vx .no .t{font-size:13.5px;color:var(--mist)}
+  .terms div{padding:9px 0;border-top:1px solid var(--line);font-size:13px}
+  .terms div:first-child{border-top:none}
+  .terms .say{color:var(--ink);font-weight:600}.terms .not{color:var(--mist)}
+  .boiler{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 15px;margin-top:10px;font-size:13.5px;color:#33444A;line-height:1.55}
+  .boiler .bk{font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mist);display:block;margin-bottom:5px}
+
+  /* surfaces */
+  .surf{display:grid;grid-template-columns:1fr;gap:10px}
+  @media(min-width:560px){.surf{grid-template-columns:repeat(2,1fr)}}
+  .stile{background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 16px}
+  .stile .h{font-family:var(--serif);font-weight:600;font-size:17px;margin-bottom:4px}
+  .stile .d{font-size:12.5px;color:var(--mist);line-height:1.5}
+
+  .reveal{opacity:1}
+  @media (prefers-reduced-motion: no-preference){
+    .reveal{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+    .reveal.in{opacity:1;transform:none}
+  }
+  :focus-visible{outline:2px solid var(--amber);outline-offset:3px;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- COVER -->
+  <div class="cover">
+    <div class="lk">
+      <span class="tile" style="width:52px;height:52px">
+        <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true">
+          <line x1="16" y1="20" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="13" y1="32" x2="40" y2="32" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+          <line x1="16" y1="44" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.6" stroke-linecap="round"/>
+          <circle cx="42" cy="32" r="5" fill="#E6A23C"/>
+          <line x1="48" y1="32" x2="54" y2="32" stroke="#E6A23C" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <span class="wm">Forevue<span class="dot">.</span></span>
+    </div>
+    <h1>Clarity, <em>early.</em></h1>
+    <p>The brand foundation — one source of truth for the deck, the site, the app, and everything that carries the name.</p>
+    <div class="meta">Brand guidelines · v0.1</div>
+  </div>
+
+  <!-- 1. THE IDEA -->
+  <div class="sec card reveal">
+    <div class="num">01</div>
+    <p class="eyebrow">The idea</p>
+    <h2 class="title">Most systems record what happened. Forevue helps you see what's coming.</h2>
+    <p class="lead">Every college already owns the data — it's just trapped across eight to twelve systems, and nobody sees the struggling student until the exam hall does. Forevue is the intelligence layer that reads across those systems and turns them into clear, early answers you can act on. It doesn't replace the ERP. It lets you finally see inside it.</p>
+    <p class="lead" style="font-family:var(--serif);font-style:italic;color:var(--teal-ink);font-size:17px">Positioning: the intelligence layer for higher education — ask anything in plain English, catch at-risk students early, keep accreditation ready, on one source of truth.</p>
+    <div class="wewe">
+      <div class="we is"><div class="h">What Forevue is</div><ul><li>A calm lens over the systems you run</li><li>Advisory — it surfaces, you decide</li><li>Grounded — every answer shows its evidence</li><li>Early — it flags before it's urgent</li></ul></div>
+      <div class="we not"><div class="h">What Forevue is not</div><ul><li>Not another ERP or rip-and-replace</li><li>Not an autopilot that acts for you</li><li>Not a black box — it never guesses</li><li>Not alarmist about students</li></ul></div>
+    </div>
+  </div>
+
+  <!-- 2. PERSONALITY -->
+  <div class="sec card reveal">
+    <div class="num">02</div>
+    <p class="eyebrow">Personality</p>
+    <h2 class="title">Four traits — and what they rule out.</h2>
+    <div class="traits">
+      <div class="trait"><div class="t">Clear</div><div class="d">Plain over clever. Always.</div></div>
+      <div class="trait"><div class="t">Grounded</div><div class="d">Shows its work; never hypes.</div></div>
+      <div class="trait"><div class="t">Incisive</div><div class="d">Calm, but it gets to the point.</div></div>
+      <div class="trait"><div class="t">Respectful</div><div class="d">Human-in-command; privacy-first.</div></div>
+    </div>
+    <p class="note">Because Forevue handles minors' data and tells institutions which students are struggling, the brand has to feel <b class="k">trustworthy and humane</b> — which rules out the "disrupt your campus with AI" energy most edtech reaches for.</p>
+  </div>
+
+  <!-- 3. LOGO -->
+  <div class="sec card reveal">
+    <div class="num">03</div>
+    <p class="eyebrow">Logo &amp; mark</p>
+    <h2 class="title">The resolve.</h2>
+    <p class="lead">Scattered records on the left converge to a single bright point that looks forward. It is the name made visible — <b class="k">fore + vue</b>, foresight. The amber point is the one spark; everything else stays teal.</p>
+    <div class="logobox">
+      <div class="lgshow light">
+        <span class="tile" style="width:40px;height:40px">
+          <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><line x1="16" y1="20" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.8" stroke-linecap="round"/><line x1="13" y1="32" x2="40" y2="32" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><line x1="16" y1="44" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.8" stroke-linecap="round"/><circle cx="42" cy="32" r="5" fill="#E6A23C"/><line x1="48" y1="32" x2="54" y2="32" stroke="#E6A23C" stroke-width="2.8" stroke-linecap="round"/></svg>
+        </span>
+        <span class="wm">Forevue<span class="dot">.</span></span>
+      </div>
+      <div class="lgshow dark">
+        <span class="tile" style="width:40px;height:40px;background:#0B4A50">
+          <svg width="26" height="26" viewBox="0 0 64 64" aria-hidden="true"><line x1="16" y1="20" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.8" stroke-linecap="round"/><line x1="13" y1="32" x2="40" y2="32" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><line x1="16" y1="44" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.8" stroke-linecap="round"/><circle cx="42" cy="32" r="5" fill="#E6A23C"/><line x1="48" y1="32" x2="54" y2="32" stroke="#E6A23C" stroke-width="2.8" stroke-linecap="round"/></svg>
+        </span>
+        <span class="wm">Forevue<span class="dot">.</span></span>
+      </div>
+    </div>
+    <div class="sizes">
+      <span class="tile" style="width:46px;height:46px"><svg width="30" height="30" viewBox="0 0 64 64" aria-hidden="true"><line x1="16" y1="20" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.8" stroke-linecap="round"/><line x1="13" y1="32" x2="40" y2="32" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><line x1="16" y1="44" x2="40" y2="32" stroke="#CFE6E5" stroke-width="2.8" stroke-linecap="round"/><circle cx="42" cy="32" r="5" fill="#E6A23C"/></svg></span>
+      <span class="tile" style="width:30px;height:30px"><svg width="20" height="20" viewBox="0 0 64 64" aria-hidden="true"><line x1="14" y1="32" x2="40" y2="32" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><line x1="16" y1="22" x2="40" y2="32" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><line x1="16" y1="42" x2="40" y2="32" stroke="#fff" stroke-width="3.6" stroke-linecap="round"/><circle cx="44" cy="32" r="7" fill="#E6A23C"/></svg></span>
+      <span class="tile" style="width:18px;height:18px"><svg width="12" height="12" viewBox="0 0 64 64" aria-hidden="true"><line x1="14" y1="32" x2="40" y2="32" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="46" cy="32" r="9" fill="#E6A23C"/></svg></span>
+      <span style="font-size:12px;color:var(--mist)">App icon · favicon · holds shape to 16px</span>
+    </div>
+    <div class="donts">
+      <div class="dont"><span class="x">✕</span><br>Don't stretch or skew</div>
+      <div class="dont"><span class="x">✕</span><br>Don't recolour outside the palette</div>
+      <div class="dont"><span class="x">✕</span><br>Don't add shadows or effects</div>
+      <div class="dont"><span class="x">✕</span><br>Don't crowd it — keep clear space</div>
+    </div>
+    <p class="note">Clear space around the lockup = the height of the mark. Minimum wordmark height: 18px screen / 6mm print.</p>
+  </div>
+
+  <!-- 4. COLOR -->
+  <div class="sec card reveal">
+    <div class="num">04</div>
+    <p class="eyebrow">Colour</p>
+    <h2 class="title">Teal is the spine. Amber is the spark.</h2>
+    <div class="swatches">
+      <div class="sw"><div class="chip" style="background:#06363B"></div><div class="meta"><div class="nm">Midnight Teal</div><div class="hx">#06363B</div><div class="role">Hero canvases, depth</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0E7C86"></div><div class="meta"><div class="nm">Forevue Teal</div><div class="hx">#0E7C86</div><div class="role">Primary · actions · shared with the app</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0A656D"></div><div class="meta"><div class="nm">Deep Teal</div><div class="hx">#0A656D</div><div class="role">Links, secondary, focus</div></div></div>
+      <div class="sw"><div class="chip" style="background:#E6A23C"></div><div class="meta"><div class="nm">Insight Amber</div><div class="hx">#E6A23C</div><div class="role">The one spark — use sparingly</div></div></div>
+      <div class="sw"><div class="chip" style="background:#0E1B22"></div><div class="meta"><div class="nm">Ink</div><div class="hx">#0E1B22</div><div class="role">Text on light</div></div></div>
+      <div class="sw"><div class="chip" style="background:#F7F5F0;border-bottom:1px solid #E4E0D6"></div><div class="meta"><div class="nm">Paper</div><div class="hx">#F7F5F0</div><div class="role">Warm light surface</div></div></div>
+    </div>
+    <p class="note"><b class="k">Rules.</b> Teal carries the brand and matches the product exactly, so the two read as one. Amber appears only as the moment of clarity — the focal point, one accent per view — never as a background. Risk colours (red / amber / green tiers) live <b class="k">inside the product only</b>; they never enter the brand. Check text contrast: Ink on Paper and white on Midnight Teal both pass AA.</p>
+  </div>
+
+  <!-- 5. TYPE -->
+  <div class="sec card reveal">
+    <div class="num">05</div>
+    <p class="eyebrow">Typography</p>
+    <h2 class="title">Two voices, on purpose.</h2>
+    <p class="lead"><b class="k">Spectral</b> — a calm literary serif — carries the human, scholarly voice in headlines and brand lines. <b class="k">Public Sans</b> carries everything functional: interface, labels, body, and data. It's the same face the app already uses, so marketing never feels bolted on.</p>
+    <div class="tscale">
+      <div><span style="font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-.01em;color:var(--ink)">See it coming.</span><span class="tk">Display · Spectral 600</span></div>
+      <div><span style="font-family:var(--serif);font-style:italic;font-size:19px;color:var(--mist)">Clarity, early.</span><span class="tk">Tagline · Spectral italic</span></div>
+      <div><span style="font-size:15px;color:#33444A">Forevue reads across the systems you already run.</span><span class="tk">Body · Public Sans 400–500</span></div>
+      <div><span style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--teal-ink)">Eyebrow label</span><span class="tk">UI · Public Sans 700</span></div>
+      <div><span class="bignum tnum">1,240</span><span class="tk">Data · Public Sans 800 · tabular</span></div>
+    </div>
+  </div>
+
+  <!-- 6. VOICE -->
+  <div class="sec card reveal">
+    <div class="num">06</div>
+    <p class="eyebrow">Voice &amp; messaging</p>
+    <h2 class="title">Sound the way the product behaves.</h2>
+    <div class="vrules">
+      <div class="vr"><b>Plain verbs, sentence case.</b> Say what happens, simply.</div>
+      <div class="vr"><b>Lead with the specific.</b> "Six students in CSE-3," not "actionable insights."</div>
+      <div class="vr"><b>Put the evidence on the table.</b> Every claim names what it's based on.</div>
+      <div class="vr"><b>Dignity for every student.</b> Never alarmist, never a label without care.</div>
+      <div class="vr"><b>Confident, never boastful.</b> No 🚀, no "revolutionary," no hype.</div>
+    </div>
+    <div class="vx">
+      <div class="yes"><div class="lab">In voice</div><div class="t">"Six students in CSE-3 slipped below the attendance line this week. Here's why, and who to talk to."</div></div>
+      <div class="no"><div class="lab">Off voice</div><div class="t">"🚀 Our AI-powered platform empowers institutions to leverage data-driven insights!"</div></div>
+    </div>
+
+    <p class="eyebrow" style="margin-top:24px">Say this, not that</p>
+    <div class="terms">
+      <div><span class="say">Forevue surfaces / shows / flags</span> &nbsp;—&nbsp; <span class="not">not "decides," "acts," "fixes"</span></div>
+      <div><span class="say">students who need attention</span> &nbsp;—&nbsp; <span class="not">not "failures," "problem students"</span></div>
+      <div><span class="say">the systems you already run</span> &nbsp;—&nbsp; <span class="not">not "rip and replace your ERP"</span></div>
+      <div><span class="say">with the evidence behind it</span> &nbsp;—&nbsp; <span class="not">not unexplained scores</span></div>
+      <div><span class="say">consent-gated · minor — consent required</span> &nbsp;—&nbsp; <span class="not">never share a minor's data quietly</span></div>
+    </div>
+
+    <p class="eyebrow" style="margin-top:24px">Boilerplate</p>
+    <div class="boiler"><span class="bk">One line</span>Forevue is the intelligence layer for higher education — it turns the systems a college already runs into clear, early answers about every student.</div>
+    <div class="boiler"><span class="bk">Short</span>Indian colleges already own their data, but it's trapped across a dozen systems and nobody sees the struggling student in time. Forevue sits on top of the systems you already run, lets you ask anything in plain English, watches every student for early signs of risk, and keeps accreditation evidence ready — with the proof behind every answer, and your team always in command.</div>
+  </div>
+
+  <!-- 7. SIGNATURE & IMAGERY -->
+  <div class="sec card reveal">
+    <div class="num">07</div>
+    <p class="eyebrow">Signature device &amp; imagery</p>
+    <h2 class="title">The resolve, everywhere.</h2>
+    <p class="lead">The convergence — scattered points becoming one clear forward line — is the single thing Forevue is remembered by. Use it as the deck's opening moment, the website hero, the app splash, and loading states. One memorable element; keep everything around it quiet.</p>
+    <p class="note"><b class="k">Imagery:</b> real Indian campus texture and evidence/citation motifs — never the glowing-blue-AI-brain stock. <b class="k">Iconography:</b> simple line icons, rounded caps, single weight, teal or ink. Deliberately avoid gradient-mesh purple, node-network logos, and "empower with AI" clichés.</p>
+  </div>
+
+  <!-- 8. SURFACES -->
+  <div class="sec card reveal">
+    <div class="num">08</div>
+    <p class="eyebrow">One idea, every surface</p>
+    <h2 class="title">How it shows up.</h2>
+    <div class="surf">
+      <div class="stile"><div class="h">Pitch deck</div><div class="d">Open on the resolve + "Clarity, early." Spectral titles, Public Sans body, lots of midnight-teal space, one amber accent per slide.</div></div>
+      <div class="stile"><div class="h">Website</div><div class="d">Hero animates the convergence; "See it coming." Sections alternate paper and teal. Real product glimpses in the brand voice.</div></div>
+      <div class="stile"><div class="h">Mobile app</div><div class="d">The mark is the icon. Inside, the product stays calm and utilitarian — Public Sans, the existing UI tokens — not the marketing serif.</div></div>
+      <div class="stile"><div class="h">Social / email</div><div class="d">Sentence-case lines, one stat or one student story, mark in the corner. Never stock-photo hype.</div></div>
+    </div>
+  </div>
+
+  <!-- 9. RELATIONSHIP TO PRODUCT -->
+  <div class="sec card reveal">
+    <div class="num">09</div>
+    <p class="eyebrow">Brand layer ↔ product layer</p>
+    <h2 class="title">Two layers, one spine.</h2>
+    <p class="lead">The <b class="k">brand</b> (deck, site, marketing) carries warmth — Spectral, amber, paper. The <b class="k">product UI</b> stays calm and functional — Public Sans and the existing design-system tokens (the cool neutrals, the colour-vision-safe risk tiers). The shared teal <b class="k">#0E7C86</b> is the through-line that makes them feel like one company. When in doubt inside the app, defer to the product design system, not these marketing styles.</p>
+    <p class="note">Governance shows up in the brand, not just the code: every AI answer is shown <b class="k">with its evidence</b> (grounded-or-abstain), all generated content is a <b class="k">human-owned draft</b> (advisory, never auto-finalized), and minors are always marked <b class="k">consent-required</b> (DPDP). The brand should never imply Forevue acts on its own.</p>
+  </div>
+
+  <div style="text-align:center;font-size:12px;color:var(--mist);margin-top:24px;line-height:1.6">
+    Forevue — fore + vue · seeing it before it happens.<br>
+    Brand guidelines v0.1 · pair with the product design-system tokens.<br>
+    <span style="font-size:11px">Reminder: confirm forevue.com and the IP India trademark (classes 9 / 42 / 41) before public launch.</span>
+  </div>
+
+</div>
+<script>
+  (function(){
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)){ els.forEach(function(e){e.classList.add('in');}); return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, {threshold:0.12});
+    els.forEach(function(e){ io.observe(e); });
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!-- @dsCard group="Colors" viewport="700x160" name="Risk tiers — product only" subtitle="Colour + shape + label · colour-vision-safe · never in brand" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { margin: 0; padding: 18px; font-family: var(--font-sans); background: #fff; }
+  .row { display: flex; gap: 12px; }
+  .tier { flex: 1; border-radius: var(--radius-md); padding: 13px 14px; display: flex; align-items: center; gap: 10px; }
+  .high { background: var(--color-risk-high-bg); border: 1px solid var(--color-risk-high); }
+  .watch { background: var(--color-risk-watch-bg); border: 1px solid var(--color-risk-watch); }
+  .low { background: var(--color-risk-low-bg); border: 1px solid var(--color-risk-low); }
+  .glyph { width: 16px; height: 16px; flex: none; }
+  .sq { background: var(--color-risk-high); border-radius: 3px; }
+  .di { background: var(--color-risk-watch); border-radius: 3px; transform: rotate(45deg); }
+  .ci { background: var(--color-risk-low); border-radius: 50%; }
+  .lab { font-weight: 700; font-size: 14px; }
+  .high .lab { color: var(--color-risk-high); }
+  .watch .lab { color: var(--color-risk-watch); }
+  .low .lab { color: var(--color-risk-low); }
+  .shape { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+  .note { font-size: 12px; color: var(--text-muted); margin: 12px 2px 0; line-height: 1.5; }
+</style>
+</head>
+<body>
+<div class="row">
+  <div class="tier high"><span class="glyph sq"></span><span class="lab">High</span><span class="shape">square · #C0492B</span></div>
+  <div class="tier watch"><span class="glyph di"></span><span class="lab">Watch</span><span class="shape">diamond · #B97A1F</span></div>
+  <div class="tier low"><span class="glyph ci"></span><span class="lab">Low</span><span class="shape">circle · #1E7A52</span></div>
+</div>
+<p class="note">Always colour <b>+ shape + label</b> — never colour alone. These live inside the product only; they never enter the marketing brand.</p>
+</body>
+</html>

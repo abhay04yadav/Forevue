@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/styles.css">
+<script src="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+  @keyframes fvFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fvRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fvSlideR { from { transform: translateX(16px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fvSpin { to { transform: rotate(360deg); } }
+  @keyframes fvShimmer { 0% { background-position: -360px 0; } 100% { background-position: 360px 0; } }
+  .fv-shim { background: linear-gradient(90deg, var(--color-neutral-100) 25%, var(--color-neutral-200) 37%, var(--color-neutral-100) 63%); background-size: 720px 100%; animation: fvShimmer 1.4s infinite linear; }
+  @media (prefers-reduced-motion: reduce) { *, .fv-shim { animation: none !important; transition: none !important; } }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="height:100vh;width:100%;background:var(--surface-page);font-family:var(--font-sans);color:var(--text-body);overflow:hidden;position:relative;display:flex;">
+
+  <!-- ===== SHELL ICON RAIL ===== -->
+  <sc-if value="{{ showShellRail }}" hint-placeholder-val="{{ true }}">
+  <nav aria-label="Primary" style="width:60px;flex:none;background:var(--surface-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;">
+    <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="Forevue" style="width:28px;height:28px;margin-bottom:8px;" /></sc-if>
+    <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="Forevue" style="width:28px;height:28px;margin-bottom:8px;" /></sc-if>
+    <sc-for list="{{ shellNav }}" as="s" hint-placeholder-count="4"><button title="{{ s.label }}" aria-label="{{ s.label }}" style="width:42px;height:42px;border:none;border-radius:var(--radius-md);background:{{ s.bg }};color:{{ s.color }};display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="{{ s.icon }}" size="19" hint-size="19px,19px"></dc-import></button></sc-for>
+    <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <button onClick="{{ toggleTheme }}" aria-label="Toggle theme" style="width:42px;height:42px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="{{ themeIcon }}" size="18" hint-size="18px,18px"></dc-import></button>
+      <span style="width:32px;height:32px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;">{{ user.initials }}</span>
+    </div>
+  </nav>
+  </sc-if>
+
+  <!-- ===== OUTLINE PANEL ===== -->
+  <sc-if value="{{ showOutline }}" hint-placeholder-val="{{ true }}">
+  <aside aria-label="Outline" style="width:236px;flex:none;background:var(--surface-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:13px 14px 9px;border-bottom:1px solid var(--border-subtle);display:flex;align-items:center;gap:8px;"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="listTree" size="16" hint-size="16px,16px"></dc-import></span><span style="font-size:13px;font-weight:700;color:var(--text-strong);flex:1;">Outline</span></div>
+    <div style="flex:1;overflow-y:auto;padding:10px 8px;">
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:6px 8px 4px;">Sections</div>
+      <sc-for list="{{ outlineSections }}" as="o" hint-placeholder-count="4">
+        <button onClick="{{ o.onClick }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 9px;border:none;border-radius:var(--radius-md);background:{{ o.bg }};cursor:pointer;text-align:left;margin-bottom:1px;" style-hover="background:var(--color-neutral-100);">
+          <span style="width:5px;height:5px;border-radius:50%;background:{{ o.dot }};flex:none;"></span>
+          <span style="flex:1;min-width:0;font-size:12.5px;font-weight:{{ o.weight }};color:{{ o.color }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ o.title }}</span>
+          <sc-if value="{{ o.hasFlag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;color:{{ o.flagColor }};flex:none;" title="{{ o.flagTitle }}"><dc-import name="Icon" n="{{ o.flagIcon }}" size="13" hint-size="13px,13px"></dc-import></span></sc-if>
+        </button>
+      </sc-for>
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:14px 8px 4px;">Bookmarks</div>
+      <button style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 9px;border:none;border-radius:var(--radius-md);background:transparent;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="bookmark" size="13" hint-size="13px,13px"></dc-import></span><span style="font-size:12.5px;color:var(--text-body);">Key recommendation</span></button>
+      <div style="font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);padding:14px 8px 4px;">Validation</div>
+      <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 9px;font-size:12px;line-height:1.4;color:var(--text-body);"><span style="display:inline-flex;color:var(--color-risk-watch);flex:none;margin-top:1px;"><dc-import name="Icon" n="alert" size="13" hint-size="13px,13px"></dc-import></span><span>1 section needs a citation before review.</span></div>
+    </div>
+  </aside>
+  </sc-if>
+
+  <!-- ===== EDITOR COLUMN ===== -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--surface-page);">
+
+    <!-- ARTIFACT HEADER -->
+    <header style="flex:none;border-bottom:1px solid var(--border-subtle);background:var(--surface-card);">
+      <div style="padding:11px 18px 9px;display:flex;align-items:flex-start;gap:12px;">
+        <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ openMobileOutline }}" aria-label="Outline" style="width:36px;height:36px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="listTree" size="17" hint-size="17px,17px"></dc-import></button></sc-if>
+        <div style="min-width:0;flex:1;">
+          <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-muted);margin-bottom:3px;"><span>Artifacts</span><span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="chevronRight" size="12" hint-size="12px,12px"></dc-import></span><span>{{ artifact.type }}</span></nav>
+          <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap;">
+            <h1 style="margin:0;font-size:19px;font-weight:700;color:var(--text-strong);letter-spacing:-0.015em;">{{ artifact.name }}</h1>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--color-deep-teal);background:var(--color-teal-50);border:1px solid var(--color-teal-100);border-radius:6px;padding:2px 8px;"><dc-import name="Icon" n="sparkles" size="12" hint-size="12px,12px"></dc-import>Generated by AI</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:{{ statusColor }};background:{{ statusBg }};border:1px solid {{ statusBorder }};border-radius:6px;padding:2px 8px;"><span style="width:7px;height:7px;background:{{ statusColor }};{{ statusShape }}"></span>{{ statusLabel }}</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:6px;font-size:11.5px;color:var(--text-muted);">
+            <span style="display:inline-flex;align-items:center;gap:5px;"><dc-import name="Icon" n="tag" size="12" hint-size="12px,12px"></dc-import>{{ artifact.type }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><dc-import name="Icon" n="user" size="12" hint-size="12px,12px"></dc-import>{{ user.name }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><dc-import name="Icon" n="calendar" size="12" hint-size="12px,12px"></dc-import>Updated {{ artifact.updated }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><dc-import name="Icon" n="gitBranch" size="12" hint-size="12px,12px"></dc-import>{{ artifact.version }}</span>
+            <span style="display:inline-flex;align-items:center;gap:5px;"><dc-import name="Icon" n="shield" size="12" hint-size="12px,12px"></dc-import>Approver: {{ artifact.approver }}</span>
+          </div>
+        </div>
+      </div>
+      <!-- quick actions -->
+      <div style="display:flex;align-items:center;gap:6px;padding:0 18px 10px;flex-wrap:wrap;">
+        <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="sm" onClick="{{ submitReview }}" hint-size="148px,32px">Submit for review</x-import>
+        <button onClick="{{ saveVersion }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="check" size="14" hint-size="14px,14px"></dc-import>Save version</button>
+        <button onClick="{{ openExport }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="download" size="14" hint-size="14px,14px"></dc-import>Export</button>
+        <button onClick="{{ openShare }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="share" size="14" hint-size="14px,14px"></dc-import>Share</button>
+        <button onClick="{{ toggleReview }}" style="display:flex;align-items:center;gap:6px;height:32px;padding:0 11px;border:1px solid {{ reviewBorder }};border-radius:var(--radius-md);background:{{ reviewBg }};color:{{ reviewColor }};font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;"><dc-import name="Icon" n="eye" size="14" hint-size="14px,14px"></dc-import>Review mode</button>
+        <label style="margin-left:auto;display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted);white-space:nowrap;">
+          <sc-if value="{{ wideEnough }}" hint-placeholder-val="{{ true }}"><span>Viewing as</span></sc-if>
+          <select value="{{ roleKey }}" onChange="{{ onRole }}" aria-label="Viewing as role" style="height:32px;padding:0 26px 0 10px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%235E7175%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22m6 9 6 6 6-6%22/></svg>');background-repeat:no-repeat;background-position:right 8px center;">
+            <sc-for list="{{ roleOptions }}" as="r" hint-placeholder-count="6"><option value="{{ r.key }}">{{ r.role }}</option></sc-for>
+          </select>
+        </label>
+        <button onClick="{{ toggleDock }}" aria-label="Toggle panel" style="width:32px;height:32px;border:none;border-radius:var(--radius-md);background:{{ dockBtnBg }};color:{{ dockBtnColor }};display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="panelRight" size="17" hint-size="17px,17px"></dc-import></button>
+      </div>
+      <!-- approval stepper -->
+      <div style="display:flex;align-items:center;gap:0;padding:0 18px 11px;overflow-x:auto;">
+        <sc-for list="{{ steps }}" as="st" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:8px;flex:none;">
+            <span style="display:inline-flex;width:22px;height:22px;border-radius:50%;align-items:center;justify-content:center;background:{{ st.bg }};color:{{ st.fg }};border:1.5px solid {{ st.ring }};flex:none;"><sc-if value="{{ st.done }}" hint-placeholder-val="{{ false }}"><dc-import name="Icon" n="check" size="12" hint-size="12px,12px"></dc-import></sc-if><sc-if value="{{ st.notDone }}" hint-placeholder-val="{{ true }}"><span style="font-size:10.5px;font-weight:700;">{{ st.num }}</span></sc-if></span>
+            <span style="font-size:12px;font-weight:{{ st.weight }};color:{{ st.labelColor }};white-space:nowrap;">{{ st.label }}</span>
+            <sc-if value="{{ st.connector }}" hint-placeholder-val="{{ true }}"><span style="width:34px;height:1.5px;background:{{ st.lineColor }};margin:0 10px;flex:none;"></span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </header>
+
+    <!-- EDITOR SCROLL -->
+    <div ref="{{ scrollRef }}" style="flex:1;overflow-y:auto;">
+      <div style="max-width:760px;margin:0 auto;padding:22px 26px 60px;">
+
+        <!-- LOADING STATE -->
+        <sc-if value="{{ isLoading }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;align-items:center;gap:10px;color:var(--text-muted);font-size:13.5px;"><span style="display:inline-flex;color:var(--color-deep-teal);animation:fvSpin 1.1s linear infinite;"><dc-import name="Icon" n="refresh" size="16" hint-size="16px,16px"></dc-import></span>{{ loadingLabel }}</div>
+            <div class="fv-shim" style="height:26px;width:60%;border-radius:7px;"></div>
+            <div class="fv-shim" style="height:13px;width:95%;border-radius:6px;"></div>
+            <div class="fv-shim" style="height:13px;width:88%;border-radius:6px;"></div>
+            <div class="fv-shim" style="height:13px;width:92%;border-radius:6px;"></div>
+            <div class="fv-shim" style="height:120px;width:100%;border-radius:10px;margin-top:8px;"></div>
+          </div>
+        </sc-if>
+
+        <!-- ERROR STATE -->
+        <sc-if value="{{ isError }}" hint-placeholder-val="{{ false }}">
+          <div style="border:1px solid {{ errBorder }};border-radius:var(--radius-lg);background:{{ errBg }};padding:20px 22px;max-width:520px;margin:24px auto;text-align:center;">
+            <span style="display:inline-flex;width:50px;height:50px;border-radius:50%;align-items:center;justify-content:center;background:var(--surface-card);color:{{ errColor }};margin-bottom:14px;"><dc-import name="Icon" n="{{ errIcon }}" size="24" hint-size="24px,24px"></dc-import></span>
+            <h2 style="margin:0;font-size:18px;font-weight:700;color:var(--text-strong);">{{ errTitle }}</h2>
+            <p style="margin:7px auto 16px;font-size:13.5px;line-height:1.55;color:var(--text-muted);max-width:38ch;">{{ errBody }}</p>
+            <div style="display:flex;gap:8px;justify-content:center;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="sm" onClick="{{ clearError }}" hint-size="120px,32px">{{ errCta }}</x-import><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="sm" onClick="{{ clearError }}" hint-size="90px,32px">Dismiss</x-import></div>
+          </div>
+        </sc-if>
+
+        <!-- EMPTY STATE -->
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 0;">
+            <div style="width:140px;height:80px;">{{ resolveMark }}</div>
+            <h2 style="margin:8px 0 4px;font-size:20px;font-weight:700;color:var(--text-strong);">No artifact open</h2>
+            <p style="margin:0 0 18px;font-size:14px;line-height:1.55;color:var(--text-muted);max-width:42ch;">Generate an artifact from the AI workspace, or start a blank one. Everything you create here is versioned, reviewable and yours to approve.</p>
+            <div style="display:flex;gap:8px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="md" onClick="{{ loadSample }}" hint-size="150px,40px">Open sample artifact</x-import><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="md" hint-size="120px,40px">Start blank</x-import></div>
+          </div>
+        </sc-if>
+
+        <!-- DOCUMENT -->
+        <sc-if value="{{ isReady }}" hint-placeholder-val="{{ true }}">
+        <article style="display:flex;flex-direction:column;gap:8px;">
+          <sc-for list="{{ docSections }}" as="sec" hint-placeholder-count="4">
+            <section style="border:1px solid {{ sec.border }};border-radius:var(--radius-md);background:var(--surface-card);overflow:hidden;">
+              <!-- section header w/ drag + collapse + reorder -->
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:{{ sec.headBg }};border-bottom:{{ sec.headBorder }};">
+                <span style="display:inline-flex;color:var(--color-neutral-400);cursor:grab;flex:none;" title="Drag to reorder"><dc-import name="Icon" n="gripVertical" size="15" hint-size="15px,15px"></dc-import></span>
+                <button onClick="{{ sec.onToggle }}" aria-label="Collapse section" style="display:inline-flex;border:none;background:transparent;color:var(--color-neutral-500);cursor:pointer;padding:0;flex:none;"><dc-import name="Icon" n="{{ sec.caret }}" size="16" hint-size="16px,16px"></dc-import></button>
+                <h2 style="margin:0;font-size:14.5px;font-weight:700;color:var(--text-strong);flex:1;min-width:0;">{{ sec.title }}</h2>
+                <sc-if value="{{ sec.aiTag }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--color-deep-teal);"><dc-import name="Icon" n="sparkles" size="11" hint-size="11px,11px"></dc-import>AI</span></sc-if>
+                <div style="display:flex;align-items:center;gap:1px;flex:none;">
+                  <button onClick="{{ sec.onUp }}" aria-label="Move up" style="width:26px;height:26px;border:none;border-radius:6px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="chevronUp" size="14" hint-size="14px,14px"></dc-import></button>
+                  <button onClick="{{ sec.onDown }}" aria-label="Move down" style="width:26px;height:26px;border:none;border-radius:6px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="chevronDown" size="14" hint-size="14px,14px"></dc-import></button>
+                  <button onClick="{{ sec.onRegen }}" aria-label="Regenerate section" title="Regenerate with AI" style="width:26px;height:26px;border:none;border-radius:6px;background:transparent;color:var(--color-deep-teal);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-teal-50);"><dc-import name="Icon" n="refresh" size="14" hint-size="14px,14px"></dc-import></button>
+                </div>
+              </div>
+              <sc-if value="{{ sec.open }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:16px 18px;">
+
+                <!-- rich text -->
+                <sc-if value="{{ sec.isText }}" hint-placeholder-val="{{ true }}">
+                  <div style="font-size:14.5px;line-height:1.7;color:var(--text-body);">{{ sec.node }}</div>
+                </sc-if>
+
+                <!-- analytics cards -->
+                <sc-if value="{{ sec.isStats }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:4px;">
+                    <sc-for list="{{ sec.stats }}" as="st" hint-placeholder-count="3"><div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:12px 14px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.DataStat" value="{{ st.value }}" label="{{ st.label }}" sub="{{ st.sub }}" hint-size="100%,64px"></x-import></div></sc-for>
+                  </div>
+                </sc-if>
+
+                <!-- table -->
+                <sc-if value="{{ sec.isTable }}" hint-placeholder-val="{{ false }}">
+                  <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);overflow:hidden;margin-top:2px;">
+                    <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
+                      <thead><tr><sc-for list="{{ sec.headers }}" as="h" hint-placeholder-count="3"><th style="text-align:{{ h.align }};padding:9px 12px;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border-subtle);white-space:nowrap;">{{ h.label }}</th></sc-for></tr></thead>
+                      <tbody><sc-for list="{{ sec.rows }}" as="r" hint-placeholder-count="3"><tr><sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3"><td style="text-align:{{ c.align }};padding:9px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-body);font-variant-numeric:tabular-nums;">{{ c.text }}</td></sc-for></tr></sc-for></tbody>
+                    </table></div>
+                  </div>
+                </sc-if>
+
+                <!-- chart -->
+                <sc-if value="{{ sec.isChart }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;align-items:flex-end;gap:10px;height:120px;padding:6px 2px 22px;position:relative;">
+                    <sc-for list="{{ sec.bars }}" as="bar" hint-placeholder-count="5"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;"><span style="font-size:11px;font-weight:700;color:{{ bar.labelColor }};font-variant-numeric:tabular-nums;">{{ bar.value }}</span><div style="width:100%;height:{{ bar.h }};background:{{ bar.fill }};border-radius:5px 5px 0 0;"></div><span style="position:absolute;bottom:0;font-size:10.5px;color:var(--text-muted);">{{ bar.label }}</span></div></sc-for>
+                  </div>
+                </sc-if>
+
+                <!-- comment anchor -->
+                <sc-if value="{{ sec.hasComment }}" hint-placeholder-val="{{ false }}">
+                  <div style="display:flex;gap:10px;margin-top:14px;padding:11px 12px;border:1px solid var(--color-amber-200);border-left:3px solid var(--color-amber);border-radius:var(--radius-sm);background:var(--color-amber-50);">
+                    <span style="width:26px;height:26px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;flex:none;">KI</span>
+                    <div style="flex:1;min-width:0;"><div style="font-size:12px;color:var(--text-body);line-height:1.45;"><span style="font-weight:600;color:var(--text-strong);">K. Iyer</span> — can we cite the attendance source here before review?</div><div style="font-size:11px;color:var(--text-muted);margin-top:3px;">2 hours ago · <button onClick="{{ openComments }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:11px;font-weight:600;cursor:pointer;padding:0;">Reply</button></div></div>
+                  </div>
+                </sc-if>
+
+                <!-- ERP action card (gated) -->
+                <sc-if value="{{ sec.hasErp }}" hint-placeholder-val="{{ false }}">
+                  <div style="margin-top:14px;border:1px solid var(--color-amber-200);border-radius:var(--radius-md);overflow:hidden;">
+                    <div style="display:flex;align-items:center;gap:8px;padding:10px 13px;background:var(--color-amber-50);border-bottom:1px solid var(--color-amber-200);"><span style="display:inline-flex;color:var(--color-amber-700);"><dc-import name="Icon" n="database" size="15" hint-size="15px,15px"></dc-import></span><span style="flex:1;font-size:12.5px;font-weight:700;color:var(--color-amber-700);">ERP action — requires your approval</span></div>
+                    <div style="padding:13px;"><div style="font-size:13.5px;font-weight:600;color:var(--text-strong);margin-bottom:3px;">Save this report to the ERP record</div><p style="margin:0 0 11px;font-size:12.5px;line-height:1.5;color:var(--text-muted);">Forevue will not write to the ERP on its own. Review the change, then approve.</p>
+                      <sc-if value="{{ erpPending }}" hint-placeholder-val="{{ true }}"><div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="sm" onClick="{{ approveErp }}" hint-size="120px,32px">Approve &amp; save</x-import><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="sm" hint-size="130px,32px">Preview changes</x-import><button onClick="{{ rejectErp }}" style="margin-left:auto;border:none;background:transparent;color:var(--color-risk-high);font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;">Reject</button></div></sc-if>
+                      <sc-if value="{{ erpResolved }}" hint-placeholder-val="{{ false }}"><div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:{{ erpColor }};"><dc-import name="Icon" n="{{ erpIcon }}" size="15" hint-size="15px,15px"></dc-import>{{ erpLabel }}</div></sc-if>
+                    </div>
+                  </div>
+                </sc-if>
+
+              </div>
+              </sc-if>
+            </section>
+          </sc-for>
+
+          <button onClick="{{ addSection }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:11px;border:1px dashed var(--border-default);border-radius:var(--radius-md);background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;margin-top:4px;" style-hover="border-color:var(--color-teal-300);color:var(--color-deep-teal);"><dc-import name="Icon" n="plus" size="15" hint-size="15px,15px"></dc-import>Add section</button>
+        </article>
+        </sc-if>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== RIGHT DOCK (Assistant / Comments / Versions / Related / Audit / Details) ===== -->
+  <sc-if value="{{ showDock }}" hint-placeholder-val="{{ true }}">
+  <aside aria-label="Assistant and details" style="{{ dockStyle }}">
+    <div style="display:flex;align-items:center;gap:1px;padding:6px 6px 0;border-bottom:1px solid var(--border-subtle);overflow-x:auto;flex:none;">
+      <sc-for list="{{ dockTabs }}" as="dt" hint-placeholder-count="6"><button onClick="{{ dt.onClick }}" title="{{ dt.label }}" style="display:flex;align-items:center;gap:6px;padding:9px 10px;border:none;border-bottom:2px solid {{ dt.under }};background:transparent;color:{{ dt.color }};font-family:var(--font-sans);font-size:12px;font-weight:{{ dt.weight }};cursor:pointer;white-space:nowrap;"><dc-import name="Icon" n="{{ dt.icon }}" size="15" hint-size="15px,15px"></dc-import><sc-if value="{{ dt.showLabel }}" hint-placeholder-val="{{ true }}">{{ dt.label }}</sc-if></button></sc-for>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeDock }}" aria-label="Close" style="margin-left:auto;width:30px;height:30px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="x" size="16" hint-size="16px,16px"></dc-import></button></sc-if>
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;">
+
+      <!-- ASSISTANT -->
+      <sc-if value="{{ dockAssistant }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;display:flex;flex-direction:column;">
+        <div style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Actions</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;">
+            <sc-for list="{{ aiActions }}" as="a" hint-placeholder-count="8"><button onClick="{{ a.onClick }}" style="display:flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border-default);border-radius:999px;background:var(--surface-card);color:var(--text-body);font-family:var(--font-sans);font-size:12px;cursor:pointer;" style-hover="border-color:var(--color-teal-300);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="{{ a.icon }}" size="13" hint-size="13px,13px"></dc-import></span>{{ a.label }}</button></sc-for>
+          </div>
+
+          <!-- suggestion / diff -->
+          <sc-if value="{{ suggestionVisible }}" hint-placeholder-val="{{ false }}">
+            <div style="border:1px solid var(--color-teal-200);border-radius:var(--radius-md);overflow:hidden;background:var(--surface-card);box-shadow:var(--shadow-sm);">
+              <div style="display:flex;align-items:center;gap:8px;padding:10px 12px;background:var(--color-teal-50);border-bottom:1px solid var(--color-teal-100);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="sparkles" size="14" hint-size="14px,14px"></dc-import></span><span style="flex:1;font-size:12px;font-weight:700;color:var(--color-deep-teal);">{{ suggestionTitle }}</span></div>
+              <div style="padding:12px;">
+                <div style="font-size:12.5px;line-height:1.55;color:var(--text-body);border-left:3px solid var(--color-risk-low);background:var(--color-risk-low-bg);padding:8px 10px;border-radius:0 6px 6px 0;margin-bottom:8px;">{{ suggestionText }}</div>
+                <div style="display:flex;align-items:center;gap:8px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="sm" onClick="{{ acceptSuggestion }}" hint-size="86px,32px">Accept</x-import><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="sm" onClick="{{ dismissSuggestion }}" hint-size="84px,32px">Dismiss</x-import><span style="margin-left:auto;font-size:11px;color:var(--text-muted);">New version on accept</span></div>
+              </div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ assistantIdle }}" hint-placeholder-val="{{ true }}">
+            <div style="border:1px dashed var(--border-default);border-radius:var(--radius-md);padding:14px;text-align:center;font-size:12.5px;line-height:1.5;color:var(--text-muted);">Pick an action or ask below. Every AI change comes back as a suggestion you accept — it never overwrites your work.</div>
+          </sc-if>
+
+          <div style="margin-top:auto;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="draft" title="Advisory &amp; grounded" hint-size="100%,54px">Suggestions show their evidence. Nothing is saved, shared or written to the ERP until you approve it.</x-import></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:11px 13px;border-top:1px solid var(--border-subtle);flex:none;">
+          <input value="{{ composer }}" onInput="{{ onComposer }}" onKeyDown="{{ onComposerKey }}" placeholder="Ask AI about this artifact…" style="flex:1;min-width:0;height:38px;padding:0 12px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);font-family:var(--font-sans);font-size:13px;color:var(--text-strong);outline:none;" />
+          <button onClick="{{ askAI }}" aria-label="Send" style="width:38px;height:38px;border:none;border-radius:var(--radius-md);background:var(--action-primary);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="send" size="16" hint-size="16px,16px"></dc-import></button>
+        </div>
+      </div>
+      </sc-if>
+
+      <!-- COMMENTS -->
+      <sc-if value="{{ dockComments }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:12px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);flex:1;">Comments</span><button onClick="{{ toggleResolved }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;">{{ resolvedToggleLabel }}</button></div>
+        <sc-for list="{{ comments }}" as="cm" hint-placeholder-count="3">
+          <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:11px 12px;background:var(--surface-card);">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="width:24px;height:24px;border-radius:50%;background:{{ cm.avatarBg }};color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex:none;">{{ cm.initials }}</span><span style="font-size:12.5px;font-weight:600;color:var(--text-strong);flex:1;">{{ cm.name }}</span><span style="font-size:11px;color:var(--text-muted);">{{ cm.time }}</span></div>
+            <div style="font-size:12.5px;line-height:1.5;color:var(--text-body);">{{ cm.node }}</div>
+            <sc-if value="{{ cm.resolved }}" hint-placeholder-val="{{ false }}"><div style="display:inline-flex;align-items:center;gap:5px;margin-top:7px;font-size:11px;font-weight:600;color:var(--color-risk-low);"><dc-import name="Icon" n="checkCheck" size="13" hint-size="13px,13px"></dc-import>Resolved</div></sc-if>
+            <sc-if value="{{ cm.open }}" hint-placeholder-val="{{ true }}"><div style="display:flex;gap:10px;margin-top:8px;"><button onClick="{{ cm.onResolve }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:11.5px;font-weight:600;cursor:pointer;padding:0;">Resolve</button><button style="border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:11.5px;font-weight:600;cursor:pointer;padding:0;">Reply</button></div></sc-if>
+          </div>
+        </sc-for>
+        <div style="display:flex;align-items:center;gap:8px;"><input placeholder="Comment or @mention…" style="flex:1;min-width:0;height:36px;padding:0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);font-family:var(--font-sans);font-size:12.5px;color:var(--text-strong);outline:none;" /><button aria-label="Send comment" style="width:36px;height:36px;border:none;border-radius:var(--radius-md);background:var(--action-primary);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="send" size="15" hint-size="15px,15px"></dc-import></button></div>
+      </div>
+      </sc-if>
+
+      <!-- VERSIONS -->
+      <sc-if value="{{ dockVersions }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);flex:1;">Version history</span><button onClick="{{ openCompare }}" style="display:flex;align-items:center;gap:5px;border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;"><dc-import name="Icon" n="gitCompare" size="13" hint-size="13px,13px"></dc-import>Compare</button></div>
+        <sc-for list="{{ versions }}" as="v" hint-placeholder-count="4">
+          <div style="display:flex;gap:11px;">
+            <div style="display:flex;flex-direction:column;align-items:center;flex:none;"><span style="width:11px;height:11px;border-radius:50%;background:{{ v.dot }};border:2px solid var(--surface-card);box-shadow:0 0 0 1px {{ v.dot }};"></span><sc-if value="{{ v.line }}" hint-placeholder-val="{{ true }}"><span style="width:1.5px;flex:1;background:var(--border-default);margin:2px 0;"></span></sc-if></div>
+            <div style="flex:1;min-width:0;padding-bottom:12px;">
+              <div style="display:flex;align-items:center;gap:7px;"><span style="font-size:12.5px;font-weight:700;color:var(--text-strong);">{{ v.label }}</span><span style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:{{ v.tagColor }};background:{{ v.tagBg }};border-radius:5px;padding:1px 6px;">{{ v.tag }}</span></div>
+              <div style="font-size:11.5px;color:var(--text-muted);margin-top:2px;">{{ v.who }} · {{ v.time }}</div>
+              <div style="font-size:12px;color:var(--text-body);margin-top:3px;line-height:1.45;">{{ v.note }}</div>
+              <sc-if value="{{ v.restorable }}" hint-placeholder-val="{{ false }}"><button onClick="{{ v.onRestore }}" style="display:inline-flex;align-items:center;gap:5px;margin-top:6px;border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:11.5px;font-weight:600;cursor:pointer;padding:0;"><dc-import name="Icon" n="rotateCcw" size="12" hint-size="12px,12px"></dc-import>Restore</button></sc-if>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- RELATED (relationship graph) -->
+      <sc-if value="{{ dockRelated }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:7px;font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="gitBranch" size="14" hint-size="14px,14px"></dc-import></span>Relationships</div>
+        <!-- focal node -->
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 12px;border:1.5px solid var(--color-teal-300);border-radius:var(--radius-md);background:var(--color-teal-50);"><span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-600);color:#fff;flex:none;"><dc-import name="Icon" n="fileText" size="16" hint-size="16px,16px"></dc-import></span><div style="flex:1;min-width:0;"><div style="font-size:12.5px;font-weight:700;color:var(--text-strong);">{{ artifact.name }}</div><div style="font-size:11px;color:var(--color-deep-teal);">This artifact</div></div></div>
+        <sc-for list="{{ relationGroups }}" as="rg" hint-placeholder-count="3">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--text-muted);margin-bottom:7px;padding-left:2px;"><span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="{{ rg.icon }}" size="13" hint-size="13px,13px"></dc-import></span>{{ rg.label }}</div>
+            <div style="display:flex;flex-direction:column;gap:6px;border-left:1.5px dashed var(--border-default);margin-left:8px;padding-left:12px;">
+              <sc-for list="{{ rg.items }}" as="ri" hint-placeholder-count="2"><button onClick="{{ ri.onClick }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);cursor:pointer;text-align:left;" style-hover="border-color:var(--color-teal-300);"><span style="display:inline-flex;width:26px;height:26px;border-radius:7px;align-items:center;justify-content:center;background:var(--color-neutral-100);color:var(--color-neutral-700);flex:none;"><dc-import name="Icon" n="{{ ri.icon }}" size="14" hint-size="14px,14px"></dc-import></span><span style="flex:1;min-width:0;"><span style="display:block;font-size:12.5px;font-weight:600;color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ri.title }}</span><span style="display:block;font-size:11px;color:var(--text-muted);">{{ ri.type }}</span></span><span style="display:inline-flex;color:var(--color-neutral-400);flex:none;"><dc-import name="Icon" n="arrowRight" size="13" hint-size="13px,13px"></dc-import></span></button></sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- AUDIT -->
+      <sc-if value="{{ dockAudit }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:0;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Audit trail</div>
+        <sc-for list="{{ auditLog }}" as="al" hint-placeholder-count="6">
+          <div style="display:flex;gap:11px;">
+            <div style="display:flex;flex-direction:column;align-items:center;flex:none;"><span style="display:inline-flex;width:26px;height:26px;border-radius:7px;align-items:center;justify-content:center;background:{{ al.iconBg }};color:{{ al.iconColor }};flex:none;"><dc-import name="Icon" n="{{ al.icon }}" size="13" hint-size="13px,13px"></dc-import></span><sc-if value="{{ al.line }}" hint-placeholder-val="{{ true }}"><span style="width:1.5px;flex:1;background:var(--border-subtle);margin:2px 0;"></span></sc-if></div>
+            <div style="flex:1;min-width:0;padding-bottom:14px;"><div style="font-size:12.5px;color:var(--text-body);line-height:1.4;"><span style="font-weight:600;color:var(--text-strong);">{{ al.who }}</span> {{ al.action }}</div><div style="font-size:11px;color:var(--text-muted);margin-top:2px;">{{ al.time }} · {{ al.version }}</div></div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- DETAILS / METADATA -->
+      <sc-if value="{{ dockDetails }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:14px;display:flex;flex-direction:column;gap:3px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;">Metadata</div>
+        <sc-for list="{{ metadata }}" as="md" hint-placeholder-count="8">
+          <div style="display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--border-subtle);">
+            <span style="display:inline-flex;color:var(--color-neutral-500);flex:none;"><dc-import name="Icon" n="{{ md.icon }}" size="14" hint-size="14px,14px"></dc-import></span>
+            <span style="flex:1;font-size:12px;color:var(--text-muted);">{{ md.label }}</span>
+            <sc-if value="{{ md.isTag }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;font-weight:600;color:{{ md.color }};background:{{ md.bg }};border-radius:5px;padding:1px 8px;">{{ md.value }}</span></sc-if>
+            <sc-if value="{{ md.isText }}" hint-placeholder-val="{{ true }}"><span style="font-size:12px;font-weight:600;color:var(--text-strong);text-align:right;">{{ md.value }}</span></sc-if>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+    </div>
+  </aside>
+  </sc-if>
+
+  <!-- ===== EXPORT MENU ===== -->
+  <sc-if value="{{ exportOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlays }}" style="position:fixed;inset:0;z-index:55;background:transparent;"></div>
+    <div style="position:fixed;top:120px;right:360px;width:230px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);z-index:56;overflow:hidden;animation:fvRise var(--duration-fast) var(--ease-standard);">
+      <div style="padding:9px 13px 5px;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Export as</div>
+      <sc-for list="{{ exportOptions }}" as="eo" hint-placeholder-count="6"><button onClick="{{ closeOverlays }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 13px;border:none;background:transparent;color:var(--text-body);font-family:var(--font-sans);font-size:13px;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="{{ eo.icon }}" size="15" hint-size="15px,15px"></dc-import></span><span style="flex:1;">{{ eo.label }}</span><span style="font-size:11px;color:var(--text-muted);">{{ eo.ext }}</span></button></sc-for>
+    </div>
+  </sc-if>
+
+  <!-- ===== SHARE ===== -->
+  <sc-if value="{{ shareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlays }}" style="position:fixed;inset:0;z-index:55;background:transparent;"></div>
+    <div style="position:fixed;top:120px;right:300px;width:300px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);z-index:56;overflow:hidden;animation:fvRise var(--duration-fast) var(--ease-standard);padding:14px;">
+      <div style="font-size:13px;font-weight:700;color:var(--text-strong);margin-bottom:9px;">Share artifact</div>
+      <div style="display:flex;align-items:center;gap:8px;height:36px;padding:0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);margin-bottom:10px;"><span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="link" size="14" hint-size="14px,14px"></dc-import></span><span style="flex:1;min-width:0;font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">forevue.app/a/{{ artifact.id }}</span><button onClick="{{ closeOverlays }}" style="border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;">Copy</button></div>
+      <div style="font-size:11.5px;color:var(--text-muted);line-height:1.5;display:flex;align-items:flex-start;gap:7px;"><span style="display:inline-flex;color:var(--color-neutral-500);flex:none;margin-top:1px;"><dc-import name="Icon" n="lock" size="13" hint-size="13px,13px"></dc-import></span>Visible to your department. Minor data stays consent-gated when shared.</div>
+    </div>
+  </sc-if>
+
+  <!-- ===== COMPARE VERSIONS ===== -->
+  <sc-if value="{{ compareOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlays }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.40);z-index:60;display:flex;align-items:center;justify-content:center;padding:24px;animation:fvFade var(--duration-fast) var(--ease-standard);">
+      <div onClick="{{ stop }}" style="width:min(820px,96vw);max-height:88vh;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);box-shadow:var(--shadow-lg);overflow:hidden;display:flex;flex-direction:column;animation:fvRise var(--duration-normal) var(--ease-standard);">
+        <div style="display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border-subtle);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="gitCompare" size="17" hint-size="17px,17px"></dc-import></span><h2 style="margin:0;font-size:15px;font-weight:700;color:var(--text-strong);flex:1;">Compare versions</h2><button onClick="{{ closeOverlays }}" aria-label="Close" style="width:30px;height:30px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="17" hint-size="17px,17px"></dc-import></button></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;overflow-y:auto;">
+          <div style="padding:16px 18px;border-right:1px solid var(--border-subtle);"><div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">v3 · approved</div><div style="font-size:13.5px;line-height:1.7;color:var(--text-body);">Two students in CSE-3 dropped below the attendance line over weeks 6–9. <span style="background:var(--color-risk-high-bg);color:var(--color-risk-high);text-decoration:line-through;padding:0 2px;">No clear cause was identified.</span></div></div>
+          <div style="padding:16px 18px;"><div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--color-deep-teal);margin-bottom:10px;">v4 · current</div><div style="font-size:13.5px;line-height:1.7;color:var(--text-body);">Two students in CSE-3 dropped below the attendance line over weeks 6–9. <span style="background:var(--color-risk-low-bg);color:var(--color-risk-low);padding:0 2px;">The decline began after the mid-sem break, based on the attendance register.</span></div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 18px;border-top:1px solid var(--border-subtle);"><span style="font-size:12px;color:var(--text-muted);flex:1;">Comparing the two most recent versions.</span><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="sm" onClick="{{ closeOverlays }}" hint-size="150px,32px">Restore v3</x-import><x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="sm" onClick="{{ closeOverlays }}" hint-size="80px,32px">Close</x-import></div>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== NOTES LAYER ===== -->
+  <sc-if value="{{ notesOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--color-midnight-teal);color:#D7E7E7;border-top:1px solid rgba(255,255,255,0.1);animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+      <div style="max-width:1240px;margin:0 auto;padding:13px 18px;display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#86CFD4;"><span style="display:inline-flex;"><dc-import name="Icon" n="info" size="15" hint-size="15px,15px"></dc-import></span>Notes</div>
+        <div style="flex:1;min-width:200px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 22px;font-size:12px;line-height:1.5;color:#B9D2D2;">
+          <div><span style="color:#fff;font-weight:600;">Components ·</span> header, editor blocks, version timeline, comments, approval and ERP cards all reuse the AI Workspace + DS families (DataStat, EvidenceCite, ConsentTag, Callout, Button, Tabs).</div>
+          <div><span style="color:#fff;font-weight:600;">Editing ·</span> human owns the doc; every AI action returns an accept/dismiss suggestion → new version, never a silent overwrite.</div>
+          <div><span style="color:#fff;font-weight:600;">Approval ·</span> Draft→Review→Approved→Published stepper; ERP writes are a separate gated class with preview + audit.</div>
+          <div><span style="color:#fff;font-weight:600;">A11y ·</span> landmark outline = heading tree, aria-live suggestions, colour+shape+text status, ⌘S save version, Esc closes overlays, AA both themes.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex:none;">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#7FA8AC;">Jump to state</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;max-width:320px;">
+            <sc-for list="{{ stateChips }}" as="sc" hint-placeholder-count="6"><button onClick="{{ sc.onClick }}" style="padding:4px 10px;border:1px solid rgba(255,255,255,0.16);border-radius:999px;background:rgba(255,255,255,0.06);color:#D7E7E7;font-family:var(--font-sans);font-size:11.5px;font-weight:600;cursor:pointer;">{{ sc.label }}</button></sc-for>
+          </div>
+        </div>
+        <button onClick="{{ toggleNotes }}" aria-label="Close notes" style="width:30px;height:30px;border:none;border-radius:7px;background:rgba(255,255,255,0.08);color:#D7E7E7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="x" size="16" hint-size="16px,16px"></dc-import></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- Notes toggle FAB -->
+  <button onClick="{{ toggleNotes }}" style="position:fixed;bottom:14px;left:74px;z-index:69;display:flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid {{ notesBorder }};border-radius:999px;background:{{ notesBg }};color:{{ notesColor }};font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;box-shadow:var(--shadow-sm);"><dc-import name="Icon" n="info" size="14" hint-size="14px,14px"></dc-import>Notes</button>
+
+  <!-- ===== MOBILE OUTLINE SHEET ===== -->
+  <sc-if value="{{ mobileOutlineOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMobile }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.45);z-index:62;animation:fvFade var(--duration-normal) var(--ease-standard);"></div>
+    <aside style="position:fixed;top:0;left:0;bottom:0;width:264px;background:var(--surface-card);z-index:63;display:flex;flex-direction:column;border-right:1px solid var(--border-subtle);animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border-subtle);"><span style="font-size:14px;font-weight:700;color:var(--text-strong);">Outline</span><button onClick="{{ closeMobile }}" aria-label="Close" style="width:32px;height:32px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="18" hint-size="18px,18px"></dc-import></button></div>
+      <div style="flex:1;overflow-y:auto;padding:10px;"><sc-for list="{{ outlineSections }}" as="o" hint-placeholder-count="4"><button onClick="{{ o.onClick }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:10px;border:none;border-radius:var(--radius-md);background:{{ o.bg }};cursor:pointer;text-align:left;"><span style="width:5px;height:5px;border-radius:50%;background:{{ o.dot }};flex:none;"></span><span style="flex:1;font-size:13px;font-weight:{{ o.weight }};color:{{ o.color }};">{{ o.title }}</span></button></sc-for></div>
+    </aside>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  state = {
+    roleKey: "hod", theme: "light",
+    dockOpen: true, dockTab: "assistant",
+    docState: "ready",
+    collapsed: {}, order: null,
+    workflow: "draft",
+    reviewMode: false,
+    suggestion: null,
+    erp: "pending",
+    exportOpen: false, shareOpen: false, compareOpen: false,
+    showResolved: false,
+    notesOn: false,
+    composer: "",
+    mobileOutlineOpen: false,
+    layout: "wide"
+  };
+  rootRef = React.createRef();
+  scrollRef = React.createRef();
+
+  roles = {
+    student: { name: "Aarav", initials: "AA", role: "Student", dept: "Computer Science",
+      artifact: { name: "Semester 4 study plan", type: "Study plan", approver: "Faculty mentor", id: "STU-4821", sensitivity: "Personal" } },
+    faculty: { name: "A. Sharma", initials: "AS", role: "Faculty", dept: "Computer Science",
+      artifact: { name: "CSE-3 mid-term question paper", type: "Question paper", approver: "HOD", id: "QP-2207", sensitivity: "Confidential" } },
+    hod: { name: "Dr. Rao", initials: "DR", role: "Head of Department", dept: "Computer Science",
+      artifact: { name: "Department performance report", type: "Department report", approver: "Academic Head", id: "DR-1180", sensitivity: "Internal" } },
+    academic: { name: "Dr. Menon", initials: "DM", role: "Academic Head", dept: "Academics",
+      artifact: { name: "NBA accreditation report", type: "Accreditation report", approver: "Director", id: "AC-0094", sensitivity: "Confidential" } },
+    director: { name: "Dr. Iyer", initials: "DI", role: "Director", dept: "Office of the Director",
+      artifact: { name: "FY strategic plan", type: "Strategic plan", approver: "Governing board", id: "EX-0007", sensitivity: "Restricted" } },
+    placement: { name: "Placement Cell", initials: "PC", role: "Placement Cell", dept: "Placements",
+      artifact: { name: "Placement season analytics", type: "Placement analytics", approver: "Director", id: "PL-0451", sensitivity: "Internal" } }
+  };
+
+  baseSections = [
+    { id: "s1", title: "Executive summary", kind: "text", ai: true,
+      md: "This artifact was generated by Forevue from the records you already keep, then refined by you. **Activity is steady overall**, with a small number of items that need attention before this can move to review. Every figure below is grounded in a named source." },
+    { id: "s2", title: "Key metrics", kind: "stats" },
+    { id: "s3", title: "Breakdown", kind: "table" },
+    { id: "s4", title: "Trend", kind: "chart" },
+    { id: "s5", title: "Recommendations", kind: "text", ai: true, comment: true, erp: true,
+      md: "Based on the evidence above, the recommended next step is a short, targeted intervention for the items flagged as needing attention. This section is advisory — review it, edit anything, and approve before it is shared or written back to the ERP." }
+  ];
+
+  darkVars = {
+    "--surface-page": "#082E33", "--surface-card": "#0C434A", "--surface-sunken": "#0A3A40",
+    "--border-subtle": "#16555E", "--border-default": "#1E6670", "--border-strong": "#2A7882",
+    "--text-strong": "#ECF5F4", "--text-body": "#C2D6D6", "--text-muted": "#8AAEAF", "--color-ink": "#ECF5F4",
+    "--color-neutral-50": "#0E4A52", "--color-neutral-100": "#11525B", "--color-neutral-200": "#16555E",
+    "--color-neutral-300": "#1E6670", "--color-neutral-400": "#5E8A8E", "--color-neutral-500": "#8AAEAF", "--color-neutral-600": "#A6C3C4", "--color-neutral-700": "#C2D6D6",
+    "--color-teal-50": "#0E5760", "--color-teal-100": "#16626B", "--color-teal-200": "#1C6E78", "--color-teal-300": "#2E96A0", "--color-deep-teal": "#86CFD4", "--text-link": "#86CFD4", "--focus-ring": "#2E96A0",
+    "--color-amber-50": "#3A2F12", "--color-amber-200": "#6B5418", "--color-amber-700": "#E6A23C",
+    "--shadow-xs": "0 1px 2px rgba(0,0,0,.35)", "--shadow-sm": "0 1px 3px rgba(0,0,0,.4)", "--shadow-md": "0 6px 16px rgba(0,0,0,.45)", "--shadow-lg": "0 16px 40px rgba(0,0,0,.55)"
+  };
+
+  componentDidMount() {
+    this._onResize = () => {
+      const w = (this.rootRef.current && this.rootRef.current.clientWidth) || window.innerWidth;
+      const layout = w >= 1200 ? "wide" : w >= 760 ? "tablet" : "mobile";
+      if (layout !== this.state.layout) this.setState({ layout, dockOpen: layout === "wide" });
+    };
+    this._onKey = (e) => { if (e.key === "Escape") this.setState({ exportOpen: false, shareOpen: false, compareOpen: false, mobileOutlineOpen: false, notesOn: false }); };
+    window.addEventListener("resize", this._onResize);
+    window.addEventListener("keydown", this._onKey);
+    this._onResize();
+    this.applyTheme();
+  }
+  componentWillUnmount() { window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); }
+  componentDidUpdate() { this.applyTheme(); }
+  applyTheme() {
+    const el = this.rootRef.current; if (!el) return;
+    if (this.state.theme === "dark") { for (const k in this.darkVars) el.style.setProperty(k, this.darkVars[k]); }
+    else { for (const k in this.darkVars) el.style.removeProperty(k); }
+  }
+
+  mdToNode(md) {
+    const parts = String(md).split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+    return parts.map((p, i) => p.startsWith("**") && p.endsWith("**")
+      ? React.createElement("strong", { key: i, style: { fontWeight: 700, color: "var(--text-strong)" } }, p.slice(2, -2)) : p);
+  }
+
+  orderedSections() {
+    const order = this.state.order || this.baseSections.map((s) => s.id);
+    return order.map((id) => this.baseSections.find((s) => s.id === id)).filter(Boolean);
+  }
+  move(id, dir) {
+    const order = (this.state.order || this.baseSections.map((s) => s.id)).slice();
+    const i = order.indexOf(id); const j = i + dir;
+    if (j < 0 || j >= order.length) return;
+    const t = order[i]; order[i] = order[j]; order[j] = t;
+    this.setState({ order });
+  }
+
+  closeOverlays = () => this.setState({ exportOpen: false, shareOpen: false, compareOpen: false });
+  stop = (e) => e.stopPropagation();
+
+  renderVals() {
+    const S = this.state;
+    const user = this.roles[S.roleKey];
+    const artifact = { ...user.artifact, updated: "12 min ago", version: "v4" };
+    const layout = S.layout;
+    const isMobile = layout === "mobile";
+    const isTablet = layout === "tablet";
+
+    const shellNav = [
+      { icon: "home", label: "Home" }, { icon: "barChart", label: "Dashboard" },
+      { icon: "sparkles", label: "AI workspace" }, { icon: "fileText", label: "Artifacts", active: true }
+    ].map((n) => ({ ...n, bg: n.active ? "var(--color-teal-50)" : "transparent", color: n.active ? "var(--color-deep-teal)" : "var(--color-neutral-600)" }));
+
+    // workflow steps
+    const stageOrder = ["draft", "review", "approved", "published"];
+    const stageLabels = { draft: "Draft", review: "Review", approved: "Approved", published: "Published" };
+    const curIdx = stageOrder.indexOf(S.workflow);
+    const steps = stageOrder.map((st, i) => {
+      const done = i < curIdx, current = i === curIdx;
+      return { label: stageLabels[st], num: i + 1, done, notDone: !done,
+        bg: done ? "var(--color-deep-teal)" : current ? "var(--color-teal-50)" : "var(--surface-card)",
+        fg: done ? "#fff" : current ? "var(--color-deep-teal)" : "var(--text-muted)",
+        ring: done || current ? "var(--color-deep-teal)" : "var(--border-default)",
+        labelColor: current ? "var(--text-strong)" : done ? "var(--text-body)" : "var(--text-muted)",
+        weight: current ? 700 : 500, connector: i < stageOrder.length - 1,
+        lineColor: i < curIdx ? "var(--color-deep-teal)" : "var(--border-default)" };
+    });
+
+    // status (derived from workflow)
+    const statusMap = {
+      draft: ["Draft", "var(--color-neutral-600)", "var(--color-neutral-100)", "var(--border-default)", "border-radius:50%;"],
+      review: ["In review", "var(--color-risk-watch)", "var(--color-risk-watch-bg)", "var(--color-amber-200)", "border-radius:1px;transform:rotate(45deg);"],
+      approved: ["Approved", "var(--color-risk-low)", "var(--color-risk-low-bg)", "var(--color-risk-low)", "border-radius:50%;"],
+      published: ["Published", "var(--color-deep-teal)", "var(--color-teal-50)", "var(--color-teal-100)", "border-radius:50%;"]
+    };
+    const sm = statusMap[S.workflow];
+
+    // document sections
+    const docSections = this.orderedSections().map((sec) => {
+      const open = !S.collapsed[sec.id];
+      const vm = { id: sec.id, title: sec.title, open, aiTag: !!sec.ai,
+        caret: open ? "chevronDown" : "chevronRight",
+        border: "var(--border-subtle)", headBg: "var(--surface-page)", headBorder: open ? "1px solid var(--border-subtle)" : "none",
+        isText: sec.kind === "text", isStats: sec.kind === "stats", isTable: sec.kind === "table", isChart: sec.kind === "chart",
+        hasComment: !!sec.comment, hasErp: !!sec.erp,
+        onToggle: () => this.setState((st) => ({ collapsed: { ...st.collapsed, [sec.id]: !st.collapsed[sec.id] } })),
+        onUp: () => this.move(sec.id, -1), onDown: () => this.move(sec.id, 1),
+        onRegen: () => this.runAction("Regenerate section") };
+      if (sec.kind === "text") vm.node = this.mdToNode(sec.md);
+      if (sec.kind === "stats") vm.stats = [["83%", "On track", "this period"], ["2", "Need attention", "to review"], ["+4", "vs last period", "trend"]].map(function (s) { return { value: s[0], label: s[1], sub: s[2] }; });
+      if (sec.kind === "table") {
+        vm.headers = [{ label: "Group", align: "left" }, { label: "In scope", align: "right" }, { label: "On track", align: "right" }, { label: "Trend", align: "left" }];
+        vm.rows = [
+          { cells: [{ text: "Group A", align: "left" }, { text: "120", align: "right" }, { text: "92%", align: "right" }, { text: "Steady", align: "left" }] },
+          { cells: [{ text: "Group B", align: "left" }, { text: "96", align: "right" }, { text: "84%", align: "right" }, { text: "Up 2%", align: "left" }] },
+          { cells: [{ text: "Group C", align: "left" }, { text: "78", align: "right" }, { text: "71%", align: "right" }, { text: "Down 6%", align: "left" }] }
+        ];
+      }
+      if (sec.kind === "chart") {
+        const data = [["P1", 78], ["P2", 74], ["P3", 81], ["P4", 69], ["P5", 86]];
+        const max = 100;
+        vm.bars = data.map((d, i) => ({ label: d[0], value: d[1] + "%", h: Math.round((d[1] / max) * 88) + "px",
+          fill: i === 3 ? "var(--color-amber)" : "var(--color-teal-200)", labelColor: i === 3 ? "var(--color-amber-700)" : "var(--text-muted)" }));
+      }
+      return vm;
+    });
+
+    // outline
+    const outlineSections = this.orderedSections().map((sec, i) => ({
+      title: sec.title, onClick: () => this.setState({ mobileOutlineOpen: false }),
+      bg: i === 0 ? "var(--color-teal-50)" : "transparent", dot: sec.ai ? "var(--color-deep-teal)" : "var(--color-neutral-400)",
+      weight: i === 0 ? 600 : 500, color: i === 0 ? "var(--color-deep-teal)" : "var(--text-body)",
+      hasFlag: !!sec.comment || !!sec.ai === false, flagColor: "var(--color-amber-700)", flagIcon: "messageSquare", flagTitle: "Has a comment" }));
+
+    // dock tabs
+    const dockTabDefs = [
+      { id: "assistant", label: "Assistant", icon: "sparkles" }, { id: "comments", label: "Comments", icon: "messageSquare" },
+      { id: "versions", label: "Versions", icon: "history" }, { id: "related", label: "Related", icon: "gitBranch" },
+      { id: "audit", label: "Audit", icon: "shield" }, { id: "details", label: "Details", icon: "info" }
+    ];
+    const dockTabs = dockTabDefs.map((d) => {
+      const on = S.dockTab === d.id;
+      return { ...d, onClick: () => this.setState({ dockTab: d.id }),
+        under: on ? "var(--color-deep-teal)" : "transparent", color: on ? "var(--text-strong)" : "var(--text-muted)", weight: on ? 600 : 500,
+        showLabel: on || layout === "wide" };
+    });
+
+    const aiActions = ["Improve", "Rewrite", "Expand", "Simplify", "Summarize", "Translate", "Continue", "Generate table", "Generate chart", "Generate insights", "Explain"].map((label) => ({
+      label, icon: label === "Translate" ? "languages" : label === "Generate chart" ? "barChart" : label === "Generate table" ? "table" : label === "Generate insights" ? "sparkles" : label === "Explain" ? "info" : label === "Expand" ? "maximize" : label === "Continue" ? "type" : "edit",
+      onClick: () => this.runAction(label) }));
+
+    const comments = [
+      { initials: "KI", name: "K. Iyer", time: "2h ago", avatarBg: "var(--color-teal-600)", md: "Can we cite the attendance source in **Recommendations** before review?", resolved: false, open: true, onResolve: () => {} },
+      { initials: "DR", name: "Dr. Rao", time: "Yesterday", avatarBg: "var(--color-deep-teal)", md: "Numbers look right. @A.Sharma please confirm Group C.", resolved: false, open: true, onResolve: () => {} },
+      { initials: "AS", name: "A. Sharma", time: "2 days ago", avatarBg: "var(--color-neutral-500)", md: "Fixed the Group B figure.", resolved: true, open: false, onResolve: () => {} }
+    ].filter((c) => S.showResolved || !c.resolved).map((c) => ({ ...c, node: this.mdToNode(c.md) }));
+
+    const versions = [
+      { label: "v4", tag: "Human edited", tagColor: "var(--color-deep-teal)", tagBg: "var(--color-teal-50)", who: user.name, time: "12 min ago", note: "Refined recommendations and added source.", dot: "var(--color-deep-teal)", line: true, restorable: false },
+      { label: "v3", tag: "Approved", tagColor: "var(--color-risk-low)", tagBg: "var(--color-risk-low-bg)", who: "Dr. Rao", time: "Yesterday", note: "Approved for review cycle.", dot: "var(--color-risk-low)", line: true, restorable: true },
+      { label: "v2", tag: "Human edited", tagColor: "var(--color-deep-teal)", tagBg: "var(--color-teal-50)", who: user.name, time: "2 days ago", note: "Edited tables and trend.", dot: "var(--color-neutral-400)", line: true, restorable: true },
+      { label: "v1", tag: "AI generated", tagColor: "var(--color-amber-700)", tagBg: "var(--color-amber-50)", who: "Forevue", time: "3 days ago", note: "Initial draft generated from ERP records.", dot: "var(--color-amber)", line: false, restorable: true }
+    ].map((v) => ({ ...v, onRestore: () => this.setState({ compareOpen: true }) }));
+
+    const relationGroups = [
+      { label: "Generated from", icon: "sparkles", items: [{ title: "Attendance analytics", type: "Dataset", icon: "barChart" }, { title: "Internal marks", type: "Dataset", icon: "database" }] },
+      { label: "Depends on", icon: "gitBranch", items: [{ title: "Course outcomes", type: "Reference", icon: "bookOpen" }, { title: "Previous term report", type: "Report", icon: "fileText" }] },
+      { label: "Referenced by", icon: "link", items: [{ title: "Accreditation report", type: "Report", icon: "shield" }] }
+    ].map((g) => ({ ...g, items: g.items.map((it) => ({ ...it, onClick: () => {} })) }));
+
+    const auditLog = [
+      { who: "You", action: "edited the Recommendations section", time: "12 min ago", version: "v4", icon: "edit", iconBg: "var(--color-teal-50)", iconColor: "var(--color-deep-teal)", line: true },
+      { who: "K. Iyer", action: "commented on Recommendations", time: "2 hours ago", version: "v4", icon: "messageSquare", iconBg: "var(--color-amber-50)", iconColor: "var(--color-amber-700)", line: true },
+      { who: "Dr. Rao", action: "approved version 3", time: "Yesterday", version: "v3", icon: "check", iconBg: "var(--color-risk-low-bg)", iconColor: "var(--color-risk-low)", line: true },
+      { who: "You", action: "exported as PDF", time: "Yesterday", version: "v3", icon: "download", iconBg: "var(--color-neutral-100)", iconColor: "var(--color-neutral-700)", line: true },
+      { who: "Forevue", action: "generated the initial draft", time: "3 days ago", version: "v1", icon: "sparkles", iconBg: "var(--color-teal-50)", iconColor: "var(--color-deep-teal)", line: false }
+    ];
+
+    const metadata = [
+      { icon: "hash", label: "Artifact ID", value: artifact.id, isText: true },
+      { icon: "user", label: "Owner", value: user.name, isText: true },
+      { icon: "sparkles", label: "Generated by", value: "Forevue AI", isText: true },
+      { icon: "building", label: "Department", value: user.dept, isText: true },
+      { icon: "shield", label: "Institution", value: "Northfield", isText: true },
+      { icon: "calendar", label: "Academic year", value: "2025–26", isText: true },
+      { icon: "gitBranch", label: "Version", value: artifact.version, isText: true },
+      { icon: "globe", label: "Visibility", value: "Department", isTag: true, color: "var(--color-deep-teal)", bg: "var(--color-teal-50)" },
+      { icon: "info", label: "Workflow stage", value: stageLabels[S.workflow], isTag: true, color: sm[1], bg: sm[2] },
+      { icon: "lock", label: "Data classification", value: artifact.sensitivity, isTag: true, color: "var(--color-amber-700)", bg: "var(--color-amber-50)" }
+    ];
+
+    const exportOptions = [
+      { label: "PDF document", ext: "PDF", icon: "fileText" }, { label: "Word document", ext: "DOCX", icon: "fileText" },
+      { label: "Spreadsheet", ext: "XLSX", icon: "table" }, { label: "CSV data", ext: "CSV", icon: "table" },
+      { label: "Print", ext: "", icon: "printer" }, { label: "Share link", ext: "", icon: "link" }
+    ];
+
+    const erpResolvedMap = { approved: ["check", "Approved — saved to ERP with your sign-off", "var(--color-risk-low)"], rejected: ["x", "Rejected — nothing was written", "var(--color-risk-high)"] };
+    const erpRv = erpResolvedMap[S.erp];
+
+    // doc state
+    const errMap = {
+      permission: ["ban", "Permission denied", "Your role does not include editing this artifact. Ask the owner to grant access.", "Back", "var(--color-risk-high)", "var(--color-risk-high)", "var(--color-risk-high-bg)"],
+      conflict: ["alert", "Edit conflict", "Someone else saved a change while you were editing. Review both versions before continuing.", "Compare versions", "var(--color-risk-watch)", "var(--color-risk-watch)", "var(--color-risk-watch-bg)"],
+      version: ["gitBranch", "Version mismatch", "This artifact was updated to a newer version. Reload to get the latest.", "Reload", "var(--color-risk-watch)", "var(--color-risk-watch)", "var(--color-risk-watch-bg)"],
+      network: ["wifiOff", "Network failure", "Changes could not be saved just now. Your edits are kept locally — try again.", "Try again", "var(--color-risk-high)", "var(--color-risk-high)", "var(--color-risk-high-bg)"],
+      erp: ["database", "ERP write failed", "The ERP rejected the change before anything was written. Nothing was saved.", "Try again", "var(--color-risk-high)", "var(--color-risk-high)", "var(--color-risk-high-bg)"],
+      abstain: ["shield", "Forevue abstained", "There was not enough grounded evidence to generate this section, so it was left for you to write.", "Got it", "var(--color-amber-700)", "var(--color-amber-700)", "var(--color-amber-50)"]
+    };
+    const em = errMap[S.docState] || errMap.permission;
+    const loadingLabels = { loadingArtifact: "Loading artifact…", generating: "Generating content…", generatingCharts: "Generating charts…", saving: "Saving…", publishing: "Publishing…" };
+
+    const stateChips = [
+      ["Ready", () => this.setState({ docState: "ready" })],
+      ["Empty", () => this.setState({ docState: "empty" })],
+      ["Loading", () => this.setState({ docState: "loadingArtifact" })],
+      ["Generating", () => this.setState({ docState: "generating" })],
+      ["Saving", () => this.setState({ docState: "saving" })],
+      ["In review", () => this.setState({ docState: "ready", workflow: "review" })],
+      ["Published", () => this.setState({ docState: "ready", workflow: "published" })],
+      ["Permission", () => this.setState({ docState: "permission" })],
+      ["Conflict", () => this.setState({ docState: "conflict" })],
+      ["Version", () => this.setState({ docState: "version" })],
+      ["Network", () => this.setState({ docState: "network" })],
+      ["ERP fail", () => this.setState({ docState: "erp" })],
+      ["AI abstain", () => this.setState({ docState: "abstain" })]
+    ].map((c) => ({ label: c[0], onClick: c[1] }));
+
+    const docState = S.docState;
+    const isReady = docState === "ready";
+    const isEmpty = docState === "empty";
+    const isLoading = ["loadingArtifact", "generating", "generatingCharts", "saving", "publishing"].includes(docState);
+    const isError = ["permission", "conflict", "version", "network", "erp", "abstain"].includes(docState);
+
+    return {
+      rootRef: this.rootRef, scrollRef: this.scrollRef,
+      isLight: S.theme === "light", isDark: S.theme === "dark", themeIcon: S.theme === "dark" ? "sun" : "moon",
+      user, artifact, roleKey: S.roleKey, roleOptions: Object.keys(this.roles).map((k) => ({ key: k, role: this.roles[k].role })),
+      shellNav, showShellRail: layout === "wide",
+      showOutline: !isMobile, showDock: !isMobile && S.dockOpen,
+      isMobile, isTablet, wideEnough: !isMobile,
+      dockStyle: "width:330px;flex:none;background:var(--surface-card);border-left:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow:hidden;" + (isTablet ? "position:absolute;top:0;right:0;bottom:0;z-index:30;box-shadow:var(--shadow-lg);" : ""),
+      dockBtnBg: S.dockOpen ? "var(--color-teal-50)" : "transparent", dockBtnColor: S.dockOpen ? "var(--color-deep-teal)" : "var(--color-neutral-600)",
+      steps, statusLabel: sm[0], statusColor: sm[1], statusBg: sm[2], statusBorder: sm[3], statusShape: sm[4],
+      docSections, outlineSections, dockTabs,
+      dockAssistant: S.dockTab === "assistant", dockComments: S.dockTab === "comments", dockVersions: S.dockTab === "versions",
+      dockRelated: S.dockTab === "related", dockAudit: S.dockTab === "audit", dockDetails: S.dockTab === "details",
+      aiActions, comments, versions, relationGroups, auditLog, metadata, exportOptions,
+      isReady, isEmpty, isLoading, isError,
+      loadingLabel: loadingLabels[docState] || "Loading…",
+      errIcon: em[0], errTitle: em[1], errBody: em[2], errCta: em[3], errColor: em[4], errBorder: em[5], errBg: em[6],
+      suggestionVisible: !!S.suggestion, assistantIdle: !S.suggestion,
+      suggestionTitle: S.suggestion ? S.suggestion.title : "", suggestionText: S.suggestion ? S.suggestion.text : "",
+      erpPending: S.erp === "pending", erpResolved: S.erp !== "pending",
+      erpIcon: erpRv ? erpRv[0] : "check", erpLabel: erpRv ? erpRv[1] : "", erpColor: erpRv ? erpRv[2] : "var(--color-risk-low)",
+      reviewMode: S.reviewMode, reviewBg: S.reviewMode ? "var(--color-teal-50)" : "var(--surface-card)", reviewColor: S.reviewMode ? "var(--color-deep-teal)" : "var(--text-strong)", reviewBorder: S.reviewMode ? "var(--color-teal-100)" : "var(--border-default)",
+      showResolved: S.showResolved, resolvedToggleLabel: S.showResolved ? "Hide resolved" : "Show resolved",
+      exportOpen: S.exportOpen, shareOpen: S.shareOpen, compareOpen: S.compareOpen,
+      notesOn: S.notesOn, stateChips,
+      notesBg: S.notesOn ? "var(--color-teal-50)" : "var(--surface-card)", notesColor: S.notesOn ? "var(--color-deep-teal)" : "var(--text-muted)", notesBorder: S.notesOn ? "var(--color-teal-100)" : "var(--border-default)",
+      composer: S.composer, mobileOutlineOpen: S.mobileOutlineOpen,
+      resolveMark: this.resolveMark(),
+      // handlers
+      onRole: (e) => this.setState({ roleKey: e.target.value, workflow: "draft", erp: "pending", suggestion: null, order: null, collapsed: {}, docState: "ready" }),
+      toggleTheme: () => this.setState((s) => ({ theme: s.theme === "dark" ? "light" : "dark" })),
+      toggleDock: () => this.setState((s) => ({ dockOpen: !s.dockOpen })),
+      closeDock: () => this.setState({ dockOpen: false }),
+      toggleReview: () => this.setState((s) => ({ reviewMode: !s.reviewMode })),
+      submitReview: () => this.setState({ workflow: "review" }),
+      saveVersion: () => {},
+      openExport: () => this.setState({ exportOpen: true, shareOpen: false }),
+      openShare: () => this.setState({ shareOpen: true, exportOpen: false }),
+      openCompare: () => this.setState({ compareOpen: true }),
+      closeOverlays: this.closeOverlays, stop: this.stop,
+      openComments: () => this.setState({ dockTab: "comments", dockOpen: true }),
+      toggleResolved: () => this.setState((s) => ({ showResolved: !s.showResolved })),
+      addSection: () => {},
+      approveErp: () => this.setState({ erp: "approved" }),
+      rejectErp: () => this.setState({ erp: "rejected" }),
+      acceptSuggestion: () => this.setState({ suggestion: null }),
+      dismissSuggestion: () => this.setState({ suggestion: null }),
+      onComposer: (e) => this.setState({ composer: e.target.value }),
+      onComposerKey: (e) => { if (e.key === "Enter") { e.preventDefault(); this.askAI(); } },
+      askAI: () => { if (S.composer.trim()) this.runAction("Ask"); },
+      runAction: (l) => this.runAction(l),
+      loadSample: () => this.setState({ docState: "ready" }),
+      clearError: () => this.setState({ docState: "ready" }),
+      toggleNotes: () => this.setState((s) => ({ notesOn: !s.notesOn })),
+      openMobileOutline: () => this.setState({ mobileOutlineOpen: true }),
+      closeMobile: () => this.setState({ mobileOutlineOpen: false })
+    };
+  }
+
+  runAction(label) {
+    const texts = {
+      "Improve": "Tightened the wording and removed two hedging phrases, keeping every figure and its source intact.",
+      "Expand": "Added a short paragraph explaining the likely cause, grounded in the attendance register for weeks 6–9.",
+      "Simplify": "Rewrote in plainer language at roughly a grade-9 reading level, without changing the meaning.",
+      "Summarize": "One-line summary: activity is steady, two items need attention before this can move to review.",
+      "Translate": "Prepared a translation into the institution's regional language — review before applying.",
+      "Generate insights": "Surfaced 3 insights: a post-break dip, a steady Group A, and one item near a threshold.",
+      "Regenerate section": "Regenerated this section from the latest records, kept your edits as a suggestion to compare."
+    };
+    const text = texts[label] || ("Drafted a suggested change for \u201C" + label + "\u201D, grounded in the records in scope.");
+    this.setState({ suggestion: { title: label + " — suggested", text }, composer: "", dockTab: "assistant", dockOpen: true });
+  }
+
+  resolveMark() {
+    const pts = [[10, 18], [16, 48], [22, 30], [30, 58], [34, 12], [44, 40], [52, 24], [60, 52]];
+    const focal = [124, 40];
+    const lines = pts.map((p, i) => React.createElement("line", { key: "l" + i, x1: p[0], y1: p[1], x2: focal[0], y2: focal[1], stroke: "var(--color-teal-300)", strokeWidth: 1, opacity: 0.32 }));
+    const dots = pts.map((p, i) => React.createElement("circle", { key: "d" + i, cx: p[0], cy: p[1], r: 2.3, fill: "var(--color-teal-500)", opacity: 0.5 }));
+    const glow = React.createElement("circle", { key: "g", cx: focal[0], cy: focal[1], r: 9, fill: "var(--color-amber)", opacity: 0.18 });
+    const focalDot = React.createElement("circle", { key: "f", cx: focal[0], cy: focal[1], r: 5, fill: "var(--color-amber)" });
+    return React.createElement("svg", { viewBox: "0 0 140 80", width: "100%", height: "100%", style: { display: "block" } }, [...lines, ...dots, glow, focalDot]);
+  }
+}
+</script>
+</body>
+</html>

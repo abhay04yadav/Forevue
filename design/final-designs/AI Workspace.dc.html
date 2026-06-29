@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/fonts.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/colors.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/typography.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/tokens/spacing.css">
+<link rel="stylesheet" href="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/styles.css">
+<script src="_ds/forevue-design-system-24f41539-5276-4849-8d68-413b1fafb1eb/_ds_bundle.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  ::-webkit-scrollbar { width: 9px; height: 9px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; border: 2px solid transparent; background-clip: padding-box; }
+  @keyframes fvFade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fvRise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fvSlideR { from { transform: translateX(16px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fvSlideL { from { transform: translateX(-16px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fvTurn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fvCaret { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes fvShimmer { 0% { background-position: -360px 0; } 100% { background-position: 360px 0; } }
+  @keyframes fvSpin { to { transform: rotate(360deg); } }
+  @keyframes fvDot { 0%,80%,100% { opacity: .25; } 40% { opacity: 1; } }
+  .fv-shim { background: linear-gradient(90deg, var(--color-neutral-100) 25%, var(--color-neutral-200) 37%, var(--color-neutral-100) 63%); background-size: 720px 100%; animation: fvShimmer 1.4s infinite linear; }
+  @media (prefers-reduced-motion: reduce) { *, .fv-shim { animation: none !important; transition: none !important; } }
+</style>
+</helmet>
+<div ref="{{ rootRef }}" style="height:100vh;width:100%;background:var(--surface-page);font-family:var(--font-sans);color:var(--text-body);overflow:hidden;position:relative;display:flex;">
+
+  <!-- ===== COL 0 · SLIM SHELL RAIL (inherited from App Shell) ===== -->
+  <sc-if value="{{ showShellRail }}" hint-placeholder-val="{{ true }}">
+  <nav aria-label="Primary" style="width:60px;flex:none;background:var(--surface-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;align-items:center;padding:14px 0;gap:6px;">
+    <sc-if value="{{ isLight }}" hint-placeholder-val="{{ true }}"><img src="assets/forevue-icon-on-light.svg" alt="Forevue" style="width:28px;height:28px;margin-bottom:8px;" /></sc-if>
+    <sc-if value="{{ isDark }}" hint-placeholder-val="{{ false }}"><img src="assets/forevue-icon-on-dark.svg" alt="Forevue" style="width:28px;height:28px;margin-bottom:8px;" /></sc-if>
+    <sc-for list="{{ shellNav }}" as="s" hint-placeholder-count="4">
+      <button title="{{ s.label }}" aria-label="{{ s.label }}" style="width:42px;height:42px;border:none;border-radius:var(--radius-md);background:{{ s.bg }};color:{{ s.color }};display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);">
+        <dc-import name="Icon" n="{{ s.icon }}" size="19" hint-size="19px,19px"></dc-import>
+      </button>
+    </sc-for>
+    <div style="margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <button onClick="{{ toggleTheme }}" aria-label="Toggle theme" style="width:42px;height:42px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="{{ themeIcon }}" size="18" hint-size="18px,18px"></dc-import></button>
+      <span style="width:32px;height:32px;border-radius:50%;background:var(--color-teal-600);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11.5px;font-weight:700;">{{ user.initials }}</span>
+    </div>
+  </nav>
+  </sc-if>
+
+  <!-- ===== COL 1 · CONVERSATION RAIL ===== -->
+  <sc-if value="{{ showConvRail }}" hint-placeholder-val="{{ true }}">
+  <aside aria-label="Conversations" style="width:250px;flex:none;background:var(--surface-card);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:14px 14px 10px;">
+      <button onClick="{{ newConversation }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;border:1px solid var(--color-teal);border-radius:var(--radius-md);background:var(--action-primary);color:#fff;font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;" style-hover="background:var(--action-primary-hover);"><dc-import name="Icon" n="plus" size="16" hint-size="16px,16px"></dc-import>New conversation</button>
+      <div style="display:flex;align-items:center;gap:8px;height:36px;margin-top:10px;padding:0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);">
+        <span style="display:inline-flex;color:var(--color-neutral-500);"><dc-import name="Icon" n="search" size="15" hint-size="15px,15px"></dc-import></span>
+        <input value="{{ convQuery }}" onInput="{{ onConvQuery }}" placeholder="Search conversations" style="flex:1;min-width:0;border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:13px;color:var(--text-strong);" />
+      </div>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:0 8px 12px;">
+      <sc-for list="{{ convGroups }}" as="g" hint-placeholder-count="2">
+        <div style="padding:10px 8px 4px;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);display:flex;align-items:center;gap:6px;"><sc-if value="{{ g.pinned }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;"><dc-import name="Icon" n="pin" size="12" hint-size="12px,12px"></dc-import></span></sc-if>{{ g.label }}</div>
+        <sc-for list="{{ g.items }}" as="c" hint-placeholder-count="3">
+          <div onClick="{{ c.onSelect }}" style="display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--radius-md);background:{{ c.bg }};cursor:pointer;margin-bottom:2px;" style-hover="background:var(--color-neutral-100);">
+            <span style="display:inline-flex;color:{{ c.iconColor }};flex:none;"><dc-import name="Icon" n="messageSquare" size="15" hint-size="15px,15px"></dc-import></span>
+            <span style="flex:1;min-width:0;"><span style="display:block;font-size:13px;font-weight:{{ c.weight }};color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ c.title }}</span><span style="display:block;font-size:11px;color:var(--text-muted);">{{ c.time }}</span></span>
+            <button onClick="{{ c.onMenu }}" aria-label="Conversation options" style="width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;" style-hover="background:var(--color-neutral-200);"><dc-import name="Icon" n="moreHorizontal" size="15" hint-size="15px,15px"></dc-import></button>
+          </div>
+          <sc-if value="{{ c.menuOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="margin:0 8px 6px 34px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);box-shadow:var(--shadow-sm);overflow:hidden;">
+              <sc-for list="{{ convActions }}" as="a" hint-placeholder-count="5"><button onClick="{{ a.onClick }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:8px 11px;border:none;background:transparent;color:{{ a.color }};font-family:var(--font-sans);font-size:12.5px;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="{{ a.icon }}" size="14" hint-size="14px,14px"></dc-import>{{ a.label }}</button></sc-for>
+            </div>
+          </sc-if>
+        </sc-for>
+      </sc-for>
+    </div>
+    <div style="padding:10px 12px;border-top:1px solid var(--border-subtle);font-size:11px;color:var(--text-muted);display:flex;align-items:center;gap:7px;"><span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="layers" size="13" hint-size="13px,13px"></dc-import></span>Multi-agent · coming soon</div>
+  </aside>
+  </sc-if>
+
+  <!-- ===== COL 2 · CONVERSATION CANVAS ===== -->
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--surface-page);">
+
+    <!-- Canvas header: breadcrumbs, title, modes, role, dock toggles -->
+    <header style="flex:none;border-bottom:1px solid var(--border-subtle);background:var(--surface-card);">
+      <div style="display:flex;align-items:center;gap:10px;padding:11px 16px 9px;">
+        <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ openMobileRail }}" aria-label="Conversations" style="width:36px;height:36px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--color-neutral-700);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="messageSquare" size="17" hint-size="17px,17px"></dc-import></button></sc-if>
+        <sc-if value="{{ canToggleRail }}" hint-placeholder-val="{{ true }}"><button onClick="{{ toggleRail }}" aria-label="Toggle conversation list" style="width:34px;height:34px;border:none;border-radius:var(--radius-md);background:transparent;color:var(--color-neutral-600);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="panelLeft" size="17" hint-size="17px,17px"></dc-import></button></sc-if>
+        <div style="min-width:0;flex:1;">
+          <nav aria-label="Breadcrumb" style="display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-muted);"><span>AI workspace</span><span style="display:inline-flex;color:var(--color-neutral-400);"><dc-import name="Icon" n="chevronRight" size="12" hint-size="12px,12px"></dc-import></span><span style="color:var(--text-body);">{{ activeConvTitle }}</span></nav>
+          <h1 style="margin:1px 0 0;font-size:16px;font-weight:700;color:var(--text-strong);letter-spacing:-0.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ activeConvTitle }}</h1>
+        </div>
+        <label style="display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted);white-space:nowrap;">
+          <sc-if value="{{ wideEnough }}" hint-placeholder-val="{{ true }}"><span>Viewing as</span></sc-if>
+          <select value="{{ roleKey }}" onChange="{{ onRole }}" aria-label="Viewing as role" style="height:34px;padding:0 28px 0 11px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%235E7175%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22m6 9 6 6 6-6%22/></svg>');background-repeat:no-repeat;background-position:right 9px center;">
+            <sc-for list="{{ roleOptions }}" as="r" hint-placeholder-count="6"><option value="{{ r.key }}">{{ r.role }}</option></sc-for>
+          </select>
+        </label>
+        <button onClick="{{ toggleDock }}" aria-label="Toggle context panel" style="width:34px;height:34px;border:none;border-radius:var(--radius-md);background:{{ dockBtnBg }};color:{{ dockBtnColor }};display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="panelRight" size="17" hint-size="17px,17px"></dc-import></button>
+      </div>
+      <!-- Mode switcher -->
+      <div style="display:flex;align-items:center;gap:4px;padding:0 16px 9px;overflow-x:auto;">
+        <sc-for list="{{ modes }}" as="m" hint-placeholder-count="5">
+          <button onClick="{{ m.onClick }}" style="display:flex;align-items:center;gap:7px;padding:6px 13px;border:1px solid {{ m.border }};border-radius:999px;background:{{ m.bg }};color:{{ m.color }};font-family:var(--font-sans);font-size:12.5px;font-weight:{{ m.weight }};cursor:pointer;white-space:nowrap;flex:none;">
+            <dc-import name="Icon" n="{{ m.icon }}" size="14" hint-size="14px,14px"></dc-import>{{ m.label }}
+            <sc-if value="{{ m.soon }}" hint-placeholder-val="{{ false }}"><span style="font-size:9.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted);background:var(--color-neutral-100);border-radius:4px;padding:1px 5px;">soon</span></sc-if>
+          </button>
+        </sc-for>
+        <button onClick="{{ toggleNotes }}" style="margin-left:auto;display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid {{ notesBorder }};border-radius:999px;background:{{ notesBg }};color:{{ notesColor }};font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex:none;"><dc-import name="Icon" n="info" size="14" hint-size="14px,14px"></dc-import>Notes</button>
+      </div>
+    </header>
+
+    <!-- Mode placeholder banner (non-chat modes) -->
+    <sc-if value="{{ modeBanner }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:12px 18px 0;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.Callout" tone="info" title="{{ modeTitle }}" hint-size="100%,60px">{{ modeDesc }} The conversation, evidence and approval model below are shared — this mode reuses the same workspace.</x-import></div>
+    </sc-if>
+
+    <!-- TRANSCRIPT -->
+    <div ref="{{ scrollRef }}" role="log" aria-live="polite" aria-label="Conversation" style="flex:1;overflow-y:auto;">
+      <div style="max-width:780px;margin:0 auto;padding:20px 20px 8px;">
+
+        <!-- EMPTY STATE -->
+        <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:14px 0 6px;">
+            <div style="width:148px;height:84px;">{{ resolveMark }}</div>
+            <h2 style="margin:8px 0 4px;font-size:22px;font-weight:700;color:var(--text-strong);letter-spacing:-0.015em;">{{ greeting }}, {{ user.name }}</h2>
+            <p style="margin:0;font-size:14.5px;line-height:1.55;color:var(--text-muted);max-width:46ch;">Ask anything about {{ user.scopeNoun }} in plain English. Forevue surfaces what it finds with the evidence behind it — nothing is written back until you approve it.</p>
+          </div>
+
+          <!-- Daily brief -->
+          <div style="margin-top:18px;background:var(--surface-card);border:1px solid var(--color-amber-200);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;">
+            <div style="display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--border-subtle);"><span style="display:inline-flex;width:28px;height:28px;border-radius:7px;align-items:center;justify-content:center;background:var(--color-amber-50);color:var(--color-amber-700);flex:none;"><dc-import name="Icon" n="sparkles" size="15" hint-size="15px,15px"></dc-import></span><span style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--color-amber-700);flex:1;">Daily brief</span><span style="font-size:11.5px;color:var(--text-muted);">{{ todayLabel }}</span></div>
+            <div style="padding:14px 16px;font-size:14px;line-height:1.55;color:var(--text-body);">{{ user.brief }}</div>
+          </div>
+
+          <!-- Suggested prompts -->
+          <div style="margin-top:16px;"><div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Suggested prompts</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,228px),1fr));gap:10px;">
+              <sc-for list="{{ suggestedPrompts }}" as="p" hint-placeholder-count="4">
+                <button onClick="{{ p.onClick }}" style="display:flex;align-items:flex-start;gap:10px;padding:13px 14px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);cursor:pointer;text-align:left;" style-hover="border-color:var(--color-teal-300);">
+                  <span style="display:inline-flex;color:var(--color-deep-teal);flex:none;margin-top:1px;"><dc-import name="Icon" n="{{ p.icon }}" size="16" hint-size="16px,16px"></dc-import></span>
+                  <span style="font-size:13.5px;line-height:1.45;color:var(--text-body);">{{ p.text }}</span>
+                </button>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- Quick actions + recent -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:12px;margin-top:16px;">
+            <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:14px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Quick actions</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <sc-for list="{{ quickActions }}" as="q" hint-placeholder-count="3"><button onClick="{{ q.onClick }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:9px 10px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-page);color:var(--text-body);font-family:var(--font-sans);font-size:13px;cursor:pointer;text-align:left;" style-hover="border-color:var(--color-teal-300);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="{{ q.icon }}" size="15" hint-size="15px,15px"></dc-import></span><span style="flex:1;">{{ q.text }}</span></button></sc-for>
+              </div>
+            </div>
+            <div style="background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-lg);padding:14px;">
+              <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);margin-bottom:10px;">Recent activity</div>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <sc-for list="{{ recentActivity }}" as="a" hint-placeholder-count="3"><div style="display:flex;gap:9px;align-items:flex-start;"><span style="display:inline-flex;width:26px;height:26px;border-radius:7px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ a.icon }}" size="13" hint-size="13px,13px"></dc-import></span><div style="flex:1;min-width:0;"><div style="font-size:12.5px;color:var(--text-body);line-height:1.35;">{{ a.text }}</div><div style="font-size:11px;color:var(--text-muted);">{{ a.time }}</div></div></div></sc-for>
+              </div>
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- CONVERSATION TURNS -->
+        <sc-if value="{{ hasTurns }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:22px;padding-bottom:8px;">
+          <sc-for list="{{ turns }}" as="t" hint-placeholder-count="2">
+
+            <!-- USER TURN -->
+            <sc-if value="{{ t.isUser }}" hint-placeholder-val="{{ false }}">
+              <div style="align-self:flex-end;max-width:80%;">
+                <div style="background:var(--color-teal-600);color:#fff;padding:11px 15px;border-radius:16px 16px 4px 16px;font-size:14.5px;line-height:1.5;">{{ t.text }}</div>
+              </div>
+            </sc-if>
+
+            <!-- AI TURN -->
+            <sc-if value="{{ t.isAi }}" hint-placeholder-val="{{ true }}">
+              <div style="display:flex;gap:11px;">
+                <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;margin-top:2px;"><dc-import name="Icon" n="sparkles" size="16" hint-size="16px,16px"></dc-import></span>
+                <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;">
+
+                  <sc-for list="{{ t.blocks }}" as="b" hint-placeholder-count="3">
+
+                    <!-- task progress / tool run -->
+                    <sc-if value="{{ b.isTool }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid {{ b.border }};border-radius:var(--radius-md);background:var(--surface-card);overflow:hidden;">
+                        <div style="display:flex;align-items:center;gap:9px;padding:10px 13px;background:{{ b.headBg }};">
+                          <span style="display:inline-flex;color:{{ b.accent }};flex:none;{{ b.spin }}"><dc-import name="Icon" n="{{ b.headIcon }}" size="15" hint-size="15px,15px"></dc-import></span>
+                          <span style="flex:1;font-size:12.5px;font-weight:600;color:var(--text-strong);">{{ b.title }}</span>
+                          <span style="font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:{{ b.accent }};background:{{ b.badgeBg }};border-radius:5px;padding:2px 7px;">{{ b.stateLabel }}</span>
+                        </div>
+                        <div style="padding:6px 13px 11px;display:flex;flex-direction:column;gap:2px;">
+                          <sc-for list="{{ b.steps }}" as="s" hint-placeholder-count="3">
+                            <div style="display:flex;align-items:center;gap:9px;padding:5px 0;">
+                              <span style="display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;flex:none;color:{{ s.color }};{{ s.spin }}"><dc-import name="Icon" n="{{ s.icon }}" size="{{ s.iconSize }}" hint-size="15px,15px"></dc-import></span>
+                              <span style="flex:1;font-size:12.5px;color:{{ s.textColor }};">{{ s.label }}</span>
+                              <sc-if value="{{ s.hasMeta }}" hint-placeholder-val="{{ false }}"><span style="font-size:11px;color:var(--text-muted);font-variant-numeric:tabular-nums;">{{ s.meta }}</span></sc-if>
+                            </div>
+                          </sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <!-- text / markdown -->
+                    <sc-if value="{{ b.isText }}" hint-placeholder-val="{{ true }}">
+                      <div style="font-size:14.5px;line-height:1.62;color:var(--text-body);">{{ b.node }}<sc-if value="{{ b.caret }}" hint-placeholder-val="{{ false }}"><span style="display:inline-block;width:8px;height:17px;background:var(--color-deep-teal);margin-left:2px;vertical-align:-3px;animation:fvCaret 1s steps(1) infinite;border-radius:1px;"></span></sc-if></div>
+                    </sc-if>
+
+                    <!-- thinking shimmer -->
+                    <sc-if value="{{ b.isThinking }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:flex;flex-direction:column;gap:8px;">
+                        <div class="fv-shim" style="height:12px;width:92%;border-radius:6px;"></div>
+                        <div class="fv-shim" style="height:12px;width:78%;border-radius:6px;"></div>
+                        <div class="fv-shim" style="height:12px;width:85%;border-radius:6px;"></div>
+                      </div>
+                    </sc-if>
+
+                    <!-- table -->
+                    <sc-if value="{{ b.isTable }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);overflow:hidden;">
+                        <div style="display:flex;align-items:center;gap:7px;padding:8px 12px;background:var(--surface-page);border-bottom:1px solid var(--border-subtle);font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);"><span style="display:inline-flex;"><dc-import name="Icon" n="table" size="13" hint-size="13px,13px"></dc-import></span>{{ b.caption }}</div>
+                        <div style="overflow-x:auto;"><table style="width:100%;border-collapse:collapse;font-size:13px;">
+                          <thead><tr><sc-for list="{{ b.headers }}" as="h" hint-placeholder-count="3"><th style="text-align:{{ h.align }};padding:9px 12px;font-weight:600;color:var(--text-muted);border-bottom:1px solid var(--border-subtle);white-space:nowrap;">{{ h.label }}</th></sc-for></tr></thead>
+                          <tbody><sc-for list="{{ b.rows }}" as="r" hint-placeholder-count="3"><tr><sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="3"><td style="text-align:{{ c.align }};padding:9px 12px;border-bottom:1px solid var(--border-subtle);color:var(--text-body);font-variant-numeric:tabular-nums;vertical-align:middle;">
+                            <sc-if value="{{ c.isRisk }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;align-items:center;gap:6px;"><span style="display:inline-block;width:9px;height:9px;background:{{ c.riskColor }};{{ c.riskShape }}"></span><span style="font-weight:600;color:{{ c.riskColor }};">{{ c.text }}</span></span></sc-if>
+                            <sc-if value="{{ c.isText }}" hint-placeholder-val="{{ true }}">{{ c.text }}</sc-if>
+                          </td></sc-for></tr></sc-for></tbody>
+                        </table></div>
+                      </div>
+                    </sc-if>
+
+                    <!-- chart -->
+                    <sc-if value="{{ b.isChart }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:14px 15px 10px;background:var(--surface-card);">
+                        <div style="display:flex;align-items:center;gap:7px;margin-bottom:14px;font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);"><span style="display:inline-flex;"><dc-import name="Icon" n="barChart" size="13" hint-size="13px,13px"></dc-import></span>{{ b.caption }}</div>
+                        <div style="display:flex;align-items:flex-end;gap:10px;height:118px;padding-bottom:22px;position:relative;">
+                          <sc-for list="{{ b.bars }}" as="bar" hint-placeholder-count="5"><div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:6px;"><span style="font-size:11px;font-weight:700;color:{{ bar.labelColor }};font-variant-numeric:tabular-nums;">{{ bar.value }}</span><div style="width:100%;height:{{ bar.h }};background:{{ bar.fill }};border-radius:5px 5px 0 0;"></div><span style="position:absolute;bottom:0;font-size:10.5px;color:var(--text-muted);">{{ bar.label }}</span></div></sc-for>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <!-- data cards -->
+                    <sc-if value="{{ b.isStats }}" hint-placeholder-val="{{ false }}">
+                      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;">
+                        <sc-for list="{{ b.stats }}" as="st" hint-placeholder-count="3"><div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:12px 14px;background:var(--surface-card);"><x-import component-from-global-scope="ForevueDesignSystem_24f415.DataStat" value="{{ st.value }}" label="{{ st.label }}" sub="{{ st.sub }}" hint-size="100%,64px"></x-import></div></sc-for>
+                      </div>
+                    </sc-if>
+
+                    <!-- code -->
+                    <sc-if value="{{ b.isCode }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);overflow:hidden;background:var(--color-midnight-teal);">
+                        <div style="display:flex;align-items:center;gap:7px;padding:8px 12px;border-bottom:1px solid rgba(255,255,255,0.08);"><span style="display:inline-flex;color:#86CFD4;"><dc-import name="Icon" n="code" size="13" hint-size="13px,13px"></dc-import></span><span style="flex:1;font-size:11px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#7FA8AC;">{{ b.lang }}</span><button onClick="{{ b.onCopy }}" aria-label="Copy code" style="border:none;background:transparent;color:#9FC4C7;display:flex;align-items:center;cursor:pointer;"><dc-import name="Icon" n="copy" size="14" hint-size="14px,14px"></dc-import></button></div>
+                        <pre style="margin:0;padding:13px 14px;overflow-x:auto;font-family:var(--font-data, ui-monospace, monospace);font-size:12.5px;line-height:1.6;color:#D7E7E7;">{{ b.code }}</pre>
+                      </div>
+                    </sc-if>
+
+                    <!-- approval card (human in control) -->
+                    <sc-if value="{{ b.isApproval }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid var(--color-amber-200);border-radius:var(--radius-md);overflow:hidden;background:var(--surface-card);box-shadow:var(--shadow-sm);">
+                        <div style="display:flex;align-items:center;gap:9px;padding:11px 14px;background:var(--color-amber-50);border-bottom:1px solid var(--color-amber-200);"><span style="display:inline-flex;color:var(--color-amber-700);"><dc-import name="Icon" n="shield" size="16" hint-size="16px,16px"></dc-import></span><span style="flex:1;font-size:13px;font-weight:700;color:var(--color-amber-700);">Human approval required</span></div>
+                        <div style="padding:14px;">
+                          <div style="font-size:14px;font-weight:600;color:var(--text-strong);margin-bottom:4px;">{{ b.title }}</div>
+                          <p style="margin:0 0 12px;font-size:13.5px;line-height:1.5;color:var(--text-muted);">{{ b.summary }}</p>
+                          <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:14px;">
+                            <sc-for list="{{ b.changes }}" as="ch" hint-placeholder-count="2"><div style="display:flex;align-items:center;gap:9px;padding:9px 12px;border-bottom:1px solid var(--border-subtle);font-size:12.5px;"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="arrowRight" size="13" hint-size="13px,13px"></dc-import></span><span style="flex:1;color:var(--text-body);">{{ ch.label }}</span><span style="color:var(--text-muted);">{{ ch.value }}</span></div></sc-for>
+                          </div>
+                          <sc-if value="{{ b.pending }}" hint-placeholder-val="{{ true }}">
+                          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="sm" onClick="{{ b.onApprove }}" hint-size="100px,32px">Approve</x-import>
+                            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="secondary" size="sm" onClick="{{ b.onPreview }}" hint-size="120px,32px">Preview changes</x-import>
+                            <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="sm" onClick="{{ b.onEdit }}" hint-size="130px,32px">Edit before apply</x-import>
+                            <button onClick="{{ b.onReject }}" style="margin-left:auto;border:none;background:transparent;color:var(--color-risk-high);font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;">Reject</button>
+                          </div>
+                          </sc-if>
+                          <sc-if value="{{ b.resolved }}" hint-placeholder-val="{{ false }}">
+                            <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:{{ b.resolvedColor }};"><span style="display:inline-flex;"><dc-import name="Icon" n="{{ b.resolvedIcon }}" size="15" hint-size="15px,15px"></dc-import></span>{{ b.resolvedLabel }}</div>
+                          </sc-if>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                    <!-- evidence tray -->
+                    <sc-if value="{{ b.isEvidence }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-page);overflow:hidden;">
+                        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:11px 13px;">
+                          <span style="display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:{{ b.confColor }};"><span style="display:inline-block;width:9px;height:9px;background:{{ b.confColor }};{{ b.confShape }}"></span>{{ b.confLabel }} confidence</span>
+                          <span style="display:inline-flex;align-items:center;gap:5px;font-size:11.5px;color:var(--text-muted);"><span style="display:inline-flex;"><dc-import name="Icon" n="clock" size="13" hint-size="13px,13px"></dc-import></span>Updated {{ b.updated }}</span>
+                          <button onClick="{{ b.onToggle }}" style="margin-left:auto;display:flex;align-items:center;gap:5px;border:none;background:transparent;color:var(--text-link);font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;"><dc-import name="Icon" n="{{ b.toggleIcon }}" size="14" hint-size="14px,14px"></dc-import>{{ b.toggleLabel }}</button>
+                        </div>
+                        <div style="padding:0 13px 12px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.EvidenceCite" sources="{{ b.sources }}" label="Based on" hint-size="100%,30px"></x-import></div>
+                        <sc-if value="{{ b.expanded }}" hint-placeholder-val="{{ false }}">
+                          <div style="padding:12px 13px;border-top:1px solid var(--border-subtle);background:var(--surface-card);">
+                            <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;">Reasoning summary</div>
+                            <ol style="margin:0;padding-left:18px;display:flex;flex-direction:column;gap:5px;font-size:13px;line-height:1.5;color:var(--text-body);">
+                              <sc-for list="{{ b.reasoning }}" as="rs" hint-placeholder-count="3"><li>{{ rs }}</li></sc-for>
+                            </ol>
+                          </div>
+                        </sc-if>
+                      </div>
+                    </sc-if>
+
+                    <!-- artifact reference -->
+                    <sc-if value="{{ b.isArtifact }}" hint-placeholder-val="{{ false }}">
+                      <button onClick="{{ b.onOpen }}" style="display:flex;align-items:center;gap:12px;width:100%;padding:13px 15px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);cursor:pointer;text-align:left;" style-hover="border-color:var(--color-teal-300);">
+                        <span style="display:inline-flex;width:38px;height:38px;border-radius:9px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ b.icon }}" size="19" hint-size="19px,19px"></dc-import></span>
+                        <span style="flex:1;min-width:0;"><span style="display:block;font-size:13.5px;font-weight:600;color:var(--text-strong);">{{ b.title }}</span><span style="display:block;font-size:12px;color:var(--text-muted);">{{ b.meta }}</span></span>
+                        <span style="display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--color-deep-teal);">Open<dc-import name="Icon" n="maximize" size="14" hint-size="14px,14px"></dc-import></span>
+                      </button>
+                    </sc-if>
+
+                    <!-- error -->
+                    <sc-if value="{{ b.isError }}" hint-placeholder-val="{{ false }}">
+                      <div style="border:1px solid {{ b.errBorder }};border-radius:var(--radius-md);background:{{ b.errBg }};padding:13px 15px;">
+                        <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;"><span style="display:inline-flex;color:{{ b.errColor }};"><dc-import name="Icon" n="{{ b.errIcon }}" size="17" hint-size="17px,17px"></dc-import></span><span style="font-size:13.5px;font-weight:700;color:{{ b.errColor }};">{{ b.errTitle }}</span></div>
+                        <p style="margin:0 0 11px;font-size:13.5px;line-height:1.5;color:var(--text-body);">{{ b.errBody }}</p>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                          <sc-if value="{{ b.errRetry }}" hint-placeholder-val="{{ true }}"><button onClick="{{ b.onRetry }}" style="display:flex;align-items:center;gap:6px;border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:12.5px;font-weight:600;padding:6px 12px;border-radius:8px;cursor:pointer;"><dc-import name="Icon" n="refresh" size="13" hint-size="13px,13px"></dc-import>Try again</button></sc-if>
+                          <span style="font-size:12px;color:var(--text-muted);">{{ b.errHint }}</span>
+                        </div>
+                      </div>
+                    </sc-if>
+
+                  </sc-for>
+
+                  <!-- AI turn footer: follow-ups + actions -->
+                  <sc-if value="{{ t.hasFollowups }}" hint-placeholder-val="{{ false }}">
+                    <div style="display:flex;flex-wrap:wrap;gap:7px;margin-top:2px;">
+                      <sc-for list="{{ t.followups }}" as="f" hint-placeholder-count="3"><button onClick="{{ f.onClick }}" style="display:flex;align-items:center;gap:6px;border:1px solid var(--border-default);background:var(--surface-card);color:var(--text-body);font-family:var(--font-sans);font-size:12.5px;padding:6px 12px;border-radius:999px;cursor:pointer;" style-hover="border-color:var(--color-teal-300);"><dc-import name="Icon" n="arrowRight" size="13" hint-size="13px,13px"></dc-import>{{ f.text }}</button></sc-for>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ t.hasActions }}" hint-placeholder-val="{{ true }}">
+                    <div style="display:flex;align-items:center;gap:2px;margin-top:1px;">
+                      <button onClick="{{ t.onCopy }}" aria-label="Copy" style="display:flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:12px;padding:5px 9px;border-radius:7px;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="copy" size="14" hint-size="14px,14px"></dc-import>Copy</button>
+                      <button onClick="{{ t.onRegen }}" aria-label="Regenerate" style="display:flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:12px;padding:5px 9px;border-radius:7px;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="refresh" size="14" hint-size="14px,14px"></dc-import>Regenerate</button>
+                      <button onClick="{{ t.onShareArtifact }}" aria-label="Share" style="display:flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--text-muted);font-family:var(--font-sans);font-size:12px;padding:5px 9px;border-radius:7px;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="share" size="14" hint-size="14px,14px"></dc-import>Share</button>
+                    </div>
+                  </sc-if>
+                </div>
+              </div>
+            </sc-if>
+
+          </sc-for>
+        </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <!-- COMPOSER -->
+    <div style="flex:none;border-top:1px solid var(--border-subtle);background:var(--surface-card);padding:12px 16px 14px;">
+      <div style="max-width:780px;margin:0 auto;position:relative;">
+
+        <!-- slash command menu -->
+        <sc-if value="{{ slashOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;bottom:calc(100% + 8px);left:0;width:300px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);overflow:hidden;z-index:6;animation:fvRise var(--duration-fast) var(--ease-standard);">
+            <div style="padding:8px 12px 4px;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Slash commands</div>
+            <sc-for list="{{ slashCommands }}" as="sc" hint-placeholder-count="4"><button onClick="{{ sc.onClick }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:9px 12px;border:none;background:transparent;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><span style="display:inline-flex;width:26px;height:26px;border-radius:7px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ sc.icon }}" size="14" hint-size="14px,14px"></dc-import></span><span style="flex:1;min-width:0;"><span style="display:block;font-size:13px;font-weight:600;color:var(--text-strong);">{{ sc.cmd }}</span><span style="display:block;font-size:11.5px;color:var(--text-muted);">{{ sc.desc }}</span></span></button></sc-for>
+          </div>
+        </sc-if>
+
+        <!-- prompt history pill -->
+        <sc-if value="{{ historyOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="position:absolute;bottom:calc(100% + 8px);right:0;width:320px;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-lg);overflow:hidden;z-index:6;animation:fvRise var(--duration-fast) var(--ease-standard);">
+            <div style="padding:8px 12px 4px;font-size:10.5px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);">Prompt history</div>
+            <sc-for list="{{ promptHistory }}" as="ph" hint-placeholder-count="3"><button onClick="{{ ph.onClick }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:9px 12px;border:none;background:transparent;cursor:pointer;text-align:left;" style-hover="background:var(--color-neutral-100);"><span style="display:inline-flex;color:var(--color-neutral-500);flex:none;"><dc-import name="Icon" n="clock" size="14" hint-size="14px,14px"></dc-import></span><span style="flex:1;min-width:0;font-size:13px;color:var(--text-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ ph.text }}</span></button></sc-for>
+          </div>
+        </sc-if>
+
+        <div style="border:1px solid {{ composerBorder }};border-radius:var(--radius-lg);background:var(--surface-card);box-shadow:var(--shadow-xs);overflow:hidden;transition:border-color var(--duration-fast) var(--ease-standard);">
+          <textarea ref="{{ composerRef }}" value="{{ composer }}" onInput="{{ onComposer }}" onKeyDown="{{ onComposerKey }}" placeholder="{{ composerPlaceholder }}" rows="1" style="display:block;width:100%;resize:none;border:none;outline:none;background:transparent;font-family:var(--font-sans);font-size:14.5px;line-height:1.5;color:var(--text-strong);padding:13px 15px 4px;max-height:160px;"></textarea>
+          <div style="display:flex;align-items:center;gap:4px;padding:7px 10px 9px;">
+            <button onClick="{{ toggleSlash }}" aria-label="Slash commands" title="Slash commands" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--color-neutral-600);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="slash" size="17" hint-size="17px,17px"></dc-import></button>
+            <button aria-label="Attach file (coming soon)" title="Attach file — coming soon" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="paperclip" size="17" hint-size="17px,17px"></dc-import></button>
+            <button aria-label="Voice input (coming soon)" title="Voice — coming soon" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="mic" size="17" hint-size="17px,17px"></dc-import></button>
+            <button onClick="{{ toggleHistory }}" aria-label="Prompt history" title="Prompt history" style="width:34px;height:34px;border:none;border-radius:8px;background:transparent;color:var(--color-neutral-600);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="clock" size="17" hint-size="17px,17px"></dc-import></button>
+            <span style="margin-left:auto;font-size:11px;color:var(--text-muted);white-space:nowrap;">{{ composerHint }}</span>
+            <sc-if value="{{ isStreaming }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ stopGen }}" style="display:flex;align-items:center;gap:7px;height:36px;padding:0 14px;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-card);color:var(--text-strong);font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;margin-left:8px;"><dc-import name="Icon" n="stop" size="14" hint-size="14px,14px"></dc-import>Stop</button>
+            </sc-if>
+            <sc-if value="{{ notStreaming }}" hint-placeholder-val="{{ true }}">
+              <button onClick="{{ sendPrompt }}" aria-label="Send" style="display:flex;align-items:center;justify-content:center;width:36px;height:36px;border:none;border-radius:var(--radius-md);background:{{ sendBg }};color:#fff;cursor:{{ sendCursor }};margin-left:8px;flex:none;"><dc-import name="Icon" n="send" size="17" hint-size="17px,17px"></dc-import></button>
+            </sc-if>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:8px;font-size:11px;color:var(--text-muted);"><span style="display:inline-flex;"><dc-import name="Icon" n="shield" size="12" hint-size="12px,12px"></dc-import></span>Advisory &amp; grounded · least-privilege · nothing is written back until you approve.</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ===== COL 3 · CONTEXT DOCK ===== -->
+  <sc-if value="{{ showDock }}" hint-placeholder-val="{{ true }}">
+  <aside aria-label="Context and tools" style="{{ dockStyle }}">
+    <div style="display:flex;align-items:center;gap:2px;padding:8px 8px 0;border-bottom:1px solid var(--border-subtle);overflow-x:auto;flex:none;">
+      <sc-for list="{{ dockTabs }}" as="dt" hint-placeholder-count="5"><button onClick="{{ dt.onClick }}" style="display:flex;align-items:center;gap:6px;padding:9px 11px;border:none;border-bottom:2px solid {{ dt.under }};background:transparent;color:{{ dt.color }};font-family:var(--font-sans);font-size:12.5px;font-weight:{{ dt.weight }};cursor:pointer;white-space:nowrap;"><dc-import name="Icon" n="{{ dt.icon }}" size="14" hint-size="14px,14px"></dc-import>{{ dt.label }}</button></sc-for>
+      <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}"><button onClick="{{ closeDock }}" aria-label="Close" style="margin-left:auto;width:32px;height:32px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="x" size="17" hint-size="17px,17px"></dc-import></button></sc-if>
+    </div>
+    <div style="flex:1;overflow-y:auto;padding:14px;">
+
+      <!-- CONTEXT TAB -->
+      <sc-if value="{{ dockContext }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px;"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);flex:1;">In context</span><span style="font-size:11px;color:var(--text-muted);">{{ user.role }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ contextItems }}" as="ci" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);">
+                  <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ ci.icon }}" size="15" hint-size="15px,15px"></dc-import></span>
+                  <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text-strong);">{{ ci.label }}</div><div style="font-size:11.5px;color:var(--text-muted);">{{ ci.meta }}</div></div>
+                  <sc-if value="{{ ci.consent }}" hint-placeholder-val="{{ false }}"><x-import component-from-global-scope="ForevueDesignSystem_24f415.ConsentTag" state="required" size="sm" hint-size="92px,22px"></x-import></sc-if>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div style="padding:11px 12px;border:1px dashed var(--border-default);border-radius:var(--radius-md);font-size:12px;line-height:1.5;color:var(--text-muted);">Context is scoped to your role and least-privilege. The AI only uses what is listed here, and you can remove any item.</div>
+        </div>
+      </sc-if>
+
+      <!-- CAPABILITIES TAB -->
+      <sc-if value="{{ dockCapabilities }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:2px;">Capabilities</div>
+          <sc-for list="{{ capabilities }}" as="cap" hint-placeholder-count="6">
+            <button onClick="{{ cap.onClick }}" style="display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);cursor:pointer;text-align:left;" style-hover="border-color:var(--color-teal-300);">
+              <span style="display:inline-flex;width:32px;height:32px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="{{ cap.icon }}" size="16" hint-size="16px,16px"></dc-import></span>
+              <span style="flex:1;min-width:0;"><span style="display:block;font-size:13px;font-weight:600;color:var(--text-strong);">{{ cap.label }}</span><span style="display:block;font-size:11.5px;color:var(--text-muted);">{{ cap.desc }}</span></span>
+              <sc-if value="{{ cap.gated }}" hint-placeholder-val="{{ false }}"><span style="display:inline-flex;color:var(--color-amber-700);flex:none;" title="Requires approval"><dc-import name="Icon" n="lock" size="14" hint-size="14px,14px"></dc-import></span></sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- SKILLS / TOOLS TAB -->
+      <sc-if value="{{ dockTools }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Connected tools</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <sc-for list="{{ connectedTools }}" as="tl" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);">
+                  <span style="display:inline-flex;width:30px;height:30px;border-radius:8px;align-items:center;justify-content:center;background:var(--color-neutral-100);color:var(--color-neutral-700);flex:none;"><dc-import name="Icon" n="{{ tl.icon }}" size="15" hint-size="15px,15px"></dc-import></span>
+                  <div style="flex:1;min-width:0;"><div style="font-size:13px;font-weight:600;color:var(--text-strong);">{{ tl.label }}</div><div style="font-size:11.5px;color:var(--text-muted);">{{ tl.meta }}</div></div>
+                  <span style="display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:{{ tl.statusColor }};"><span style="width:7px;height:7px;border-radius:50%;background:{{ tl.statusColor }};"></span>{{ tl.status }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px;">Skills</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;">
+              <sc-for list="{{ skills }}" as="sk" hint-placeholder-count="6"><span style="display:inline-flex;align-items:center;gap:6px;padding:6px 11px;border:1px solid var(--border-default);border-radius:999px;background:var(--surface-card);font-size:12px;color:var(--text-body);"><span style="display:inline-flex;color:var(--color-deep-teal);"><dc-import name="Icon" n="{{ sk.icon }}" size="13" hint-size="13px,13px"></dc-import></span>{{ sk.label }}</span></sc-for>
+            </div>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:9px;padding:11px 12px;border:1px dashed var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);"><span style="display:inline-flex;color:var(--color-neutral-500);flex:none;margin-top:1px;"><dc-import name="Icon" n="layers" size="15" hint-size="15px,15px"></dc-import></span><div style="font-size:12px;line-height:1.5;color:var(--text-muted);"><span style="font-weight:600;color:var(--text-body);">Multi-agent orchestration</span> — an extension point. Skills can later be delegated to specialist agents without changing this workspace.</div></div>
+        </div>
+      </sc-if>
+
+      <!-- MEMORY TAB -->
+      <sc-if value="{{ dockMemory }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:12px;">
+          <div style="display:flex;align-items:center;gap:8px;"><span style="font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--text-muted);flex:1;">AI memory</span><button onClick="{{ clearMemory }}" style="border:none;background:transparent;color:var(--color-risk-high);font-family:var(--font-sans);font-size:12px;font-weight:600;cursor:pointer;">Clear all</button></div>
+          <sc-for list="{{ memoryItems }}" as="mi" hint-placeholder-count="4">
+            <div style="border:1px solid var(--border-subtle);border-radius:var(--radius-md);background:var(--surface-card);padding:11px 12px;">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;"><span style="font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:{{ mi.tagColor }};background:{{ mi.tagBg }};border-radius:5px;padding:1px 7px;">{{ mi.tag }}</span><button onClick="{{ mi.onClear }}" aria-label="Forget" style="margin-left:auto;width:24px;height:24px;border:none;border-radius:6px;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;" style-hover="background:var(--color-neutral-100);"><dc-import name="Icon" n="x" size="13" hint-size="13px,13px"></dc-import></button></div>
+              <div style="font-size:13px;line-height:1.45;color:var(--text-body);">{{ mi.text }}</div>
+            </div>
+          </sc-for>
+          <div style="font-size:12px;line-height:1.5;color:var(--text-muted);padding:2px 2px;">Memory is visible and revocable. Temporary context clears when the conversation ends.</div>
+        </div>
+      </sc-if>
+    </div>
+  </aside>
+  </sc-if>
+
+  <!-- ===== ARTIFACT WORKSPACE ===== -->
+  <sc-if value="{{ artifactOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeArtifact }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.40);z-index:60;animation:fvFade var(--duration-fast) var(--ease-standard);"></div>
+    <aside aria-label="Artifact" style="position:fixed;top:0;right:0;bottom:0;width:min(760px,100vw);background:var(--surface-card);border-left:1px solid var(--border-subtle);box-shadow:var(--shadow-lg);z-index:61;display:flex;flex-direction:column;animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+      <div style="display:flex;align-items:center;gap:11px;padding:14px 18px;border-bottom:1px solid var(--border-subtle);flex:none;">
+        <span style="display:inline-flex;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;background:var(--color-teal-50);color:var(--color-deep-teal);flex:none;"><dc-import name="Icon" n="fileText" size="18" hint-size="18px,18px"></dc-import></span>
+        <div style="flex:1;min-width:0;"><h2 style="margin:0;font-size:15.5px;font-weight:700;color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ artifactTitle }}</h2><div style="font-size:11.5px;color:var(--text-muted);">{{ artifactMeta }}</div></div>
+        <div style="display:flex;align-items:center;gap:2px;background:var(--surface-page);border:1px solid var(--border-subtle);border-radius:var(--radius-md);padding:3px;">
+          <button onClick="{{ setArtifactPreview }}" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:none;border-radius:7px;background:{{ artPreviewBg }};color:{{ artPreviewColor }};font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;"><dc-import name="Icon" n="eye" size="14" hint-size="14px,14px"></dc-import>Preview</button>
+          <button onClick="{{ setArtifactEdit }}" style="display:flex;align-items:center;gap:6px;padding:6px 12px;border:none;border-radius:7px;background:{{ artEditBg }};color:{{ artEditColor }};font-family:var(--font-sans);font-size:12.5px;font-weight:600;cursor:pointer;"><dc-import name="Icon" n="edit" size="14" hint-size="14px,14px"></dc-import>Edit</button>
+        </div>
+        <button onClick="{{ closeArtifact }}" aria-label="Close" style="width:32px;height:32px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="x" size="18" hint-size="18px,18px"></dc-import></button>
+      </div>
+      <div style="flex:1;overflow-y:auto;background:var(--surface-page);padding:22px;">
+        <div style="max-width:600px;margin:0 auto;background:var(--surface-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);box-shadow:var(--shadow-sm);padding:32px 34px;">
+          <sc-if value="{{ artifactEditing }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-deep-teal);margin-bottom:10px;">Editing draft</div>
+            <textarea value="{{ artifactBody }}" onInput="{{ onArtifactBody }}" style="width:100%;min-height:340px;resize:vertical;border:1px solid var(--border-default);border-radius:var(--radius-md);background:var(--surface-page);font-family:var(--font-sans);font-size:14px;line-height:1.7;color:var(--text-strong);padding:14px;outline:none;"></textarea>
+          </sc-if>
+          <sc-if value="{{ artifactPreviewing }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--text-muted);">{{ artifactKicker }}</div>
+            <h1 style="margin:6px 0 4px;font-size:23px;font-weight:700;color:var(--text-strong);letter-spacing:-0.015em;">{{ artifactHeading }}</h1>
+            <div style="font-size:12.5px;color:var(--text-muted);margin-bottom:18px;">{{ artifactMeta }}</div>
+            <div style="font-size:14.5px;line-height:1.75;color:var(--text-body);white-space:pre-wrap;">{{ artifactBody }}</div>
+            <div style="margin-top:20px;"><x-import component-from-global-scope="ForevueDesignSystem_24f415.EvidenceCite" sources="{{ artifactSources }}" label="Based on" hint-size="100%,30px"></x-import></div>
+          </sc-if>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;padding:12px 18px;border-top:1px solid var(--border-subtle);flex:none;">
+        <span style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px;"><span style="display:inline-flex;"><dc-import name="Icon" n="shield" size="13" hint-size="13px,13px"></dc-import></span>Draft — owned by you. Nothing is shared until you export or approve.</span>
+        <div style="margin-left:auto;display:flex;align-items:center;gap:8px;">
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="ghost" size="sm" hint-size="84px,32px">Export</x-import>
+          <x-import component-from-global-scope="ForevueDesignSystem_24f415.Button" variant="primary" size="sm" hint-size="120px,32px">Save draft</x-import>
+        </div>
+      </div>
+    </aside>
+  </sc-if>
+
+  <!-- ===== NOTES (annotations) LAYER ===== -->
+  <sc-if value="{{ notesOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--color-midnight-teal);color:#D7E7E7;border-top:1px solid rgba(255,255,255,0.1);animation:fvSlideR var(--duration-normal) var(--ease-standard);">
+      <div style="max-width:1180px;margin:0 auto;padding:13px 18px;display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#86CFD4;"><span style="display:inline-flex;"><dc-import name="Icon" n="info" size="15" hint-size="15px,15px"></dc-import></span>Notes</div>
+        <div style="flex:1;min-width:200px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:6px 22px;font-size:12px;line-height:1.5;color:#B9D2D2;">
+          <div><span style="color:#fff;font-weight:600;">Components ·</span> every block (turn, tool-run, evidence, approval, artifact) composes from the DS bundle — DataStat, EvidenceCite, ConsentTag, Callout, Button, Tabs.</div>
+          <div><span style="color:#fff;font-weight:600;">AI UX ·</span> grounded-or-abstain; writes always gate through an approval card; amber spent once per view on the moment that needs your eye.</div>
+          <div><span style="color:#fff;font-weight:600;">Responsive ·</span> 3 panes ≥1200px → dock becomes a drawer on tablet → rail + dock become sheets on mobile, canvas stays primary.</div>
+          <div><span style="color:#fff;font-weight:600;">A11y ·</span> log/aria-live transcript, colour+shape+label status, full keyboard path (⌘K, ⌘↵, Esc, slash-menu), AA contrast both themes.</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex:none;">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#7FA8AC;">Jump to state</div>
+          <div style="display:flex;flex-wrap:wrap;gap:5px;max-width:300px;">
+            <sc-for list="{{ stateChips }}" as="sch" hint-placeholder-count="5"><button onClick="{{ sch.onClick }}" style="padding:4px 10px;border:1px solid {{ sch.border }};border-radius:999px;background:{{ sch.bg }};color:{{ sch.color }};font-family:var(--font-sans);font-size:11.5px;font-weight:600;cursor:pointer;">{{ sch.label }}</button></sc-for>
+          </div>
+        </div>
+        <button onClick="{{ toggleNotes }}" aria-label="Close notes" style="width:30px;height:30px;border:none;border-radius:7px;background:rgba(255,255,255,0.08);color:#D7E7E7;display:flex;align-items:center;justify-content:center;cursor:pointer;flex:none;"><dc-import name="Icon" n="x" size="16" hint-size="16px,16px"></dc-import></button>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ===== MOBILE OVERLAYS (rail / dock as sheets) ===== -->
+  <sc-if value="{{ mobileRailOpen }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeMobile }}" style="position:fixed;inset:0;background:rgba(6,54,59,0.45);z-index:62;animation:fvFade var(--duration-normal) var(--ease-standard);"></div>
+    <aside style="position:fixed;top:0;left:0;bottom:0;width:280px;background:var(--surface-card);z-index:63;display:flex;flex-direction:column;animation:fvSlideR var(--duration-normal) var(--ease-standard);border-right:1px solid var(--border-subtle);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px;border-bottom:1px solid var(--border-subtle);"><span style="font-size:14px;font-weight:700;color:var(--text-strong);">Conversations</span><button onClick="{{ closeMobile }}" aria-label="Close" style="width:32px;height:32px;border:none;background:transparent;color:var(--color-neutral-500);display:flex;align-items:center;justify-content:center;cursor:pointer;"><dc-import name="Icon" n="x" size="18" hint-size="18px,18px"></dc-import></button></div>
+      <div style="flex:1;overflow-y:auto;padding:10px;">
+        <button onClick="{{ newConversation }}" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:10px;border:1px solid var(--color-teal);border-radius:var(--radius-md);background:var(--action-primary);color:#fff;font-family:var(--font-sans);font-size:13.5px;font-weight:600;cursor:pointer;margin-bottom:10px;"><dc-import name="Icon" n="plus" size="16" hint-size="16px,16px"></dc-import>New conversation</button>
+        <sc-for list="{{ flatConvs }}" as="c" hint-placeholder-count="4"><button onClick="{{ c.onSelect }}" style="display:flex;align-items:center;gap:9px;width:100%;padding:10px;border:none;border-radius:var(--radius-md);background:{{ c.bg }};cursor:pointer;text-align:left;margin-bottom:2px;"><span style="display:inline-flex;color:{{ c.iconColor }};"><dc-import name="Icon" n="messageSquare" size="15" hint-size="15px,15px"></dc-import></span><span style="flex:1;min-width:0;font-size:13px;font-weight:{{ c.weight }};color:var(--text-strong);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ c.title }}</span></button></sc-for>
+      </div>
+    </aside>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;}}">
+class Component extends DCLogic {
+  state = {
+    roleKey: "faculty", theme: "light", mode: "chat",
+    railOpen: true, dockOpen: true, dockTab: "context",
+    mobileRailOpen: false,
+    activeConv: "c1", convMenu: null, convQuery: "",
+    view: "conversation",
+    turns: null,
+    composer: "", slashOpen: false, historyOpen: false,
+    streaming: false,
+    artifactOpen: false, artifactMode: "preview", artifactBody: "",
+    notesOn: false,
+    evidenceExpanded: {},
+    layout: "wide"
+  };
+  rootRef = React.createRef();
+  scrollRef = React.createRef();
+  composerRef = React.createRef();
+  timers = [];
+
+  roles = {
+    student: { name: "Aarav", initials: "AA", role: "Student", scopeNoun: "your courses and progress",
+      brief: "You have 2 assignments due this week and your attendance is steady. One course needs a catch-up before Friday.",
+      context: [["Student profile", "Aarav · CSE, Sem 4", "user", true], ["Current semester", "Semester 4 · 6 courses", "bookOpen", false], ["Attendance", "Register · this term", "checkCheck", true], ["Courses", "6 enrolled", "folder", false]] },
+    faculty: { name: "A. Sharma", initials: "AS", role: "Faculty", scopeNoun: "your sections and students",
+      brief: "Across your 3 sections, attendance held steady this week. Two students in CSE-3 slipped below the line and may need a check-in.",
+      context: [["Assigned courses", "3 sections · CSE", "bookOpen", false], ["Students", "96 in scope", "users", true], ["Department", "Computer Science", "folder", false], ["This term", "Semester 4", "clock", false]] },
+    hod: { name: "Dr. Rao", initials: "DR", role: "Head of Department", scopeNoun: "the department",
+      brief: "Department attendance is at 81%. Three sections are trending down after the mid-sem break; two staff have pending approvals.",
+      context: [["Department", "Computer Science", "folder", false], ["Faculty", "18 staff", "users", false], ["Students", "412 in scope", "users", true], ["KPIs", "This term", "barChart", false]] },
+    academic: { name: "Dr. Menon", initials: "DM", role: "Academic Head", scopeNoun: "all programs",
+      brief: "Across programs, completion sits at 84%. Two departments are below target on attendance; accreditation evidence is up to date.",
+      context: [["Programs", "All · 6 departments", "folder", false], ["Departments", "6", "grid", false], ["Students", "1.6k in scope", "users", true], ["KPI summary", "This term", "barChart", false]] },
+    director: { name: "Dr. Iyer", initials: "DI", role: "Director", scopeNoun: "the institution",
+      brief: "Institution health is steady at 86% on track. One program needs attention; the accreditation cycle is on schedule.",
+      context: [["Institution", "Northfield · all", "shield", false], ["KPI summary", "Institution-wide", "barChart", false], ["Programs", "6 departments", "folder", false], ["Students", "4.2k in scope", "users", true]] },
+    placement: { name: "Placement Cell", initials: "PC", role: "Placement Cell", scopeNoun: "candidates and drives",
+      brief: "356 candidates are in process this season. 31 profiles need a review before the next drive; offer conversion is up.",
+      context: [["Candidates", "780 in scope", "users", true], ["Drives", "Season · active", "clipboard", false], ["Companies", "Partners", "folder", false], ["Conversion", "This season", "barChart", false]] }
+  };
+
+  darkVars = {
+    "--surface-page": "#082E33", "--surface-card": "#0C434A", "--surface-sunken": "#0A3A40",
+    "--border-subtle": "#16555E", "--border-default": "#1E6670", "--border-strong": "#2A7882",
+    "--text-strong": "#ECF5F4", "--text-body": "#C2D6D6", "--text-muted": "#8AAEAF", "--color-ink": "#ECF5F4",
+    "--color-neutral-50": "#0E4A52", "--color-neutral-100": "#11525B", "--color-neutral-200": "#16555E",
+    "--color-neutral-300": "#1E6670", "--color-neutral-400": "#5E8A8E", "--color-neutral-500": "#8AAEAF", "--color-neutral-600": "#A6C3C4", "--color-neutral-700": "#C2D6D6",
+    "--color-teal-50": "#0E5760", "--color-teal-100": "#16626B", "--color-deep-teal": "#86CFD4", "--text-link": "#86CFD4", "--focus-ring": "#2E96A0",
+    "--color-amber-50": "#3A2F12", "--color-amber-200": "#6B5418", "--color-amber-300": "#8A6E1E", "--color-amber-700": "#E6A23C",
+    "--shadow-xs": "0 1px 2px rgba(0,0,0,.35)", "--shadow-sm": "0 1px 3px rgba(0,0,0,.4)", "--shadow-md": "0 6px 16px rgba(0,0,0,.45)", "--shadow-lg": "0 16px 40px rgba(0,0,0,.55)"
+  };
+
+  componentDidMount() {
+    this._onResize = () => {
+      const w = (this.rootRef.current && this.rootRef.current.clientWidth) || window.innerWidth;
+      const layout = w >= 1200 ? "wide" : w >= 760 ? "tablet" : "mobile";
+      if (layout !== this.state.layout) this.setState({ layout, dockOpen: layout === "wide", railOpen: layout !== "mobile" ? this.state.railOpen : false });
+    };
+    this._onKey = (e) => {
+      if (e.key === "Escape") this.setState({ artifactOpen: false, slashOpen: false, historyOpen: false, mobileRailOpen: false, notesOn: false });
+    };
+    window.addEventListener("resize", this._onResize);
+    window.addEventListener("keydown", this._onKey);
+    this._onResize();
+    this.applyTheme();
+  }
+  componentWillUnmount() { window.removeEventListener("resize", this._onResize); window.removeEventListener("keydown", this._onKey); this.clearTimers(); }
+  componentDidUpdate() { this.applyTheme(); }
+  clearTimers() { this.timers.forEach((t) => clearTimeout(t)); this.timers = []; }
+  applyTheme() {
+    const el = this.rootRef.current; if (!el) return;
+    if (this.state.theme === "dark") { for (const k in this.darkVars) el.style.setProperty(k, this.darkVars[k]); }
+    else { for (const k in this.darkVars) el.style.removeProperty(k); }
+  }
+  scrollDown() { this.timers.push(setTimeout(() => { if (this.scrollRef.current) this.scrollRef.current.scrollTop = this.scrollRef.current.scrollHeight; }, 40)); }
+
+  // ----- conversation content builders -----
+  seededTurns() {
+    return [
+      { role: "user", text: "Which of my sections are slipping this week, and why?" },
+      { role: "ai", followups: ["Draft a check-in note to the mentor", "Compare with last term", "Show attendance by week"], blocks: [
+        { type: "tool", title: "Resolved across the systems you run", state: "done", steps: [
+          { label: "Reading ERP — section roster", status: "done", meta: "3 sections" },
+          { label: "Fetching attendance register", status: "done", meta: "wk 6–9" },
+          { label: "Fetching internal marks", status: "done", meta: "Sem 4" },
+          { label: "Running analysis", status: "done", meta: "96 students" }
+        ] },
+        { type: "text", md: "Two of your three sections held steady. **CSE-3 is slipping** — attendance fell after the mid-sem break and two students are now below the line. Here is who, and what it is based on." },
+        { type: "table", caption: "Sections this week", headers: [["Section", "left"], ["Below line", "right"], ["Trend", "left"], ["Tier", "left"]], rows: [
+          [["CSE-1", "t", "left"], ["0", "t", "right"], ["Steady", "t", "left"], ["Low", "low", "left"]],
+          [["CSE-2", "t", "left"], ["1", "t", "right"], ["Steady", "t", "left"], ["Watch", "watch", "left"]],
+          [["CSE-3", "t", "left"], ["2", "t", "right"], ["Down 6%", "t", "left"], ["Watch", "watch", "left"]]
+        ] },
+        { type: "chart", caption: "CSE-3 attendance by week", bars: [["wk6", 78, false], ["wk7", 74, false], ["wk8", 69, false], ["wk9", 63, true]] },
+        { type: "evidence", confidence: "watch", updated: "12 min ago", sources: [{ label: "Attendance register", meta: "wk 6–9" }, { label: "Internal marks" }, "Section roster"], reasoning: [
+          "Compared weekly attendance for each section against the section baseline.",
+          "Flagged students who crossed below the attendance line in the last two weeks.",
+          "Cross-checked against internal marks; abstained where data was incomplete."
+        ] }
+      ] }
+    ];
+  }
+
+  buildAnswerTurn(kind) {
+    if (kind === "draft") {
+      return { role: "ai", followups: ["Change the tone", "Add attendance figures"], blocks: [
+        { type: "tool", title: "Preparing a draft", state: "done", steps: [
+          { label: "Reading ERP — mentor + student", status: "done", meta: "CSE-3" },
+          { label: "Fetching attendance context", status: "done", meta: "wk 6–9" },
+          { label: "Composing draft", status: "done" }
+        ] },
+        { type: "text", md: "I have prepared a draft mentor note for the two CSE-3 students below the line. It is a **draft you own** — review it in the artifact, and nothing is sent until you approve." },
+        { type: "artifact", icon: "fileText", title: "Draft — CSE-3 mentor check-in note", meta: "Document · generated just now" },
+        { type: "approval", title: "Send check-in note to mentor", summary: "This would notify the section mentor with the draft above. Forevue will not send it on its own.", changes: [["Recipient", "Section mentor · CSE-3"], ["Channel", "In-app + email"]], status: "pending" },
+        { type: "evidence", confidence: "low", updated: "just now", sources: [{ label: "Attendance register", meta: "wk 6–9" }, "Mentor directory"], reasoning: ["Drafted from the two flagged students and their recent attendance.", "Held back any figure that was not directly supported."] }
+      ] };
+    }
+    return { role: "ai", followups: ["Show the evidence", "Compare with last term"], blocks: [
+      { type: "tool", title: "Resolved across the systems you run", state: "done", steps: [
+        { label: "Reading ERP", status: "done" },
+        { label: "Fetching data in scope", status: "done" },
+        { label: "Running analysis", status: "done" }
+      ] },
+      { type: "text", md: "Here is what I found, scoped to this view. Activity is steady overall, with a small number of items that may need attention. This is advisory — nothing is written back until you approve it." },
+      { type: "stats", stats: [["83%", "On track", "this week"], ["2", "Need attention", "to review"], ["+4", "vs last week", "trend"]] },
+      { type: "evidence", confidence: "watch", updated: "just now", sources: [{ label: "Records in scope" }, "Selected period"], reasoning: ["Summarised the records currently in context.", "Abstained on anything not directly supported by the data."] }
+    ] };
+  }
+
+  errorTurn(kind) {
+    const M = {
+      network: ["wifiOff", "Network failure", "I could not reach the systems just now. Your context is safe — try again in a moment.", "var(--color-risk-high)", "var(--color-risk-high-bg)", "var(--color-risk-high)", true, "Check your connection."],
+      permission: ["ban", "Permission denied", "Your role does not include access to this data, so I stopped rather than guess. Ask your admin to widen access if you need it.", "var(--color-risk-high)", "var(--color-risk-high-bg)", "var(--color-risk-high)", false, "Least-privilege — by design."],
+      tool: ["alert", "Tool failed", "The ERP search tool returned an error before finishing. Nothing was changed.", "var(--color-risk-watch)", "var(--color-risk-watch-bg)", "var(--color-risk-watch)", true, "The action was not applied."],
+      nodata: ["info", "No data found", "There is nothing in scope for that question yet. Try widening the period or scope.", "var(--color-deep-teal)", "var(--surface-page)", "var(--color-deep-teal)", false, ""],
+      abstain: ["shield", "Forevue abstained", "I did not have enough grounded evidence to answer this confidently, so I held back rather than guess. Here is what is missing: recent attendance for two students.", "var(--color-amber-700)", "var(--color-amber-50)", "var(--color-amber-700)", false, "Grounded-or-abstain."],
+      rate: ["clock", "Rate limit reached", "A lot is happening at once. Please wait a few seconds and try again.", "var(--color-risk-watch)", "var(--color-risk-watch-bg)", "var(--color-risk-watch)", true, "Briefly throttled."],
+      timeout: ["clock", "Timed out", "That took longer than expected and I stopped to avoid a partial answer. Nothing was changed.", "var(--color-risk-watch)", "var(--color-risk-watch-bg)", "var(--color-risk-watch)", true, "No partial results applied."]
+    };
+    const e = M[kind] || M.network;
+    return { role: "ai", blocks: [{ type: "error", icon: e[0], title: e[1], body: e[2], color: e[3], bg: e[4], border: e[5], retry: e[6], hint: e[7] }] };
+  }
+
+  mdToNode(md) {
+    // minimal bold parser → React nodes
+    const parts = String(md).split(/(\*\*[^*]+\*\*)/g).filter(Boolean);
+    return parts.map((p, i) => p.startsWith("**") && p.endsWith("**")
+      ? React.createElement("strong", { key: i, style: { fontWeight: 700, color: "var(--text-strong)" } }, p.slice(2, -2))
+      : p);
+  }
+
+  // ----- streaming simulation -----
+  send = (text) => {
+    const t = (text || "").trim(); if (!t) return;
+    this.clearTimers();
+    const isDraft = /draft|note|write|create/i.test(t);
+    const base = (this.state.turns || []).concat([{ role: "user", text: t }]);
+    const steps = isDraft
+      ? [{ label: "Reading ERP — mentor + student", k: 1 }, { label: "Fetching attendance context", k: 1 }, { label: "Composing draft", k: 1 }]
+      : [{ label: "Reading ERP", k: 1 }, { label: "Fetching data in scope", k: 1 }, { label: "Running analysis", k: 1 }, { label: "Composing answer", k: 1 }];
+    const live = { role: "ai", streaming: true, live: { stepIndex: 0, steps: steps.map((s) => ({ label: s.label, status: "pending" })), phase: "tools" } };
+    live.live.steps[0].status = "active";
+    this.setState({ turns: base.concat([live]), streaming: true, composer: "", slashOpen: false, historyOpen: false, view: "conversation" }, () => this.scrollDown());
+
+    let delay = 0;
+    steps.forEach((s, i) => {
+      delay += 720;
+      this.timers.push(setTimeout(() => {
+        this.setState((st) => {
+          const turns = st.turns.slice();
+          const last = { ...turns[turns.length - 1] };
+          const lv = { ...last.live, steps: last.live.steps.map((x, idx) => ({ ...x, status: idx < i + 1 ? "done" : idx === i + 1 ? "active" : "pending" })) };
+          last.live = lv; turns[turns.length - 1] = last; return { turns };
+        }, () => this.scrollDown());
+      }, delay));
+    });
+    // phase: thinking shimmer
+    delay += 700;
+    this.timers.push(setTimeout(() => {
+      this.setState((st) => {
+        const turns = st.turns.slice();
+        const last = { ...turns[turns.length - 1] };
+        last.live = { ...last.live, phase: "thinking" };
+        turns[turns.length - 1] = last; return { turns };
+      }, () => this.scrollDown());
+    }, delay));
+    // commit answer
+    delay += 900;
+    this.timers.push(setTimeout(() => {
+      this.setState((st) => {
+        const turns = st.turns.slice();
+        turns[turns.length - 1] = this.buildAnswerTurn(isDraft ? "draft" : "summary");
+        return { turns, streaming: false };
+      }, () => this.scrollDown());
+    }, delay));
+  };
+
+  renderVals() {
+    const S = this.state;
+    const user = this.roles[S.roleKey];
+    const layout = S.layout;
+    const isMobile = layout === "mobile";
+    const isTablet = layout === "tablet";
+    const turns = S.turns;
+    const isEmpty = !turns || turns.length === 0;
+
+    // shell nav
+    const shellNav = [
+      { icon: "home", label: "Home" }, { icon: "barChart", label: "Dashboard" },
+      { icon: "sparkles", label: "AI workspace", active: true }, { icon: "fileText", label: "Reports" }
+    ].map((n) => ({ ...n, bg: n.active ? "var(--color-teal-50)" : "transparent", color: n.active ? "var(--color-deep-teal)" : "var(--color-neutral-600)" }));
+
+    // conversations
+    const convData = {
+      pinned: [{ id: "c1", title: "Sections slipping this week", time: "Active now" }],
+      recent: [{ id: "c2", title: "Attendance trend — CSE-3", time: "2h ago" }, { id: "c3", title: "Draft mentor note", time: "Yesterday" }, { id: "c4", title: "Compare sections, last term", time: "3 days ago" }]
+    };
+    const cq = S.convQuery.trim().toLowerCase();
+    const flt = (arr) => arr.filter((c) => !cq || c.title.toLowerCase().includes(cq));
+    const mkConv = (c) => ({ ...c, bg: c.id === S.activeConv ? "var(--color-teal-50)" : "transparent",
+      iconColor: c.id === S.activeConv ? "var(--color-deep-teal)" : "var(--color-neutral-500)",
+      weight: c.id === S.activeConv ? 600 : 500, menuOpen: S.convMenu === c.id,
+      onSelect: () => this.setState({ activeConv: c.id, convMenu: null, mobileRailOpen: false }),
+      onMenu: (e) => { e.stopPropagation(); this.setState({ convMenu: S.convMenu === c.id ? null : c.id }); } });
+    const convGroups = [
+      { label: "Pinned", pinned: true, items: flt(convData.pinned).map(mkConv) },
+      { label: "Recent", pinned: false, items: flt(convData.recent).map(mkConv) }
+    ].filter((g) => g.items.length > 0);
+    const flatConvs = flt(convData.pinned.concat(convData.recent)).map(mkConv);
+    const convActions = [
+      { icon: "edit", label: "Rename", color: "var(--text-body)" }, { icon: "pin", label: "Pin", color: "var(--text-body)" },
+      { icon: "share", label: "Share", color: "var(--text-body)" }, { icon: "download", label: "Export", color: "var(--text-body)" },
+      { icon: "archive", label: "Archive", color: "var(--text-body)" }, { icon: "trash", label: "Delete", color: "var(--color-risk-high)" }
+    ].map((a) => ({ ...a, onClick: () => this.setState({ convMenu: null }) }));
+    const activeConvObj = convData.pinned.concat(convData.recent).find((c) => c.id === S.activeConv);
+    const activeConvTitle = (activeConvObj && activeConvObj.title) || "New conversation";
+
+    // modes
+    const modeDefs = [
+      { id: "chat", label: "Chat", icon: "messageSquare" }, { id: "research", label: "Research", icon: "search", soon: true },
+      { id: "analyze", label: "Analyze", icon: "barChart", soon: true }, { id: "generate", label: "Generate", icon: "fileEdit", soon: true },
+      { id: "automate", label: "Automate", icon: "zap", soon: true }
+    ];
+    const modes = modeDefs.map((m) => {
+      const on = S.mode === m.id;
+      return { ...m, onClick: () => this.setState({ mode: m.id }),
+        bg: on ? "var(--color-teal-50)" : "var(--surface-card)", color: on ? "var(--color-deep-teal)" : "var(--text-muted)",
+        border: on ? "var(--color-teal-100)" : "var(--border-default)", weight: on ? 600 : 500 };
+    });
+    const modeMeta = {
+      research: ["Research mode", "Deep, multi-source investigation with citations on every claim."],
+      analyze: ["Analyze mode", "Turn records in scope into charts, comparisons and breakdowns."],
+      generate: ["Generate mode", "Produce reports, drafts and documents into the artifact workspace."],
+      automate: ["Automate mode", "Chain approved actions into repeatable, human-gated workflows."]
+    };
+    const mb = modeMeta[S.mode];
+
+    // turns view-model
+    const evx = S.evidenceExpanded;
+    const vmTurns = (turns || []).map((t, ti) => {
+      if (t.role === "user") return { isUser: true, isAi: false, text: t.text };
+      const blocks = [];
+      if (t.streaming && t.live) {
+        const accent = t.live.phase === "tools" ? "var(--color-deep-teal)" : "var(--color-deep-teal)";
+        blocks.push({ isTool: true, title: t.live.phase === "tools" ? "Working across the systems you run" : "Composing answer",
+          headIcon: t.live.phase === "tools" ? "database" : "sparkles",
+          spin: t.live.phase === "tools" ? "" : "animation:fvSpin 1.1s linear infinite;",
+          accent, headBg: "var(--surface-page)", border: "var(--color-teal-100)", badgeBg: "var(--color-teal-50)",
+          stateLabel: "Running",
+          steps: t.live.steps.map((s) => ({
+            label: s.label,
+            icon: s.status === "done" ? "check" : s.status === "active" ? "refresh" : "circle",
+            iconSize: s.status === "active" ? "13" : "14",
+            spin: s.status === "active" ? "animation:fvSpin 1s linear infinite;" : "",
+            color: s.status === "done" ? "var(--color-risk-low)" : s.status === "active" ? "var(--color-deep-teal)" : "var(--color-neutral-300)",
+            textColor: s.status === "pending" ? "var(--text-muted)" : "var(--text-body)",
+            hasMeta: !!s.meta, meta: s.meta || ""
+          })) });
+        if (t.live.phase === "thinking") blocks.push({ isThinking: true });
+        return { isAi: true, isUser: false, blocks, hasFollowups: false, hasActions: false };
+      }
+      (t.blocks || []).forEach((b, bi) => {
+        if (b.type === "tool") {
+          blocks.push({ isTool: true, title: b.title, headIcon: "checkCheck", spin: "", accent: "var(--color-risk-low)",
+            headBg: "var(--surface-page)", border: "var(--border-subtle)", badgeBg: "var(--color-risk-low-bg)", stateLabel: "Completed",
+            steps: (b.steps || []).map((s) => ({ label: s.label, icon: "check", iconSize: "14", spin: "",
+              color: "var(--color-risk-low)", textColor: "var(--text-body)", hasMeta: !!s.meta, meta: s.meta || "" })) });
+        } else if (b.type === "text") {
+          blocks.push({ isText: true, node: this.mdToNode(b.md), caret: false });
+        } else if (b.type === "table") {
+          const riskColors = { high: "var(--color-risk-high)", watch: "var(--color-risk-watch)", low: "var(--color-risk-low)" };
+          const riskShape = { high: "border-radius:1px;", watch: "border-radius:1px;transform:rotate(45deg);", low: "border-radius:50%;" };
+          blocks.push({ isTable: true, caption: b.caption,
+            headers: b.headers.map((h) => ({ label: h[0], align: h[1] })),
+            rows: b.rows.map((r) => ({ cells: r.map((c) => {
+              if (c[1] === "t") return { isText: true, isRisk: false, text: c[0], align: c[2] };
+              return { isRisk: true, isText: false, text: c[0], align: c[2], riskColor: riskColors[c[1]], riskShape: riskShape[c[1]] };
+            }) })) });
+        } else if (b.type === "chart") {
+          const max = Math.max.apply(null, b.bars.map((x) => x[1]));
+          blocks.push({ isChart: true, caption: b.caption, bars: b.bars.map((x) => ({
+            label: x[0], value: x[1] + "%", h: Math.round((x[1] / max) * 88) + "px",
+            fill: x[2] ? "var(--color-amber)" : "var(--color-teal-200)",
+            labelColor: x[2] ? "var(--color-amber-700)" : "var(--text-muted)" })) });
+        } else if (b.type === "stats") {
+          blocks.push({ isStats: true, stats: b.stats.map((s) => ({ value: s[0], label: s[1], sub: s[2] })) });
+        } else if (b.type === "code") {
+          blocks.push({ isCode: true, lang: b.lang, code: b.code, onCopy: () => {} });
+        } else if (b.type === "approval") {
+          const key = ti + "-" + bi;
+          const status = (S.approvals && S.approvals[key]) || b.status;
+          const resolvedMap = { approved: ["check", "Approved — applied with your sign-off", "var(--color-risk-low)"],
+            rejected: ["x", "Rejected — nothing was sent", "var(--color-risk-high)"], edited: ["edit", "Opened in artifact to edit before applying", "var(--color-deep-teal)"] };
+          const rv = resolvedMap[status];
+          blocks.push({ isApproval: true, title: b.title, summary: b.summary,
+            changes: b.changes.map((c) => ({ label: c[0], value: c[1] })),
+            pending: status === "pending", resolved: status !== "pending",
+            resolvedIcon: rv ? rv[0] : "check", resolvedLabel: rv ? rv[1] : "", resolvedColor: rv ? rv[2] : "var(--color-risk-low)",
+            onApprove: () => this.setApproval(key, "approved"),
+            onReject: () => this.setApproval(key, "rejected"),
+            onEdit: () => { this.setApproval(key, "edited"); this.openArtifact("note"); },
+            onPreview: () => this.openArtifact("note") });
+        } else if (b.type === "evidence") {
+          const key = ti + "-" + bi;
+          const exp = !!evx[key];
+          const confColors = { high: "var(--color-risk-high)", watch: "var(--color-risk-watch)", low: "var(--color-risk-low)" };
+          const confShape = { high: "border-radius:1px;", watch: "border-radius:1px;transform:rotate(45deg);", low: "border-radius:50%;" };
+          const confLabel = { high: "High", watch: "Medium", low: "High" };
+          blocks.push({ isEvidence: true, confColor: confColors[b.confidence], confShape: confShape[b.confidence],
+            confLabel: b.confidence === "watch" ? "Medium" : b.confidence === "low" ? "Guarded" : "High",
+            updated: b.updated, sources: b.sources, reasoning: b.reasoning, expanded: exp,
+            toggleIcon: exp ? "chevronDown" : "chevronRight", toggleLabel: exp ? "Hide reasoning" : "Show reasoning",
+            onToggle: () => this.setState((st) => ({ evidenceExpanded: { ...st.evidenceExpanded, [key]: !st.evidenceExpanded[key] } })) });
+        } else if (b.type === "artifact") {
+          blocks.push({ isArtifact: true, icon: b.icon, title: b.title, meta: b.meta, onOpen: () => this.openArtifact("note") });
+        } else if (b.type === "error") {
+          blocks.push({ isError: true, errIcon: b.icon, errTitle: b.title, errBody: b.body,
+            errColor: b.color, errBg: b.bg, errBorder: b.border, errRetry: b.retry, errHint: b.hint,
+            onRetry: () => this.send("Which of my sections are slipping this week, and why?") });
+        }
+      });
+      const followups = (t.followups || []).map((f) => ({ text: f, onClick: () => this.send(f) }));
+      return { isAi: true, isUser: false, blocks, hasFollowups: followups.length > 0, followups,
+        hasActions: true, onCopy: () => {}, onRegen: () => this.send("Which of my sections are slipping this week, and why?"),
+        onShareArtifact: () => this.openArtifact("note") };
+    });
+
+    // dock tabs
+    const dockTabDefs = [
+      { id: "context", label: "Context", icon: "folder" }, { id: "capabilities", label: "Capabilities", icon: "sparkles" },
+      { id: "tools", label: "Skills", icon: "sliders" }, { id: "memory", label: "Memory", icon: "database" }
+    ];
+    const dockTabs = dockTabDefs.map((d) => {
+      const on = S.dockTab === d.id;
+      return { ...d, onClick: () => this.setState({ dockTab: d.id }),
+        under: on ? "var(--color-deep-teal)" : "transparent", color: on ? "var(--text-strong)" : "var(--text-muted)", weight: on ? 600 : 500 };
+    });
+
+    const contextItems = user.context.map((c) => ({ label: c[0], meta: c[1], icon: c[2], consent: c[3] }));
+
+    const capabilityDefs = [
+      ["Search ERP", "Look across the systems you run", "search", false], ["Analyze data", "Trends, breakdowns, comparisons", "barChart", false],
+      ["Generate report", "Into the artifact workspace", "fileText", false], ["Summarize", "Condense records in scope", "fileEdit", false],
+      ["Predict", "Forecast from history", "gauge", false], ["Compare", "Across periods or groups", "layers", false],
+      ["Explain", "Plain-English reasoning", "info", false], ["Create draft", "A draft you own", "edit", true],
+      ["Recommend", "A next best action", "sparkles", false], ["Forecast", "Where things are heading", "barChart", false],
+      ["Automate", "Human-gated workflows", "zap", true]
+    ];
+    const capabilities = capabilityDefs.map((c) => ({ label: c[0], desc: c[1], icon: c[2], gated: c[3], onClick: () => this.send(c[0] + " for this view") }));
+
+    const connectedTools = [
+      ["Institution ERP", "Read · roster, attendance, marks", "database", "var(--color-risk-low)", "Connected"],
+      ["Reporting", "Read · saved reports", "fileText", "var(--color-risk-low)", "Connected"],
+      ["Notifications", "Write · gated by approval", "bell", "var(--color-amber-700)", "Approval"],
+      ["Directory", "Read · staff & mentors", "users", "var(--color-risk-low)", "Connected"]
+    ].map((t) => ({ label: t[0], meta: t[1], icon: t[2], statusColor: t[3], status: t[4] }));
+
+    const skills = [["Search", "search"], ["Summarize", "fileEdit"], ["Analyze", "barChart"], ["Draft", "edit"], ["Forecast", "gauge"], ["Compare", "layers"]].map((s) => ({ label: s[0], icon: s[1] }));
+
+    const memoryItems = [
+      { tag: "Preference", text: "Prefers concise answers with the evidence shown.", tagColor: "var(--color-deep-teal)", tagBg: "var(--color-teal-50)" },
+      { tag: "Institution", text: "Northfield · Computer Science · Semester 4 in progress.", tagColor: "var(--color-deep-teal)", tagBg: "var(--color-teal-50)" },
+      { tag: "Pinned", text: "Watching CSE-3 attendance this term.", tagColor: "var(--color-amber-700)", tagBg: "var(--color-amber-50)" },
+      { tag: "Temporary", text: "This session: comparing weeks 6–9.", tagColor: "var(--color-neutral-700)", tagBg: "var(--color-neutral-100)" }
+    ].map((m) => ({ ...m, onClear: () => {} }));
+
+    const suggestedPrompts = [
+      { icon: "search", text: "Which of my sections are slipping this week, and why?" },
+      { icon: "barChart", text: "Show attendance trends for CSE-3 over the term" },
+      { icon: "edit", text: "Draft a check-in note for students below the line" },
+      { icon: "layers", text: "Compare this term with the last one" }
+    ].map((p) => ({ ...p, onClick: () => this.send(p.text) }));
+
+    const quickActions = [
+      { icon: "fileText", text: "Generate a weekly summary" }, { icon: "sparkles", text: "What changed since yesterday?" }, { icon: "gauge", text: "Forecast end-of-term completion" }
+    ].map((q) => ({ ...q, onClick: () => this.send(q.text) }));
+
+    const recentActivity = [
+      { icon: "fileText", text: "Weekly summary generated", time: "12 min ago" },
+      { icon: "sparkles", text: "Forevue surfaced a CSE-3 pattern", time: "2 hours ago" },
+      { icon: "checkCheck", text: "Mentor note approved", time: "Yesterday" }
+    ];
+
+    const slashCommands = [
+      { cmd: "/search", desc: "Search the ERP in scope", icon: "search" },
+      { cmd: "/analyze", desc: "Analyze records in this view", icon: "barChart" },
+      { cmd: "/report", desc: "Generate a report artifact", icon: "fileText" },
+      { cmd: "/draft", desc: "Draft a note or message", icon: "edit" },
+      { cmd: "/summarize", desc: "Summarize the current view", icon: "fileEdit" }
+    ].map((s) => ({ ...s, onClick: () => this.setState({ composer: s.cmd + " ", slashOpen: false }, () => this.composerRef.current && this.composerRef.current.focus()) }));
+
+    const promptHistory = ["Which of my sections are slipping this week, and why?", "Compare CSE-3 with last term", "Draft a mentor check-in note"].map((h) => ({ text: h, onClick: () => this.setState({ composer: h, historyOpen: false }, () => this.composerRef.current && this.composerRef.current.focus()) }));
+
+    const stateChips = [
+      ["Empty", () => { this.clearTimers(); this.setState({ turns: null, streaming: false }); }],
+      ["Answer", () => { this.clearTimers(); this.setState({ turns: this.seededTurns(), streaming: false }, () => this.scrollDown()); }],
+      ["Streaming", () => this.send("Which of my sections are slipping this week, and why?")],
+      ["Draft + approval", () => { this.clearTimers(); this.setState({ turns: (this.seededTurns()).concat([{ role: "user", text: "Draft a check-in note to the mentor" }, this.buildAnswerTurn("draft")]), streaming: false }, () => this.scrollDown()); }],
+      ["Abstain", () => this.showError("abstain")], ["Permission", () => this.showError("permission")],
+      ["Network", () => this.showError("network")], ["Tool failed", () => this.showError("tool")],
+      ["No data", () => this.showError("nodata")], ["Rate limit", () => this.showError("rate")], ["Timeout", () => this.showError("timeout")]
+    ].map((c) => ({ label: c[0], onClick: c[1], bg: "rgba(255,255,255,0.06)", color: "#D7E7E7", border: "rgba(255,255,255,0.16)" }));
+
+    // layout flags
+    const showShellRail = layout === "wide";
+    const showConvRail = !isMobile && S.railOpen;
+    const showDock = !isMobile && S.dockOpen;
+    const dockStyle = "width:320px;flex:none;background:var(--surface-card);border-left:1px solid var(--border-subtle);display:flex;flex-direction:column;overflow:hidden;"
+      + (isTablet ? "position:absolute;top:0;right:0;bottom:0;z-index:30;box-shadow:var(--shadow-lg);" : "");
+
+    const hour = new Date().getHours();
+    const greeting = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+    const todayLabel = new Date().toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+
+    const composerEmpty = !S.composer.trim();
+
+    return {
+      rootRef: this.rootRef, scrollRef: this.scrollRef, composerRef: this.composerRef,
+      isLight: S.theme === "light", isDark: S.theme === "dark", themeIcon: S.theme === "dark" ? "sun" : "moon",
+      user, roleKey: S.roleKey, roleOptions: Object.keys(this.roles).map((k) => ({ key: k, role: this.roles[k].role })),
+      shellNav, showShellRail, showConvRail, showDock,
+      isMobile, isTablet, wideEnough: !isMobile, canToggleRail: !isMobile,
+      convGroups, flatConvs, convActions, convQuery: S.convQuery, activeConvTitle,
+      modes, modeBanner: S.mode !== "chat", modeTitle: mb ? mb[0] : "", modeDesc: mb ? mb[1] : "",
+      dockBtnBg: S.dockOpen ? "var(--color-teal-50)" : "transparent", dockBtnColor: S.dockOpen ? "var(--color-deep-teal)" : "var(--color-neutral-600)",
+      dockStyle, dockTabs,
+      dockContext: S.dockTab === "context", dockCapabilities: S.dockTab === "capabilities", dockTools: S.dockTab === "tools", dockMemory: S.dockTab === "memory",
+      contextItems, capabilities, connectedTools, skills, memoryItems,
+      isEmpty, hasTurns: !isEmpty, turns: vmTurns,
+      greeting, todayLabel, suggestedPrompts, quickActions, recentActivity,
+      // composer
+      composer: S.composer, composerPlaceholder: "Ask Forevue about " + user.scopeNoun + "…  ( / for commands )",
+      composerHint: composerEmpty ? "Enter to send · Shift+Enter for a new line" : "\u2318\u21B5 to send",
+      composerBorder: (S.slashOpen || S.historyOpen) ? "var(--color-teal-300)" : "var(--border-default)",
+      isStreaming: S.streaming, notStreaming: !S.streaming,
+      sendBg: composerEmpty ? "var(--color-neutral-300)" : "var(--action-primary)", sendCursor: composerEmpty ? "default" : "pointer",
+      slashOpen: S.slashOpen, historyOpen: S.historyOpen, slashCommands, promptHistory,
+      // artifact
+      artifactOpen: S.artifactOpen, artifactEditing: S.artifactMode === "edit", artifactPreviewing: S.artifactMode === "preview",
+      artPreviewBg: S.artifactMode === "preview" ? "var(--surface-card)" : "transparent", artPreviewColor: S.artifactMode === "preview" ? "var(--text-strong)" : "var(--text-muted)",
+      artEditBg: S.artifactMode === "edit" ? "var(--surface-card)" : "transparent", artEditColor: S.artifactMode === "edit" ? "var(--text-strong)" : "var(--text-muted)",
+      artifactTitle: "CSE-3 mentor check-in note", artifactMeta: "Document · draft · generated by Forevue",
+      artifactKicker: "Draft note", artifactHeading: "Check-in: CSE-3 attendance",
+      artifactBody: S.artifactBody, artifactSources: [{ label: "Attendance register", meta: "wk 6–9" }, "Mentor directory"],
+      // notes
+      notesOn: S.notesOn, stateChips,
+      notesBg: S.notesOn ? "var(--color-teal-50)" : "var(--surface-card)", notesColor: S.notesOn ? "var(--color-deep-teal)" : "var(--text-muted)", notesBorder: S.notesOn ? "var(--color-teal-100)" : "var(--border-default)",
+      mobileRailOpen: S.mobileRailOpen,
+      resolveMark: this.resolveMark(),
+      // handlers
+      onRole: (e) => this.setState({ roleKey: e.target.value, turns: null, streaming: false, artifactOpen: false }),
+      toggleTheme: () => this.setState((s) => ({ theme: s.theme === "dark" ? "light" : "dark" })),
+      toggleRail: () => this.setState((s) => ({ railOpen: !s.railOpen })),
+      toggleDock: () => this.setState((s) => ({ dockOpen: !s.dockOpen })),
+      closeDock: () => this.setState({ dockOpen: false }),
+      openMobileRail: () => this.setState({ mobileRailOpen: true }),
+      closeMobile: () => this.setState({ mobileRailOpen: false }),
+      newConversation: () => { this.clearTimers(); this.setState({ turns: null, streaming: false, activeConv: "new", convMenu: null, mobileRailOpen: false, artifactOpen: false }); },
+      onConvQuery: (e) => this.setState({ convQuery: e.target.value }),
+      onComposer: (e) => { const v = e.target.value; this.setState({ composer: v, slashOpen: v.trim().startsWith("/") }); if (this.composerRef.current) { this.composerRef.current.style.height = "auto"; this.composerRef.current.style.height = Math.min(this.composerRef.current.scrollHeight, 160) + "px"; } },
+      onComposerKey: (e) => { if ((e.key === "Enter" && !e.shiftKey) || (e.key === "Enter" && (e.metaKey || e.ctrlKey))) { e.preventDefault(); this.sendPrompt(); } },
+      sendPrompt: () => this.send(S.composer),
+      stopGen: () => { this.clearTimers(); this.setState((st) => { const turns = (st.turns || []).slice(); if (turns.length && turns[turns.length - 1].streaming) turns[turns.length - 1] = this.errorTurn("timeout"); return { turns, streaming: false }; }); },
+      toggleSlash: () => this.setState((s) => ({ slashOpen: !s.slashOpen, historyOpen: false })),
+      toggleHistory: () => this.setState((s) => ({ historyOpen: !s.historyOpen, slashOpen: false })),
+      toggleNotes: () => this.setState((s) => ({ notesOn: !s.notesOn })),
+      openArtifact: () => this.openArtifact("note"),
+      closeArtifact: () => this.setState({ artifactOpen: false }),
+      setArtifactPreview: () => this.setState({ artifactMode: "preview" }),
+      setArtifactEdit: () => this.setState({ artifactMode: "edit" }),
+      onArtifactBody: (e) => this.setState({ artifactBody: e.target.value })
+    };
+  }
+
+  setApproval(key, val) { this.setState((s) => ({ approvals: { ...(s.approvals || {}), [key]: val } })); }
+  showError(kind) { this.clearTimers(); this.setState({ turns: (this.seededTurns()).concat([this.errorTurn(kind)]), streaming: false }, () => this.scrollDown()); }
+  openArtifact(which) {
+    const body = "Dear mentor,\n\nTwo students in CSE-3 have dropped below the attendance line over weeks 6 to 9, with a 6% decline after the mid-sem break. Both have otherwise steady internal marks, so a short check-in now may be enough to bring them back on track.\n\nCould you have a brief conversation with them this week and note anything that would help? Forevue will keep watching attendance and flag if it improves.\n\nThis note is based on the attendance register (wk 6–9) and the section roster.";
+    this.setState({ artifactOpen: true, artifactMode: "preview", artifactBody: body });
+  }
+
+  resolveMark() {
+    const pts = [[10, 20], [16, 52], [22, 34], [30, 64], [34, 14], [44, 44], [52, 26], [60, 58], [68, 18]];
+    const focal = [130, 42];
+    const lines = pts.map((p, i) => React.createElement("line", { key: "l" + i, x1: p[0], y1: p[1], x2: focal[0], y2: focal[1], stroke: "var(--color-teal-300)", strokeWidth: 1, opacity: 0.32 }));
+    const dots = pts.map((p, i) => React.createElement("circle", { key: "d" + i, cx: p[0], cy: p[1], r: 2.3, fill: "var(--color-teal-500)", opacity: 0.5 }));
+    const glow = React.createElement("circle", { key: "g", cx: focal[0], cy: focal[1], r: 10, fill: "var(--color-amber)", opacity: 0.18 });
+    const focalDot = React.createElement("circle", { key: "f", cx: focal[0], cy: focal[1], r: 5.5, fill: "var(--color-amber)" });
+    return React.createElement("svg", { viewBox: "0 0 148 84", width: "100%", height: "100%", style: { display: "block" } }, [...lines, ...dots, glow, focalDot]);
+  }
+}
+</script>
+</body>
+</html>

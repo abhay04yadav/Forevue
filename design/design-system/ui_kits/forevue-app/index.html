@@ -1,0 +1,82 @@
+<!-- @dsCard group="Forevue App" viewport="1280x800" name="Forevue — product app" subtitle="Ask · watchlist · student evidence" -->
+<!-- @startingPoint section="Forevue App" subtitle="Calm intelligence-layer app shell with ask, watchlist & evidence" viewport="1280x800" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Forevue — App</title>
+<link rel="icon" href="../../assets/forevue-favicon-32.png">
+<link rel="stylesheet" href="../../styles.css">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  html, body { margin: 0; height: 100%; }
+  body { background: var(--surface-page); font-family: var(--font-sans); color: var(--text-body); }
+  #root { height: 100vh; }
+  * { box-sizing: border-box; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: 999px; border: 2px solid var(--surface-page); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="AppShell.jsx"></script>
+<script type="text/babel" src="AskView.jsx"></script>
+<script type="text/babel" src="WatchView.jsx"></script>
+<script type="text/babel" src="StudentView.jsx"></script>
+<script type="text/babel">
+  const { useState, useEffect } = React;
+  const { Button, IconButton } = window.ForevueDesignSystem_24f415;
+
+  const NAV = [
+    { id: "ask", icon: "sparkles", label: "Ask" },
+    { id: "watch", icon: "users", label: "Watchlist", count: 18 },
+    { id: "student", icon: "user", label: "P. Nair" },
+    { id: "accreditation", icon: "shield-check", label: "Accreditation" },
+  ];
+
+  const META = {
+    ask: { title: "Ask Forevue", subtitle: "Ask anything about your students, in plain English." },
+    watch: { title: "Watchlist", subtitle: "Students who need attention this week — surfaced early." },
+    student: { title: "Student", subtitle: "The evidence behind the risk — your team decides." },
+    accreditation: { title: "Accreditation", subtitle: "Evidence kept ready." },
+  };
+
+  function App() {
+    const [view, setView] = useState("ask");
+    useEffect(() => { if (window.lucide) window.lucide.createIcons(); });
+
+    let body;
+    if (view === "ask") body = <AskView />;
+    else if (view === "watch") body = <WatchView />;
+    else if (view === "student") body = <StudentView />;
+    else body = (
+      <div style={{ maxWidth: 520, margin: "60px auto", textAlign: "center", color: "var(--text-muted)" }}>
+        <i data-lucide="shield-check" style={{ width: 30, height: 30, color: "var(--color-neutral-400)" }}></i>
+        <p style={{ fontSize: 15, marginTop: 12 }}>Accreditation evidence packs are kept ready here — not part of this preview.</p>
+      </div>
+    );
+
+    const actions = (
+      <>
+        <IconButton aria-label="Search"><i data-lucide="search" style={{ width: 17, height: 17 }}></i></IconButton>
+        <IconButton aria-label="Notifications"><i data-lucide="bell" style={{ width: 17, height: 17 }}></i></IconButton>
+        {view === "watch" && <Button variant="secondary" size="sm" iconLeft={<i data-lucide="download" style={{ width: 15, height: 15 }}></i>}>Export</Button>}
+      </>
+    );
+
+    const meta = META[view] || META.ask;
+    return (
+      <AppShell nav={NAV} active={view} onNav={setView} title={meta.title} subtitle={meta.subtitle} actions={actions}>
+        {body}
+      </AppShell>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>

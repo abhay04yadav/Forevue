@@ -1,0 +1,50 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Form controls" subtitle="Inputs, select, checkbox, switch — deep-teal focus" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 22px; background: var(--surface-page); font-family: var(--font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 20px; align-items: start; }
+  .col { display: flex; flex-direction: column; gap: 14px; }
+  i[data-lucide] { width: 15px; height: 15px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { Input, Select, Checkbox, Switch } = window.ForevueDesignSystem_24f415;
+  function Demo() {
+    return (
+      <div className="grid">
+        <div className="col">
+          <Input label="Roll number" placeholder="e.g. 21CSE042" iconLeft={<i data-lucide="search"></i>} />
+          <Input label="Email" defaultValue="dean@iit.example" hint="Used only for sign-in." />
+          <Input label="Batch" error="Not found in this batch." defaultValue="CSE-9" />
+        </div>
+        <div className="col">
+          <Select label="Department" defaultValue="cse">
+            <option value="cse">Computer Science</option>
+            <option value="ece">Electronics</option>
+            <option value="me">Mechanical</option>
+          </Select>
+          <div className="col" style={{ gap: 10, marginTop: 4 }}>
+            <Checkbox label="Only students who need attention" defaultChecked />
+            <Checkbox label="Include consent-gated minors" />
+            <Switch label="Email me weekly risk digests" defaultChecked />
+          </div>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+  setTimeout(() => window.lucide && window.lucide.createIcons(), 60);
+</script>
+</body>
+</html>

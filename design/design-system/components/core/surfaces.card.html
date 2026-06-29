@@ -1,0 +1,63 @@
+<!-- @dsCard group="Components" viewport="700x300" name="Cards, badges & tags" subtitle="Calm white surfaces; quiet status pills" -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" href="../../styles.css">
+<script crossorigin src="https://unpkg.com/react@18.3.1/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  body { margin: 0; padding: 22px; background: var(--surface-page); font-family: var(--font-sans); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: start; }
+  .stack { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .stack + .stack { margin-top: 12px; }
+  .lab { font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  i[data-lucide] { width: 15px; height: 15px; }
+  p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--text-body); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+  const { Card, CardHeader, Badge, Tag, IconButton } = window.ForevueDesignSystem_24f415;
+  function Demo() {
+    return (
+      <div className="grid">
+        <Card padding="lg" interactive>
+          <CardHeader
+            eyebrow="CSE · Semester 3"
+            title="Attendance watch"
+            trailing={<IconButton aria-label="More"><i data-lucide="more-horizontal"></i></IconButton>}
+          />
+          <p>Six students slipped below the attendance line this week.</p>
+          <div className="stack" style={{ marginTop: 14 }}>
+            <Badge tone="teal">Draft</Badge>
+            <Badge tone="amber">Needs attention</Badge>
+          </div>
+        </Card>
+        <div>
+          <div className="lab">Badges</div>
+          <div className="stack">
+            <Badge tone="neutral">Synced</Badge>
+            <Badge tone="teal">Draft</Badge>
+            <Badge tone="amber">Needs attention</Badge>
+            <Badge tone="dark">NAAC</Badge>
+          </div>
+          <div className="lab" style={{ marginTop: 18 }}>Tags / filters</div>
+          <div className="stack">
+            <Tag>CSE-3</Tag>
+            <Tag onRemove={() => {}}>Below attendance</Tag>
+            <Tag onRemove={() => {}}>This term</Tag>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  ReactDOM.createRoot(document.getElementById("root")).render(<Demo />);
+  setTimeout(() => window.lucide && window.lucide.createIcons(), 60);
+</script>
+</body>
+</html>
