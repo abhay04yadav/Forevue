@@ -4,6 +4,8 @@
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "lint": "pnpm --filter web lint",
+    "format": "pnpm --filter web format",
+    "format:check": "pnpm --filter web format:check",
     "typecheck": "pnpm --filter web exec tsc --noEmit",
     "test:e2e": "pnpm --filter web test:e2e"
   },

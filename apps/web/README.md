@@ -1,16 +1,18 @@
 # Forevue Web (`apps/web`)
 
-**Status:** Phase 5 — App Shell, role dashboards, frozen Design System.
+**Status:** Frontend foundation — React 19 + Vite + Tailwind + shadcn/ui.
 
-React + Vite experience plane. API types come from `@forevue/api-client` (generated from OpenAPI).
+Experience plane for Forevue. API types will come from `@forevue/api-client` (generated from OpenAPI) in a later phase.
 
 ```bash
 # from repo root
 pnpm install
-pnpm --filter @forevue/api-client generate
 pnpm --filter web dev
+pnpm --filter web build
 ```
 
-**Release gate:** `tsc --noEmit` + Playwright (`pnpm --filter web test:e2e`).
+**Tooling:** Oxlint + ESLint (`pnpm --filter web lint`), Prettier (`pnpm --filter web format:check`).
 
-Set `VITE_API_BASE_URL=http://localhost:8000` in `.env.local`.
+**Release gate (future):** `tsc --noEmit` + Playwright.
+
+Set `VITE_API_BASE_URL=http://localhost:8000` in `.env.local` when API wiring lands.

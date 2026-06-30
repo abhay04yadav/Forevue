@@ -1,0 +1,21 @@
+{
+  "name": "@forevue/config",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./prettier.config.mjs": "./prettier.config.mjs",
+    "./eslint.config.mjs": "./eslint.config.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.28.0",
+    "eslint": "^9.28.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.20",
+    "globals": "^16.2.0",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.12",
+    "typescript-eslint": "^8.33.0"
+  }
+}

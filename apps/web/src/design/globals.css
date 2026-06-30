@@ -1,0 +1,109 @@
+@import "@forevue/design-system/styles.css";
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent-ui);
+  --color-accent-foreground: var(--accent-ui-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --background: var(--surface-page);
+  --foreground: var(--text-strong);
+  --card: var(--surface-card);
+  --card-foreground: var(--text-strong);
+  --popover: var(--surface-card);
+  --popover-foreground: var(--text-strong);
+  --primary: var(--color-teal);
+  --primary-foreground: var(--action-primary-text);
+  --secondary: var(--color-neutral-100);
+  --secondary-foreground: var(--text-body);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--text-muted);
+  --accent-ui: var(--color-teal-50);
+  --accent-ui-foreground: var(--color-deep-teal);
+  --destructive: var(--color-risk-high);
+  --border: var(--border-subtle);
+  --input: var(--border-default);
+  --ring: var(--focus-ring);
+}
+
+.dark {
+  --background: var(--color-midnight-teal);
+  --foreground: var(--text-on-dark);
+  --card: var(--color-teal-900);
+  --card-foreground: var(--text-on-dark);
+  --popover: var(--color-teal-900);
+  --popover-foreground: var(--text-on-dark);
+  --primary: var(--color-teal-500);
+  --primary-foreground: var(--color-ink);
+  --secondary: var(--color-teal-800);
+  --secondary-foreground: var(--text-on-dark);
+  --muted: var(--color-teal-800);
+  --muted-foreground: var(--color-teal-200);
+  --accent-ui: var(--color-teal-800);
+  --accent-ui-foreground: var(--color-teal-100);
+  --destructive: var(--color-risk-high);
+  --border: var(--color-teal-800);
+  --input: var(--color-teal-700);
+  --ring: var(--color-teal-300);
+  --surface-page: var(--color-midnight-teal);
+  --surface-card: var(--color-teal-900);
+  --surface-sunken: var(--color-teal-800);
+  --text-strong: var(--text-on-dark);
+  --text-body: var(--color-teal-100);
+  --text-muted: var(--color-teal-300);
+  --text-link: var(--color-teal-200);
+  --border-subtle: var(--color-teal-800);
+  --border-default: var(--color-teal-700);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground min-h-screen font-sans;
+    font-feature-settings: "tnum" 1;
+  }
+
+  #root {
+    @apply min-h-screen;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
