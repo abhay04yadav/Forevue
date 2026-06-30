@@ -10,7 +10,7 @@
 
 ---
 
-> **Repository status: Phase 6 — Hardening** (token revocation, `request_id`, user/scope APIs, rate limits).
+> **Repository status: Phase 7 — AI plane** (governed semantic layer, AI Gateway stub, tool calling, `/ai/ask`).
 > Backend Phases 2–5 and frontend `apps/web` are in place. Legacy prototype
 > (`AI-ERP-Copilot`) is **reference only** — see
 > [`docs/engineering/MIGRATION_PLAN.md`](docs/engineering/MIGRATION_PLAN.md).

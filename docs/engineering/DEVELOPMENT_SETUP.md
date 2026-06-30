@@ -167,7 +167,7 @@ pnpm exec lint-staged
 | Task | Command |
 |---|---|
 | New backend migration | `cd apps/api && alembic revision -m "..."` (additive-by-default; include RLS policy for new tenant tables) |
-| Seed demo data | `python scripts/seed_demo.py` (once ported) |
+| Seed demo data | `cd apps/api && python -m scripts.seed_demo` |
 | Regenerate API client | `pnpm --filter @forevue/api-client generate` |
 | Run all backend gates | `cd apps/api && ruff check app tests && ruff format --check app tests && mypy app && pytest -q` |
 

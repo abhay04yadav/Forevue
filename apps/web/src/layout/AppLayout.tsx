@@ -91,6 +91,11 @@ export function AppLayout() {
           <NavLink to="/board" style={({ isActive }) => navStyle(isActive)}>
             <span style={{ width: 17, display: "inline-flex", justifyContent: "center" }}>▦</span> Risk Board
           </NavLink>
+          {user?.role !== "student" && (
+            <NavLink to="/ask" style={({ isActive }) => navStyle(isActive)}>
+              <span style={{ width: 17, display: "inline-flex", justifyContent: "center" }}>✦</span> Ask
+            </NavLink>
+          )}
           {privileged && (
             <NavLink to="/dashboard" style={({ isActive }) => navStyle(isActive)}>
               <span style={{ width: 17, display: "inline-flex", justifyContent: "center" }}>◳</span> Dashboard

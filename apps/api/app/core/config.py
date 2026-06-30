@@ -1,8 +1,21 @@
+from pathlib import Path
+import os
+
+from dotenv import load_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+_API_ROOT = Path(__file__).resolve().parents[2]
+# Local `.env` must win over a stale shell DATABASE_URL — but never during pytest,
+# where testcontainers inject DATABASE_URL and a checked-in .env would clobber it.
+if not os.environ.get("FOREVUE_TESTING"):
+    load_dotenv(_API_ROOT / ".env", override=True)
 
 
 class Settings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=str(_API_ROOT / ".env") if not os.environ.get("FOREVUE_TESTING") else None,
+        env_file_encoding="utf-8",
+    )
 
     app_env: str = "development"
     log_level: str = "INFO"
@@ -39,6 +52,27 @@ class Settings(BaseSettings):
 
     auth_rate_limit_per_minute: int = 30
     """Per-identifier cap on /auth/* requests (Ch7 §10). Set 0 to disable."""
+
+    ai_gateway_provider: str = "stub"
+    """LLM provider routed through the AI Gateway (Ch3 §3). 'stub' for local/tests."""
+
+    ai_gateway_cache_enabled: bool = True
+    """Tenant-partitioned gateway response cache (Ch3 §3)."""
+
+    openai_api_key: str | None = None
+    openai_model: str = "gpt-4o-mini"
+    openai_intent_model: str | None = None
+    openai_narration_model: str | None = None
+
+    anthropic_api_key: str | None = None
+    anthropic_model: str = "claude-3-5-haiku-latest"
+
+    ai_session_memory_max_turns: int = 10
+    ai_session_memory_ttl_seconds: int = 86400
+
+    ai_rag_top_k: int = 5
+    ai_rag_min_score: float = 0.05
+    ai_embedding_dimensions: int = 384
 
 
 settings = Settings()

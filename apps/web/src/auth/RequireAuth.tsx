@@ -40,3 +40,11 @@ export function RequireAdmin() {
   if (user.role !== "admin") return <Navigate to="/board" replace />;
   return <Outlet />;
 }
+
+// UX guard (Phase 7): student role is blocked server-side from /ai/* (Ch4 §9).
+export function RequireAiRole() {
+  const { user } = useAuth();
+  if (!user) return <Navigate to="/login" replace />;
+  if (user.role === "student") return <Navigate to="/board" replace />;
+  return <Outlet />;
+}

@@ -7,8 +7,6 @@ from sqlalchemy import event, insert
 from sqlalchemy.orm import Mapper, object_session
 from sqlalchemy.orm.attributes import get_history
 
-from app.models.audit import AuditLog
-
 actor_user_id_ctx: ContextVar[str | None] = ContextVar("actor_user_id", default=None)
 
 
@@ -68,6 +66,9 @@ def _resolve_actor_user_id(target: Any) -> str | None:
 def _write_audit_row(
     connection, tenant_id, table_name: str, record_id, action: str, old_value, new_value, actor_user_id: str | None
 ) -> None:
+    # Lazy import breaks the audit.py <-> models package circular import at startup.
+    from app.models.audit import AuditLog
+
     connection.execute(
         insert(AuditLog.__table__).values(
             tenant_id=tenant_id,

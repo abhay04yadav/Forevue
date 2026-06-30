@@ -1,7 +1,8 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { RequireAdmin, RequireAuth, RequirePrivileged } from "./auth/RequireAuth";
+import { RequireAdmin, RequireAiRole, RequireAuth, RequirePrivileged } from "./auth/RequireAuth";
 import { AppLayout } from "./layout/AppLayout";
+import { AskPage } from "./pages/AskPage";
 import { DashboardPage } from "./pages/DashboardPage";
 import { ImportsPage } from "./pages/ImportsPage";
 import { LoginPage } from "./pages/LoginPage";
@@ -17,6 +18,9 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/board" element={<RiskBoardPage />} />
           <Route path="/students/:studentId" element={<StudentPage />} />
+          <Route element={<RequireAiRole />}>
+            <Route path="/ask" element={<AskPage />} />
+          </Route>
           <Route element={<RequirePrivileged />}>
             <Route path="/dashboard" element={<DashboardPage />} />
           </Route>

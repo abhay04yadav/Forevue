@@ -12,6 +12,8 @@ from testcontainers.postgres import PostgresContainer
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 
+os.environ.setdefault("FOREVUE_TESTING", "1")
+
 # Placeholders so test modules can import app.* at collection time (before
 # migrated_db starts the container). migrated_db overwrites DATABASE_URL with
 # the real testcontainer URL; JWT_SECRET_KEY stays "test-secret".
@@ -56,6 +58,8 @@ _ALL_TABLES = (
     "intervention_outcomes",
     "risk_alerts",
     "faculty_scopes",
+    "governed_documents",
+    "governed_document_chunks",
 )
 
 
@@ -63,12 +67,15 @@ _ALL_TABLES = (
 def _reset_ephemeral_stores():
     from app.core.kv import reset_kv_store_for_tests
     from app.core.refresh_tokens import reset_refresh_token_store
+    from app.services.ai.monitoring import reset_ai_metrics_for_tests
 
     reset_kv_store_for_tests()
     reset_refresh_token_store()
+    reset_ai_metrics_for_tests()
     yield
     reset_kv_store_for_tests()
     reset_refresh_token_store()
+    reset_ai_metrics_for_tests()
 
 
 @pytest.fixture(scope="session")
@@ -90,6 +97,7 @@ def migrated_db(postgres_container, app_db_password, monkeysession):
         f"app_user:{app_db_password}",
     )
 
+    monkeysession.setenv("FOREVUE_TESTING", "1")
     monkeysession.setenv("DATABASE_URL", app_url)
     monkeysession.setenv("MIGRATIONS_DATABASE_URL", superuser_url)
     monkeysession.setenv("APP_DB_PASSWORD", app_db_password)
