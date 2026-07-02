@@ -1,6 +1,7 @@
 from uuid import UUID
 
 import jwt
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.exceptions import ConflictException, UnauthorizedException
@@ -17,9 +18,11 @@ from app.core.security import (
 )
 from app.models.tenant import Tenant
 from app.models.user import User
+from app.models.risk import FacultyScope
 from app.repositories.tenant_repository import TenantRepository
+from app.api.deps import CurrentUser
 from app.repositories.user_repository import UserRepository
-from app.schemas.auth import RegisterRequest, TokenResponse
+from app.schemas.auth import MeResponse, RegisterRequest, TokenResponse
 
 
 def _issue_tokens(user: User) -> TokenResponse:
@@ -107,3 +110,30 @@ def logout(refresh_token: str) -> None:
 
 def revoke_user_sessions(user_id: UUID) -> None:
     get_refresh_token_store().revoke_all_for_user(user_id, refresh_token_ttl_seconds())
+
+
+def get_me(session: Session, current_user: CurrentUser) -> MeResponse:
+    user = UserRepository(session, current_user.tenant_id).get(current_user.user_id)
+    if user is None:
+        raise UnauthorizedException("User not found.")
+    department_codes: list[str] = []
+    if user.role in ("faculty", "hod"):
+        department_codes = list(
+            session.execute(
+                select(FacultyScope.scope_ref).where(
+                    FacultyScope.tenant_id == user.tenant_id,
+                    FacultyScope.user_id == user.id,
+                    FacultyScope.scope_type == "department",
+                )
+            )
+            .scalars()
+            .all()
+        )
+    return MeResponse(
+        user_id=user.id,
+        tenant_id=user.tenant_id,
+        email=user.email,
+        role=user.role,
+        student_id=user.student_id,
+        department_codes=department_codes,
+    )

@@ -1,0 +1,9 @@
+/* Forevue — Breakpoints
+   Derived from layout tokens (spacing.css) and product UI kit content widths. */
+
+:root {
+  --breakpoint-narrow:  780px; /* = --container-narrow */
+  --breakpoint-content: 860px; /* product content column (ui_kits) */
+  --breakpoint-wide:    1120px; /* = --container-wide */
+  --breakpoint-marketing-sm: 560px; /* marketing grid (brand guidelines) */
+}

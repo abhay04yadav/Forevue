@@ -83,8 +83,8 @@ def add_faculty_scope(
     user = UserRepository(session, tenant_id).get(user_id)
     if user is None:
         raise NotFoundException("User not found.")
-    if user.role != "faculty":
-        raise ConflictException("Faculty scopes can only be assigned to faculty users.")
+    if user.role not in ("faculty", "hod"):
+        raise ConflictException("Faculty scopes can only be assigned to faculty or HOD users.")
     if payload.scope_type not in FACULTY_SCOPE_TYPES:
         raise ConflictException(f"Invalid scope_type. Must be one of: {', '.join(FACULTY_SCOPE_TYPES)}")
     repo = FacultyScopeRepository(session, tenant_id)

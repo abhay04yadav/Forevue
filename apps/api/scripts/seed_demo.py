@@ -10,7 +10,7 @@ real risk_assessments/findings/alerts from the engine. Run from `apps/api/`:
 
 from __future__ import annotations
 
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from uuid import UUID
 
@@ -20,8 +20,26 @@ from sqlalchemy.orm import Session
 from app.core.db import SessionLocal
 from app.core.rls import set_tenant_context
 from app.core.security import hash_password
-from app.models.canonical import Attendance, Course, Department, Fee, InternalMark, Programme, Student
+from app.models.canonical import (
+    Assignment,
+    Attendance,
+    CampusAnnouncement,
+    CareerProfile,
+    Course,
+    Department,
+    Fee,
+    InternalMark,
+    Programme,
+    SemesterResult,
+    Student,
+    StudentActivity,
+    StudentNotification,
+    TimetableSession,
+    UpcomingExam,
+)
 from app.models.ingestion import SourceSystem
+from app.models.placement import PlacementDrive
+from app.models.faculty_workspace import FacultyArtifact, FacultyCoursePlan, OfficeHourSlot
 from app.models.risk import FacultyScope, Intervention, InterventionOutcome, RiskAssessment
 from app.models.tenant import Tenant
 from app.models.user import User
@@ -79,6 +97,10 @@ def _ensure_demo_users(session: Session, tenant_id: UUID) -> dict[str, User]:
         ("principal@demo-eng.edu", "principal"),
         ("meera.iyer@demo-eng.edu", "faculty"),
         ("admin@demo-eng.edu", "admin"),
+        ("registrar@demo-eng.edu", "registrar"),
+        ("iqac@demo-eng.edu", "iqac"),
+        ("hod.cse@demo-eng.edu", "hod"),
+        ("placement@demo-eng.edu", "placement"),
     ):
         existing = session.execute(
             select(User).where(User.tenant_id == tenant_id, User.email == email)
@@ -90,26 +112,167 @@ def _ensure_demo_users(session: Session, tenant_id: UUID) -> dict[str, User]:
         users[email] = existing
 
     faculty = users["meera.iyer@demo-eng.edu"]
+    hod = users["hod.cse@demo-eng.edu"]
     admin = users["admin@demo-eng.edu"]
-    scope = session.execute(
-        select(FacultyScope).where(
-            FacultyScope.tenant_id == tenant_id,
-            FacultyScope.user_id == faculty.id,
-            FacultyScope.scope_type == "department",
-            FacultyScope.scope_ref == "CSE",
+    for scoped_user, dept in ((faculty, "CSE"), (hod, "CSE")):
+        scope = session.execute(
+            select(FacultyScope).where(
+                FacultyScope.tenant_id == tenant_id,
+                FacultyScope.user_id == scoped_user.id,
+                FacultyScope.scope_type == "department",
+                FacultyScope.scope_ref == dept,
+            )
+        ).scalar_one_or_none()
+        if scope is None:
+            session.add(
+                FacultyScope(
+                    tenant_id=tenant_id,
+                    user_id=scoped_user.id,
+                    scope_type="department",
+                    scope_ref=dept,
+                    created_by=admin.id,
+                )
+            )
+    return users
+
+
+def _ensure_student_user(session: Session, tenant_id: UUID) -> None:
+    """Demo student login linked to Aarav Sharma (21CSE045)."""
+    email = "aarav.sharma@demo-eng.edu"
+    student = session.execute(
+        select(Student).where(
+            Student.tenant_id == tenant_id,
+            Student.canonical_roll_no == "21CSE045",
         )
     ).scalar_one_or_none()
-    if scope is None:
+    if student is None:
+        return
+
+    existing = session.execute(
+        select(User).where(User.tenant_id == tenant_id, User.email == email)
+    ).scalar_one_or_none()
+    if existing is None:
         session.add(
-            FacultyScope(
+            User(
                 tenant_id=tenant_id,
-                user_id=faculty.id,
-                scope_type="department",
-                scope_ref="CSE",
-                created_by=admin.id,
+                email=email,
+                password_hash=hash_password(DEMO_PASSWORD),
+                role="student",
+                student_id=student.id,
             )
         )
-    return users
+        session.flush()
+    elif existing.student_id != student.id or existing.role != "student":
+        existing.student_id = student.id
+        existing.role = "student"
+        session.flush()
+
+
+def _ensure_placement_drives(session: Session, tenant_id: UUID, created_by: UUID | None) -> None:
+    """Demo placement drives for the placement officer dashboard."""
+    samples = (
+        ("Campus hiring — TCS", "TCS", "active", TODAY + timedelta(days=14), "Main auditorium"),
+        ("Infosys drive", "Infosys", "draft", TODAY + timedelta(days=30), "Placement cell"),
+        ("Wipro off-campus", "Wipro", "closed", TODAY - timedelta(days=7), "Online"),
+    )
+    for title, company, status, drive_date, location in samples:
+        existing = session.execute(
+            select(PlacementDrive).where(
+                PlacementDrive.tenant_id == tenant_id,
+                PlacementDrive.title == title,
+                PlacementDrive.is_deleted.is_(False),
+            )
+        ).scalar_one_or_none()
+        if existing is None:
+            session.add(
+                PlacementDrive(
+                    tenant_id=tenant_id,
+                    title=title,
+                    company_name=company,
+                    status=status,
+                    drive_date=drive_date,
+                    location=location,
+                    created_by=created_by,
+                )
+            )
+
+
+def _ensure_faculty_workspace_data(session: Session, tenant_id: UUID, faculty_user_id: UUID) -> None:
+    """Course plans, sample artifact, and office-hour slots for faculty demos."""
+    courses = session.execute(
+        select(Course).where(Course.tenant_id == tenant_id, Course.code.in_(("DBMS", "OS", "CN", "TOC")))
+    ).scalars().all()
+    syllabus_by_code = {
+        "DBMS": ["ER model", "Normalization", "SQL queries", "Transactions"],
+        "OS": ["Processes", "Scheduling", "Memory", "File systems"],
+        "CN": ["OSI model", "TCP/IP", "Routing", "Network security"],
+        "TOC": ["Finite automata", "Regular languages", "Context-free grammars", "Turing machines"],
+    }
+    plans = (
+        ("DBMS", 16, 11),
+        ("OS", 14, 10),
+        ("CN", 14, 9),
+        ("TOC", 12, 8),
+    )
+    for course in courses:
+        planned, delivered = next((p, d) for code, p, d in plans if code == course.code)
+        existing = session.execute(
+            select(FacultyCoursePlan).where(
+                FacultyCoursePlan.tenant_id == tenant_id,
+                FacultyCoursePlan.owner_user_id == faculty_user_id,
+                FacultyCoursePlan.course_id == course.id,
+                FacultyCoursePlan.is_deleted.is_(False),
+            )
+        ).scalar_one_or_none()
+        if existing is None:
+            session.add(
+                FacultyCoursePlan(
+                    tenant_id=tenant_id,
+                    owner_user_id=faculty_user_id,
+                    course_id=course.id,
+                    syllabus_units=syllabus_by_code.get(course.code, []),
+                    planned_sessions=planned,
+                    delivered_sessions=delivered,
+                )
+            )
+
+    if session.execute(
+        select(FacultyArtifact).where(
+            FacultyArtifact.tenant_id == tenant_id,
+            FacultyArtifact.owner_user_id == faculty_user_id,
+            FacultyArtifact.title == "DBMS Unit test — Normalization (draft)",
+        )
+    ).scalar_one_or_none() is None:
+        session.add(
+            FacultyArtifact(
+                tenant_id=tenant_id,
+                owner_user_id=faculty_user_id,
+                artifact_type="assessment_paper",
+                title="DBMS Unit test — Normalization (draft)",
+                status="draft",
+                content_json={
+                    "markdown": "# DBMS Unit test — Normalization\n\n*Sample demo artifact for Meera Iyer.*"
+                },
+            )
+        )
+
+    if session.execute(
+        select(OfficeHourSlot).where(
+            OfficeHourSlot.tenant_id == tenant_id,
+            OfficeHourSlot.owner_user_id == faculty_user_id,
+        ).limit(1)
+    ).scalar_one_or_none() is None:
+        session.add(
+            OfficeHourSlot(
+                tenant_id=tenant_id,
+                owner_user_id=faculty_user_id,
+                slot_date=TODAY + timedelta(days=2),
+                start_time="15:00",
+                end_time="16:00",
+                location="CSE faculty room",
+                status="open",
+            )
+        )
 
 
 def _create_departments_and_programmes(
@@ -493,6 +656,238 @@ def _seed_other_departments(
         _add_fee(session, tenant_id, student, None, source_system_id)
 
 
+def _ensure_student_dashboard_data(
+    session: Session,
+    tenant_id: UUID,
+    source_system_id: UUID | None,
+) -> None:
+    """Idempotent dashboard seed for Aarav Sharma (21CSE045) — runs on existing tenants."""
+    student = session.execute(
+        select(Student).where(Student.tenant_id == tenant_id, Student.canonical_roll_no == "21CSE045")
+    ).scalar_one_or_none()
+    if student is None:
+        return
+
+    courses = {
+        row.code: row
+        for row in session.execute(
+            select(Course).where(Course.tenant_id == tenant_id, Course.is_deleted.is_(False))
+        ).scalars()
+    }
+    if not courses:
+        return
+
+    # Friendly names for CSE courses used in the dashboard design
+    name_map = {
+        "DBMS": "DBMS",
+        "OS": "Operating Systems",
+        "CN": "Computer Networks",
+        "TOC": "Theory of Computation",
+        "DSA": "DSA",
+        "MATH": "Mathematics",
+    }
+    for code, course in courses.items():
+        if code in name_map and course.name != name_map[code]:
+            course.name = name_map[code]
+
+    dbms = courses.get("DBMS")
+    os_course = courses.get("OS")
+    dsa = courses.get("DSA") or dbms
+    if dbms is None:
+        return
+
+    existing_tt = session.execute(
+        select(TimetableSession.id).where(
+            TimetableSession.tenant_id == tenant_id,
+            TimetableSession.student_id == student.id,
+            TimetableSession.session_date == TODAY,
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_tt is None:
+        sessions = [
+            (time(9, 0), time(10, 0), "lecture", "DBMS lecture", dbms.id, "Room A-204", "Dr. Rao", None),
+            (time(10, 30), time(11, 0), "free", "Free slot", None, None, None, "Good moment to get ahead on DSA revision."),
+            (time(11, 0), time(12, 30), "lab", "Operating Systems lab", os_course.id if os_course else dbms.id, "Lab 3", "Prof. Iyer", None),
+            (time(14, 0), time(15, 0), "tutorial", "DSA tutorial", dsa.id, "Room B-110", "Dr. Nair", None),
+            (time(16, 0), time(16, 30), "assignment", "DBMS ER-model assignment due", dbms.id, None, None, "Due today"),
+            (time(18, 0), time(19, 0), "free", "Optional: DSA practice set", dsa.id, None, None, "Keep your streak going with a short set."),
+        ]
+        for i, (start, end, stype, title, cid, room, faculty, notes) in enumerate(sessions):
+            row = TimetableSession(
+                tenant_id=tenant_id,
+                student_id=student.id,
+                course_id=cid,
+                session_date=TODAY,
+                start_time=start,
+                end_time=end,
+                session_type=stype,
+                title=title,
+                room=room,
+                faculty_name=faculty,
+                notes=notes,
+            )
+            if source_system_id:
+                _stamp(row, source_system_id, f"tt-aarav-{i}")
+            session.add(row)
+
+    existing_asg = session.execute(
+        select(Assignment.id).where(
+            Assignment.tenant_id == tenant_id, Assignment.student_id == student.id
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_asg is None:
+        due_today = datetime.now(UTC).replace(hour=16, minute=0, second=0, microsecond=0)
+        due_later = datetime.now(UTC) + timedelta(days=5)
+        for title, cid, due, priority, progress in (
+            ("DBMS ER-model", dbms.id, due_today, "soon", 70),
+            ("DSA problem set 4", dsa.id, due_later, "planned", 45),
+        ):
+            row = Assignment(
+                tenant_id=tenant_id,
+                student_id=student.id,
+                course_id=cid,
+                title=title,
+                due_at=due,
+                status="open",
+                progress_pct=progress,
+                priority=priority,
+            )
+            if source_system_id:
+                _stamp(row, source_system_id, f"asg-{title}")
+            session.add(row)
+
+    existing_sem = session.execute(
+        select(SemesterResult.id).where(
+            SemesterResult.tenant_id == tenant_id,
+            SemesterResult.student_id == student.id,
+            SemesterResult.course_id.is_(None),
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_sem is None:
+        for sem, sgpa in ((1, Decimal("78")), (2, Decimal("80")), (3, Decimal("82")), (4, Decimal("84"))):
+            row = SemesterResult(
+                tenant_id=tenant_id,
+                student_id=student.id,
+                course_id=None,
+                academic_year="2025-26",
+                semester=sem,
+                sgpa=sgpa,
+                result_status="pass",
+            )
+            if source_system_id:
+                _stamp(row, source_system_id, f"sem-aarav-{sem}")
+            session.add(row)
+
+    existing_campus = session.execute(
+        select(CampusAnnouncement.id).where(CampusAnnouncement.tenant_id == tenant_id).limit(1)
+    ).scalar_one_or_none()
+    if existing_campus is None:
+        now = datetime.now(UTC)
+        for title, body, location, days_ago, closes_days in (
+            ("Hackathon 2026", "Registrations close Friday", "Innovation Lab", 1, 3),
+            ("Guest lecture: Systems at scale", "Tomorrow, 3 PM", "Auditorium", 0, 1),
+            ("Merit scholarship applications", "2 weeks left", "Admin office", 2, 14),
+            ("Placement talk at 5 PM", "Auditorium · Today", "Auditorium", 0, 0),
+        ):
+            session.add(
+                CampusAnnouncement(
+                    tenant_id=tenant_id,
+                    title=title,
+                    body=body,
+                    location=location,
+                    published_at=now - timedelta(days=days_ago),
+                    closes_at=now + timedelta(days=closes_days) if closes_days else None,
+                )
+            )
+
+    existing_notif = session.execute(
+        select(StudentNotification.id).where(
+            StudentNotification.tenant_id == tenant_id, StudentNotification.student_id == student.id
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_notif is None:
+        now = datetime.now(UTC)
+        for title, body, tone, hours_ago in (
+            ("Assignment due at 4:00 PM", "DBMS ER-model", "alert", 1),
+            ("Hackathon registrations close Friday", None, "default", 24),
+            ("Daily brief is ready", None, "ai", 0),
+        ):
+            session.add(
+                StudentNotification(
+                    tenant_id=tenant_id,
+                    student_id=student.id,
+                    title=title,
+                    body=body,
+                    tone=tone,
+                    created_at=now - timedelta(hours=hours_ago),
+                )
+            )
+
+    existing_act = session.execute(
+        select(StudentActivity.id).where(
+            StudentActivity.tenant_id == tenant_id, StudentActivity.student_id == student.id
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_act is None:
+        now = datetime.now(UTC)
+        for atype, summary, hours_ago in (
+            ("submission", "Submitted DSA problem set 3", 24),
+            ("ai", "Forevue surfaced a study plan", 48),
+            ("timetable", "Timetable updated for next week", 72),
+            ("ai", "Asked Forevue about DBMS normalization", 0.3),
+            ("ai", "Generated revision notes for OS", 2),
+        ):
+            session.add(
+                StudentActivity(
+                    tenant_id=tenant_id,
+                    student_id=student.id,
+                    activity_type=atype,
+                    summary=summary,
+                    created_at=now - timedelta(hours=hours_ago),
+                )
+            )
+
+    existing_career = session.execute(
+        select(CareerProfile.id).where(
+            CareerProfile.tenant_id == tenant_id, CareerProfile.student_id == student.id
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_career is None:
+        session.add(
+            CareerProfile(
+                tenant_id=tenant_id,
+                student_id=student.id,
+                readiness_score=68,
+                skills=["Python", "DSA", "SQL", "React", "Communication"],
+                opportunities=[
+                    {"title": "Summer internship drive", "subtitle": "Applications open · 2 weeks left", "icon": "briefcase"},
+                    {"title": "Mock interview workshop", "subtitle": "Friday · Placement cell", "icon": "graduation"},
+                ],
+                credits_completed=86,
+                credits_required=120,
+            )
+        )
+
+    existing_exam = session.execute(
+        select(UpcomingExam.id).where(
+            UpcomingExam.tenant_id == tenant_id, UpcomingExam.student_id == student.id
+        ).limit(1)
+    ).scalar_one_or_none()
+    if existing_exam is None:
+        exam_date = TODAY + timedelta(days=9)
+        for cid, name in ((dsa.id, "DSA exam"), (dbms.id, "DBMS exam")):
+            row = UpcomingExam(
+                tenant_id=tenant_id,
+                student_id=student.id,
+                course_id=cid,
+                exam_name=name,
+                exam_date=exam_date if name.startswith("DSA") else TODAY + timedelta(days=6),
+            )
+            if source_system_id:
+                _stamp(row, source_system_id, f"exam-{name}")
+            session.add(row)
+
+
 def seed() -> None:
     session = SessionLocal()
     try:
@@ -518,15 +913,6 @@ def seed() -> None:
                     dept_courses[dept_code] = courses[f"{dept_code}101"]
 
                 faculty = users["meera.iyer@demo-eng.edu"]
-                session.add(
-                    FacultyScope(
-                        tenant_id=tenant.id,
-                        user_id=faculty.id,
-                        scope_type="department",
-                        scope_ref="CSE",
-                        created_by=users["admin@demo-eng.edu"].id,
-                    )
-                )
 
                 _seed_named_cohort(
                     session, tenant.id, cse_programme.id, cse_course_ids, primary_course_id, source.id, faculty
@@ -541,14 +927,39 @@ def seed() -> None:
                 print(f"Tenant '{TENANT_NAME}' (slug={TENANT_SLUG}) already exists -- skipping data creation.")
                 _ensure_demo_users(session, tenant.id)
 
+            source = session.execute(
+                select(SourceSystem).where(SourceSystem.tenant_id == tenant.id).limit(1)
+            ).scalar_one_or_none()
+            _ensure_student_dashboard_data(session, tenant.id, source.id if source else None)
+            _ensure_student_user(session, tenant.id)
+            placement_user = session.execute(
+                select(User).where(User.tenant_id == tenant.id, User.email == "placement@demo-eng.edu")
+            ).scalar_one_or_none()
+            admin_user = session.execute(
+                select(User).where(User.tenant_id == tenant.id, User.email == "admin@demo-eng.edu")
+            ).scalar_one_or_none()
+            _ensure_placement_drives(
+                session, tenant.id, (placement_user or admin_user).id if (placement_user or admin_user) else None
+            )
+            faculty_user = session.execute(
+                select(User).where(User.tenant_id == tenant.id, User.email == "meera.iyer@demo-eng.edu")
+            ).scalar_one_or_none()
+            if faculty_user:
+                _ensure_faculty_workspace_data(session, tenant.id, faculty_user.id)
+
             summary = recompute_for_tenant(session, tenant.id, triggered_by="manual")
 
         print()
         print("Login credentials (password for all): " + DEMO_PASSWORD)
         print("  College (tenant slug): " + TENANT_SLUG)
         print("  principal@demo-eng.edu  (role: principal -- Dashboard)")
+        print("  registrar@demo-eng.edu  (role: registrar -- Dashboard)")
+        print("  iqac@demo-eng.edu       (role: iqac -- Dashboard)")
         print("  meera.iyer@demo-eng.edu (role: faculty, scope: department=CSE -- Risk Board)")
-        print("  admin@demo-eng.edu      (role: admin)")
+        print("  hod.cse@demo-eng.edu    (role: hod, scope: department=CSE -- Department)")
+        print("  placement@demo-eng.edu  (role: placement -- Placement)")
+        print("  aarav.sharma@demo-eng.edu (role: student -- My day)")
+        print("  admin@demo-eng.edu      (role: admin -- Dashboard + Admin)")
         print()
         print(f"Tenant id: {tenant.id}")
         print(

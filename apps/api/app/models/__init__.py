@@ -2,7 +2,10 @@ from app.core.audit import register_audit_hooks
 from app.models.audit import AuditLog
 from app.models.base import Base
 from app.models.canonical import (
+    Assignment,
     Attendance,
+    CampusAnnouncement,
+    CareerProfile,
     Course,
     Department,
     Enrollment,
@@ -15,6 +18,10 @@ from app.models.canonical import (
     ResearchPublication,
     SemesterResult,
     Student,
+    StudentActivity,
+    StudentNotification,
+    TimetableSession,
+    UpcomingExam,
 )
 from app.models.conflict import DataConflict
 from app.models.identity import EntityIdentityMap, MergeReviewItem
@@ -45,6 +52,13 @@ for _canonical_model in (
     InternalMark,
     Fee,
     SemesterResult,
+    TimetableSession,
+    Assignment,
+    CampusAnnouncement,
+    StudentNotification,
+    StudentActivity,
+    CareerProfile,
+    UpcomingExam,
 ):
     register_audit_hooks(_canonical_model)
 
@@ -75,6 +89,13 @@ __all__ = [
     "InternalMark",
     "Fee",
     "SemesterResult",
+    "TimetableSession",
+    "Assignment",
+    "CampusAnnouncement",
+    "StudentNotification",
+    "StudentActivity",
+    "CareerProfile",
+    "UpcomingExam",
     "Hostel",
     "Placement",
     "ResearchPublication",

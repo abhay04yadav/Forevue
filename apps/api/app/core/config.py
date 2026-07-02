@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     jwt_access_token_expire_minutes: int = 15
     jwt_refresh_token_expire_days: int = 7
 
-    frontend_origins: str = "http://localhost:5173"
+    frontend_origins: str = "http://localhost:5173,http://127.0.0.1:5173"
     """Comma-separated allowed CORS origins for the frontend (Phase 3 §A.1).
     Default is the Vite dev server. Never combined with allow_credentials=True
     here -- auth is Bearer-token-in-header, not cookies, so credentialed CORS

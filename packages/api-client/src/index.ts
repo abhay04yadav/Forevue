@@ -3,6 +3,7 @@ import type { components } from "./schema";
 export type { components, paths } from "./schema";
 
 export type TokenResponse = components["schemas"]["TokenResponse"];
+export type LoginRequest = components["schemas"]["LoginRequest"];
 export type AtRiskStudentResponse = components["schemas"]["AtRiskStudentResponse"];
 export type StudentRiskDetailResponse = components["schemas"]["StudentRiskDetailResponse"];
 export type RiskAssessmentResponse = components["schemas"]["RiskAssessmentResponse"];
@@ -19,6 +20,7 @@ export type AlertResponse = components["schemas"]["AlertResponse"];
 export type RiskConfigResponse = components["schemas"]["RiskConfigResponse"];
 export type RiskConfigUpdateRequest = components["schemas"]["RiskConfigUpdateRequest"];
 export type Student360Response = components["schemas"]["Student360Response"];
+export type AttendanceSummary = components["schemas"]["AttendanceSummary"];
 export type ImportBatchResponse = components["schemas"]["ImportBatchResponse"];
 export type RecomputeRequest = components["schemas"]["RecomputeRequest"];
 export type RecomputeSummaryResponse = components["schemas"]["RecomputeSummaryResponse"];

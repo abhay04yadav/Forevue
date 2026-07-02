@@ -1,9 +1,7 @@
-/* Frozen design tokens — source of truth: design/design-system/tokens/ */
+/* Frozen design tokens — source of truth: design/design-system/styles.css */
+@import "../../../../design/design-system/tokens/fonts.css";
 @import "../../../../design/design-system/tokens/colors.css";
-@import "../../../../design/design-system/tokens/spacing.css";
 @import "../../../../design/design-system/tokens/typography.css";
-
-:root {
-  --font-sans: "Public Sans", system-ui, -apple-system, sans-serif;
-  --app-sidebar: 230px;
-}
+@import "../../../../design/design-system/tokens/spacing.css";
+@import "../../../../design/design-system/tokens/breakpoints.css";
+@import "../../../../design/design-system/tokens/icons.css";

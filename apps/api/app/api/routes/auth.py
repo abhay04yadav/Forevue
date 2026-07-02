@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Depends, Request
 from sqlalchemy.orm import Session
 
+from app.api.deps import CurrentUser, get_current_user, get_tenant_session
 from app.core.db import get_session
 from app.core.rate_limit import check_auth_rate_limit, check_auth_rate_limit_by_ip
-from app.schemas.auth import LoginRequest, LogoutRequest, RefreshRequest, RegisterRequest, TokenResponse
+from app.schemas.auth import LoginRequest, LogoutRequest, MeResponse, RefreshRequest, RegisterRequest, TokenResponse
 from app.services import auth_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -42,3 +43,11 @@ def refresh(
 @router.post("/logout", status_code=204)
 def logout(payload: LogoutRequest) -> None:
     auth_service.logout(payload.refresh_token)
+
+
+@router.get("/me", response_model=MeResponse)
+def me(
+    current_user: CurrentUser = Depends(get_current_user),
+    session: Session = Depends(get_tenant_session),
+) -> MeResponse:
+    return auth_service.get_me(session, current_user)

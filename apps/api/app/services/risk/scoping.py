@@ -13,6 +13,8 @@ from app.models.canonical import Course, Department, Enrollment, Programme, Stud
 from app.models.risk import FacultyScope
 
 PRIVILEGED_ROLES = ("admin", "principal", "registrar", "iqac")
+SCOPE_RESOLVED_STAFF_ROLES = ("faculty", "hod")
+PLACEMENT_ROLE = "placement"
 """Spec §13 names the full-visibility group as "admin/principal/registrar/
 management" but VALID_ROLES (app/models/user.py, Phase 0, locked) has no
 "management" role. The closest faithful read is "every role besides faculty
@@ -24,14 +26,18 @@ def has_full_visibility(role: str) -> bool:
     return role in PRIVILEGED_ROLES
 
 
+def is_placement_role(role: str) -> bool:
+    return role == PLACEMENT_ROLE
+
+
 def visible_student_ids(session: Session, tenant_id: UUID, role: str, user_id: UUID) -> set[UUID] | None:
-    """None means "all tenant students" (privileged roles). Faculty get the
-    explicit set resolved from their FacultyScope rows; any other role
-    (student, or anything unrecognized) gets an empty set -- spec §13 routes
-    the student role to 403 at the route layer, not a 200 with zero rows."""
+    """None means "all tenant students" (privileged roles). Faculty and HOD get the
+    explicit set resolved from their FacultyScope rows; placement and student get
+    an empty set for risk surfaces -- spec §13 routes the student role to 403 at
+    the route layer, not a 200 with zero rows."""
     if has_full_visibility(role):
         return None
-    if role != "faculty":
+    if role not in SCOPE_RESOLVED_STAFF_ROLES:
         return set()
 
     scopes = session.execute(

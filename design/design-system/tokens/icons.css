@@ -1,0 +1,14 @@
+/* Forevue — Icon tokens
+   Lucide line icons — rounded caps, single stroke. See readme.md ICONOGRAPHY. */
+
+:root {
+  --icon-library: lucide;
+  --icon-stroke-width: 1.75;
+  --icon-size-sm: 15px; /* form fields, compact UI */
+  --icon-size-md: 17px; /* nav items, default */
+  --icon-size-lg: 20px; /* headers, emphasis */
+  --icon-color-default: var(--color-neutral-700);
+  --icon-color-muted:    var(--color-neutral-500);
+  --icon-color-active:   var(--color-deep-teal);
+  --icon-color-on-teal:  var(--text-on-teal);
+}

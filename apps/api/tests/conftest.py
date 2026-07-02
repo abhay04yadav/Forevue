@@ -58,6 +58,11 @@ _ALL_TABLES = (
     "intervention_outcomes",
     "risk_alerts",
     "faculty_scopes",
+    "placement_drives",
+    "faculty_course_plans",
+    "generation_jobs",
+    "faculty_artifacts",
+    "office_hour_slots",
     "governed_documents",
     "governed_document_chunks",
 )

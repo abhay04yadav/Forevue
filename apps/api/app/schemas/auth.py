@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel, Field
 
 _EMAIL_PATTERN = r"^[^@\s]+@[^@\s]+\.[^@\s]+$"
@@ -28,3 +30,12 @@ class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+
+
+class MeResponse(BaseModel):
+    user_id: UUID
+    tenant_id: UUID
+    email: str
+    role: str
+    student_id: UUID | None = None
+    department_codes: list[str] = Field(default_factory=list)

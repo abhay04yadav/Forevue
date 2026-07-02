@@ -13,13 +13,13 @@ interface ThemeState {
 export const useThemeStore = create<ThemeState>()(
   persist(
     (set) => ({
-      mode: "system",
+      mode: "light",
       resolved: "light",
       setMode: (mode) => set({ mode }),
       setResolved: (resolved) => set({ resolved }),
     }),
     {
-      name: "forevue-theme",
+      name: "forevue-theme-v2",
       partialize: (state) => ({ mode: state.mode }),
     },
   ),

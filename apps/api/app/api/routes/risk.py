@@ -13,6 +13,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.deps import CurrentUser, get_current_user, get_tenant_session
+from app.api.student_scope import assert_student_self_scope
 from app.core.exceptions import AppException, ForbiddenException, NotFoundException
 from app.models.canonical import Student
 from app.models.risk import Intervention, RiskAlert, RiskAssessment, RiskFinding
@@ -41,7 +42,7 @@ from app.schemas.risk import (
 from app.services.risk import interventions as interventions_service
 from app.services.risk.config import get_or_seed_config, set_new_config
 from app.services.risk.engine import recompute_for_students, recompute_for_tenant
-from app.services.risk.scoping import has_full_visibility, visible_student_ids
+from app.services.risk.scoping import has_full_visibility, is_placement_role, visible_student_ids
 
 router = APIRouter(prefix="/risk", tags=["risk"])
 
@@ -49,6 +50,8 @@ router = APIRouter(prefix="/risk", tags=["risk"])
 def _ensure_not_student_role(current_user: CurrentUser) -> None:
     if current_user.role == "student":
         raise ForbiddenException("The student role is out of scope for the Student Success Engine (Phase 2).")
+    if is_placement_role(current_user.role):
+        raise ForbiddenException("The placement role is out of scope for the Student Success Engine.")
 
 
 def _visible_ids(session: Session, current_user: CurrentUser) -> set[UUID] | None:
@@ -142,10 +145,12 @@ def get_student_risk(
     current_user: CurrentUser = Depends(get_current_user),
     session: Session = Depends(get_tenant_session),
 ) -> StudentRiskDetailResponse:
-    _ensure_not_student_role(current_user)
-    visible = _visible_ids(session, current_user)
-    if visible is not None and student_id not in visible:
-        raise NotFoundException("Student not found.")  # don't reveal existence outside the caller's scope
+    if current_user.role == "student":
+        assert_student_self_scope(session, current_user, student_id)
+    else:
+        visible = _visible_ids(session, current_user)
+        if visible is not None and student_id not in visible:
+            raise NotFoundException("Student not found.")  # don't reveal existence outside the caller's scope
 
     repo = RiskRepository(session, current_user.tenant_id)
     current = repo.get_current_assessment(student_id)

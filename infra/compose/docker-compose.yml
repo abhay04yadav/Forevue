@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: forevue-postgres
+    restart: unless-stopped
+    ports:
+      - "55432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: forevue_dev
+      POSTGRES_DB: erp_copilot
+    volumes:
+      - forevue_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d erp_copilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  forevue_pgdata:

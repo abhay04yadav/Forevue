@@ -70,3 +70,63 @@ def test_duplicate_tenant_slug_is_rejected(client):
     assert first.status_code == 200
     second = client.post("/auth/register", json={**payload, "admin_email": "other@dup-college.edu"})
     assert second.status_code == 409
+
+
+def test_me_returns_role(client):
+    register_resp = client.post(
+        "/auth/register",
+        json={
+            "tenant_name": "Me College",
+            "tenant_slug": "me-college",
+            "admin_email": "admin@me-college.edu",
+            "admin_password": "supersecret1",
+        },
+    )
+    token = register_resp.json()["access_token"]
+    me_resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert me_resp.status_code == 200
+    body = me_resp.json()
+    assert body["role"] == "admin"
+    assert body["email"] == "admin@me-college.edu"
+    assert body["department_codes"] == []
+
+
+def test_hod_me_includes_department_scope(client, superuser_connection):
+    from sqlalchemy import text
+
+    from app.core.security import create_access_token
+
+    slug = "hod-scope-college"
+    client.post(
+        "/auth/register",
+        json={
+            "tenant_name": slug,
+            "tenant_slug": slug,
+            "admin_email": f"admin@{slug}.edu",
+            "admin_password": "supersecret1",
+        },
+    )
+    tenant_id = superuser_connection.execute(
+        text("SELECT id FROM tenants WHERE slug = :s"), {"s": slug}
+    ).scalar_one()
+    hod_id = superuser_connection.execute(
+        text(
+            "INSERT INTO users (tenant_id, email, password_hash, role) "
+            "VALUES (:t, 'hod@hod-scope-college.edu', 'x', 'hod') RETURNING id"
+        ),
+        {"t": tenant_id},
+    ).scalar_one()
+    superuser_connection.execute(
+        text(
+            "INSERT INTO faculty_scopes (tenant_id, user_id, scope_type, scope_ref) "
+            "VALUES (:t, :u, 'department', 'CSE')"
+        ),
+        {"t": tenant_id, "u": hod_id},
+    )
+    superuser_connection.commit()
+
+    token = create_access_token(hod_id, tenant_id, "hod")
+    me_resp = client.get("/auth/me", headers={"Authorization": f"Bearer {token}"})
+    assert me_resp.status_code == 200
+    assert me_resp.json()["role"] == "hod"
+    assert me_resp.json()["department_codes"] == ["CSE"]

@@ -14,11 +14,11 @@ entity_type yet.
 """
 
 import uuid
-from datetime import date
+from datetime import date, datetime, time
 from decimal import Decimal
 
-from sqlalchemy import CheckConstraint, ForeignKey, UniqueConstraint, text
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Time, UniqueConstraint, text
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.models.base import Base, PKMixin, ProvenanceMixin, SoftDeleteMixin, TenantMixin, TimestampMixin
@@ -184,6 +184,108 @@ class SemesterResult(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, Prov
     attempt: Mapped[int] = mapped_column(nullable=False, default=1, server_default=text("1"))
     grade: Mapped[str | None] = mapped_column(nullable=True)
     result_status: Mapped[str | None] = mapped_column(nullable=True)
+    sgpa: Mapped[Decimal | None] = mapped_column(nullable=True)
+
+
+class TimetableSession(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, ProvenanceMixin, Base):
+    __tablename__ = "timetable_sessions"
+    __table_args__ = (
+        UniqueConstraint(
+            "tenant_id",
+            "student_id",
+            "session_date",
+            "start_time",
+            "title",
+            name="uq_timetable_sessions_natural_key",
+        ),
+        CheckConstraint(
+            "session_type IN ('lecture', 'lab', 'tutorial', 'free', 'assignment')",
+            name="ck_timetable_sessions_type",
+        ),
+    )
+
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    course_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("courses.id"), nullable=True)
+    session_date: Mapped[date] = mapped_column(nullable=False)
+    start_time: Mapped[time] = mapped_column(Time, nullable=False)
+    end_time: Mapped[time | None] = mapped_column(Time, nullable=True)
+    session_type: Mapped[str] = mapped_column(nullable=False, default="lecture", server_default=text("'lecture'"))
+    title: Mapped[str] = mapped_column(nullable=False)
+    room: Mapped[str | None] = mapped_column(nullable=True)
+    faculty_name: Mapped[str | None] = mapped_column(nullable=True)
+    notes: Mapped[str | None] = mapped_column(nullable=True)
+
+
+class Assignment(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, ProvenanceMixin, Base):
+    __tablename__ = "assignments"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "student_id", "course_id", "title", name="uq_assignments_natural_key"),
+        CheckConstraint("status IN ('open', 'submitted')", name="ck_assignments_status"),
+        CheckConstraint("priority IN ('soon', 'planned', 'normal')", name="ck_assignments_priority"),
+    )
+
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    course_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("courses.id"), nullable=False)
+    title: Mapped[str] = mapped_column(nullable=False)
+    due_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    status: Mapped[str] = mapped_column(nullable=False, default="open", server_default=text("'open'"))
+    progress_pct: Mapped[int] = mapped_column(nullable=False, default=0, server_default=text("0"))
+    priority: Mapped[str] = mapped_column(nullable=False, default="normal", server_default=text("'normal'"))
+
+
+class CampusAnnouncement(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, Base):
+    __tablename__ = "campus_announcements"
+
+    title: Mapped[str] = mapped_column(nullable=False)
+    body: Mapped[str | None] = mapped_column(nullable=True)
+    location: Mapped[str | None] = mapped_column(nullable=True)
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    closes_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class StudentNotification(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, Base):
+    __tablename__ = "student_notifications"
+    __table_args__ = (
+        CheckConstraint("tone IN ('default', 'alert', 'ai')", name="ck_student_notifications_tone"),
+    )
+
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    title: Mapped[str] = mapped_column(nullable=False)
+    body: Mapped[str | None] = mapped_column(nullable=True)
+    tone: Mapped[str] = mapped_column(nullable=False, default="default", server_default=text("'default'"))
+    read_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class StudentActivity(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, Base):
+    __tablename__ = "student_activity"
+
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    activity_type: Mapped[str] = mapped_column(nullable=False)
+    summary: Mapped[str] = mapped_column(nullable=False)
+
+
+class CareerProfile(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, Base):
+    __tablename__ = "career_profiles"
+    __table_args__ = (UniqueConstraint("tenant_id", "student_id", name="uq_career_profiles_student"),)
+
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    readiness_score: Mapped[int] = mapped_column(nullable=False, default=0, server_default=text("0"))
+    skills: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    opportunities: Mapped[list] = mapped_column(JSONB, nullable=False, default=list, server_default=text("'[]'::jsonb"))
+    credits_completed: Mapped[int] = mapped_column(nullable=False, default=0, server_default=text("0"))
+    credits_required: Mapped[int] = mapped_column(nullable=False, default=120, server_default=text("120"))
+
+
+class UpcomingExam(PKMixin, TenantMixin, TimestampMixin, SoftDeleteMixin, ProvenanceMixin, Base):
+    __tablename__ = "upcoming_exams"
+    __table_args__ = (
+        UniqueConstraint("tenant_id", "student_id", "course_id", "exam_name", name="uq_upcoming_exams_natural_key"),
+    )
+
+    student_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("students.id"), nullable=False)
+    course_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("courses.id"), nullable=False)
+    exam_name: Mapped[str] = mapped_column(nullable=False)
+    exam_date: Mapped[date] = mapped_column(nullable=False)
 
 
 class Hostel(PKMixin, TenantMixin, Base):

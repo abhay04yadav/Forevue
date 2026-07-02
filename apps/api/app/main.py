@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import ai, auth, health, imports, mappings, risk, sources, students, users
+from app.api.routes import ai, auth, faculty, health, imports, mappings, placement, risk, sources, students, users
 from app.core.config import settings
 from app.core.exceptions import register_exception_handlers
 from app.core.logging import configure_logging
@@ -28,5 +28,8 @@ app.include_router(sources.router)
 app.include_router(mappings.router)
 app.include_router(imports.router)
 app.include_router(students.router)
+app.include_router(students.campus_router)
 app.include_router(risk.router)
+app.include_router(placement.router)
+app.include_router(faculty.router)
 app.include_router(ai.router)
